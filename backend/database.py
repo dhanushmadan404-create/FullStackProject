@@ -42,6 +42,28 @@ def init_db():
     if not engine:
         print("Skipping init_db: engine not configured.")
         return
+        
     from models import user, food, vendor
+    from sqlalchemy import text
+    
+    # 🚀 AUTO-MIGRATION: Rename 'image' to 'image_url' if it exists
+    try:
+        with engine.connect() as conn:
+            # Check if old column 'image' exists and 'image_url' does NOT exist
+            check_sql = text("""
+                SELECT column_name 
+                FROM information_schema.columns 
+                WHERE table_name='users' AND column_name='image';
+            """)
+            result = conn.execute(check_sql).fetchone()
+            
+            if result:
+                print("Found old 'image' column. Renaming to 'image_url'...")
+                conn.execute(text("ALTER TABLE users RENAME COLUMN image TO image_url;"))
+                conn.commit()
+                print("Migration successful: Renamed users.image to users.image_url")
+    except Exception as e:
+        print(f"Migration error (might already be fixed): {e}")
+
     Base.metadata.create_all(bind=engine)
     print("Database initialized.")

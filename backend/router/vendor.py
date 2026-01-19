@@ -6,7 +6,7 @@ from fastapi import (
     File,
     UploadFile
 )
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from typing import List
 from datetime import time
 import os
@@ -78,7 +78,7 @@ def create_vendor(
 # get all vendors
 @router.get("", response_model=List[VendorResponse])
 def get_all_vendors(db: Session = Depends(get_db)):
-    return db.query(Vendor).all()
+    return db.query(Vendor).options(joinedload(Vendor.user)).all()
 
 
 # get by user id
