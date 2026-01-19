@@ -73,9 +73,7 @@ def create_food(
 # ================= GET FOOD BY CATEGORY =================
 @router.get("/category/{category}", response_model=List[FoodResponse])
 def get_foods_by_category(category: str, db: Session = Depends(get_db)):
-    foods = db.query(Food).filter(Food.category == category.lower()).all()
-    if not foods:
-        raise HTTPException(status_code=404, detail="No foods found")
+    foods = db.query(Food).filter(Food.category == category.lower().strip()).all()
     return foods
 
 # ================= GET FOOD BY VENDOR =================

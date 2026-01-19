@@ -1,42 +1,20 @@
 // Redundant API_URL removed - using centralized api-helper.js
-
-// ---------------- MAP INIT ----------------
-const map = L.map("map").setView([13.0827, 80.2707], 11);
-
-L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  maxZoom: 20,
-}).addTo(map);
-
-// ---------------- ICONS ----------------
-const foodIcon = L.icon({
-  iconUrl: "../assets/food.png",
-  iconSize: [40, 40],
-  iconAnchor: [20, 40],
-});
-
-const shopIcon = L.icon({
-  iconUrl: "../assets/shop.png",
-  iconSize: [40, 40],
-  iconAnchor: [20, 40],
-});
-
-const userIcon = L.icon({
-  iconUrl: "../assets/3448609.png",
-  iconSize: [40, 40],
-  iconAnchor: [20, 40],
-});
+const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://127.0.0.1:8000/api' : '/api';
 
 // ---------------- GLOBAL STATE ----------------
+let map = null;
 let userLat = null;
 let userLng = null;
 let foodLat = null;
 let foodLng = null;
 let routingControl = null;
 
+// Icons (initialized inside DomContentLoaded or lazily)
+let foodIcon, shopIcon, userIcon;
+
 // ---------------- GET FOOD ID FROM URL ----------------
 const params = new URLSearchParams(window.location.search);
 const foodId = Number(params.get("food_id"));
-console.log("Food ID:", foodId);
 
 // ---------------- FETCH FOOD LOCATION ----------------
 async function loadFoodLocation() {
@@ -47,7 +25,6 @@ async function loadFoodLocation() {
     if (!res.ok) throw new Error("Food not found");
 
     const food = await res.json();
-
     foodLat = food.latitude;
     foodLng = food.longitude;
 
@@ -113,7 +90,7 @@ function tryRouting() {
 // ---------------- LOAD ALL FOOD LOCATIONS ----------------
 async function loadAllFoodLocations() {
   try {
-    const res = await fetch(`${API_URL}/foods/locations`);
+    const res = await fetch(`${API_URL}/foods`);
     if (!res.ok) throw new Error("Failed to load food locations");
 
     const foods = await res.json();
@@ -132,6 +109,34 @@ async function loadAllFoodLocations() {
 
 // ---------------- INIT ----------------
 document.addEventListener("DOMContentLoaded", () => {
+  // Check if L exists
+  if (typeof L === 'undefined') {
+    console.error("Leaflet (L) is not defined. Ensure script is loaded correctly.");
+    return;
+  }
+
+  // 1. Init Map
+  map = L.map("map").setView([13.0827, 80.2707], 11);
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 20 }).addTo(map);
+
+  // 2. Init Icons
+  foodIcon = L.icon({
+    iconUrl: "../assets/food.png",
+    iconSize: [40, 40],
+    iconAnchor: [20, 40],
+  });
+  shopIcon = L.icon({
+    iconUrl: "../assets/shop.png",
+    iconSize: [40, 40],
+    iconAnchor: [20, 40],
+  });
+  userIcon = L.icon({
+    iconUrl: "../assets/3448609.png",
+    iconSize: [40, 40],
+    iconAnchor: [20, 40],
+  });
+
+  // 3. Kick off location loading
   getUserLocation();
   loadFoodLocation();
   loadAllFoodLocations();
