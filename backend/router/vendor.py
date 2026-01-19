@@ -81,11 +81,12 @@ def get_all_vendors(db: Session = Depends(get_db)):
     return db.query(Vendor).options(joinedload(Vendor.user)).all()
 
 
-# get by user id
-@router.get("/user/{user_id}")
-def check_vendor_by_user(user_id: int, db: Session = Depends(get_db)):
+@router.get("/user/{user_id}", response_model=VendorResponse)
+def get_vendor_by_user(user_id: int, db: Session = Depends(get_db)):
     vendor = db.query(Vendor).filter(Vendor.user_id == user_id).first()
-    return {"exists": vendor is not None}
+    if not vendor:
+        raise HTTPException(status_code=404, detail="Vendor not found")
+    return vendor
 
 # vendor id
 @router.get("/{vendor_id}", response_model=VendorResponse)
