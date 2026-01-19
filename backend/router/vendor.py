@@ -129,6 +129,38 @@ def update_vendor(
     db.refresh(vendor)
     return vendor
 
+# update vendor by id (Admin/Special use)
+@router.put("/{vendor_id}", response_model=VendorResponse)
+def update_vendor_by_id(
+    vendor_id: int,
+    phone_number: str | None = Form(None),
+    opening_time: time | None = Form(None),
+    closing_time: time | None = Form(None),
+    image: UploadFile | None = File(None),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    # Only Admin or the Vendor owner can update
+    vendor = db.query(Vendor).filter(Vendor.vendor_id == vendor_id).first()
+    if not vendor:
+        raise HTTPException(status_code=404, detail="Vendor not found")
+        
+    if current_user.role != "admin" and vendor.user_id != current_user.user_id:
+        raise HTTPException(status_code=403, detail="Not authorized")
+
+    if phone_number:
+        vendor.phone_number = phone_number
+    if opening_time:
+        vendor.opening_time = opening_time
+    if closing_time:
+        vendor.closing_time = closing_time
+    if image:
+        vendor.cart_image_url = save_image(image)
+
+    db.commit()
+    db.refresh(vendor)
+    return vendor
+
 # delete vendor
 @router.delete("")
 def delete_vendor(
@@ -144,6 +176,42 @@ def delete_vendor(
             status_code=404,
             detail="Vendor not found"
         )
+
+    db.delete(vendor)
+    db.commit()
+    return {"message": "Vendor deleted successfully"}
+
+# delete vendor by id (Admin flow)
+@router.delete("/{vendor_id}")
+def delete_vendor_by_id(
+    vendor_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+
+    vendor = db.query(Vendor).filter(Vendor.vendor_id == vendor_id).first()
+    if not vendor:
+        raise HTTPException(status_code=404, detail="Vendor not found")
+
+    db.delete(vendor)
+    db.commit()
+    return {"message": "Vendor deleted successfully"}
+
+# delete vendor by id (Admin flow)
+@router.delete("/{vendor_id}")
+def delete_vendor_by_id(
+    vendor_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+
+    vendor = db.query(Vendor).filter(Vendor.vendor_id == vendor_id).first()
+    if not vendor:
+        raise HTTPException(status_code=404, detail="Vendor not found")
 
     db.delete(vendor)
     db.commit()

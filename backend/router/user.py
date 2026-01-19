@@ -9,7 +9,13 @@ from core.security import get_current_user, hash_password
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
-UPLOAD_DIR = "uploads/users"
+# ================= IMAGE STORAGE =================
+if os.environ.get("VERCEL"):
+    UPLOAD_DIR = "/tmp/uploads/users"
+else:
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    UPLOAD_DIR = os.path.join(BASE_DIR, "uploads", "users")
+
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 def save_image(image: UploadFile) -> str:
@@ -20,7 +26,7 @@ def save_image(image: UploadFile) -> str:
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(image.file, buffer)
 
-    return f"/{file_path}"
+    return f"/uploads/users/{filename}"
 
 # ---------------- REGISTER USER ----------------
 @router.post("/", response_model=UserResponse)
