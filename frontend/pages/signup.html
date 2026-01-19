@@ -28,12 +28,12 @@
       <label id="nameError"></label>
 
       <label>Email</label>
-      <input id="registrationEmail" type="text" required />
-      <label id="emailError"></label>
+      <input id="regEmail" type="text" required />
+      <span class="error" id="emailError"></span>
 
       <label>Password</label>
-      <input id="registrationPassword" type="password" required />
-      <label id="passwordError"></label>
+      <input id="regPassword" type="password" required />
+      <span class="error" id="passwordError"></span>
 
       <label>Role</label>
       <select id="role">
@@ -41,17 +41,18 @@
         <option value="user">User</option>
         <option value="vendor">Vendor</option>
       </select>
-      <label id="roleError"></label>
+      <span class="error" id="roleError"></span>
 
       <label>Profile Image</label>
-      <input id="image" type="file" accept="image/*" />
-      <label id="imageError"></label>
+      <input id="img" type="file" accept="image/*" />
+      <span class="error" id="imageError"></span>
 
-      <button type="button" id="append">Register</button>
+      <button type="button" id="registerBtn">Register</button>
 
-      <button class="change" onclick="location.href='./login.html'">nav</button>
+      <button class="change" type="button" onclick="location.href='./login.html'">Login</button>
     </form>
     <script src="../scripts/api-helper.js"></script>
+    <script src="../scripts/common.js"></script>
     <script src="../scripts/login.js"></script>
 </body>
 

@@ -80,8 +80,6 @@ def get_foods_by_category(category: str, db: Session = Depends(get_db)):
 @router.get("/vendor/{vendor_id}", response_model=List[FoodResponse])
 def get_foods_by_vendor(vendor_id: int, db: Session = Depends(get_db)):
     foods = db.query(Food).filter(Food.vendor_id == vendor_id).all()
-    if not foods:
-        raise HTTPException(status_code=404, detail="No foods found")
     return foods
 
 # ================= DELETE FOOD =================
