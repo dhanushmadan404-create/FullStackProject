@@ -35,8 +35,15 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
+    import traceback
     logger.error(f"Unhandled error: {exc}", exc_info=True)
-    return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})
+    
+    content = {"detail": "Internal Server Error"}
+    if os.environ.get("VERCEL"):
+        content["message"] = str(exc)
+        content["traceback"] = traceback.format_exc()
+        
+    return JSONResponse(status_code=500, content=content)
 
 # ---------------- CORS ----------------
 app.add_middleware(
@@ -77,4 +84,6 @@ def root():
     return {"message": "Welcome to Annesana API"}
 
 # ---------------- INIT DATABASE ----------------
-init_db()
+@app.on_event("startup")
+def on_startup():
+    init_db()
