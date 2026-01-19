@@ -49,9 +49,9 @@ def register_user(
     db_user = User(
         name=name,
         email=email,
-        password_hash=hash_password(password),  # ✅ FIXED
+        password_hash=hash_password(password),
         role=role,
-        image=image_path                         # ✅ FIXED
+        image_url=image_path
     )
 
     db.add(db_user)
@@ -91,12 +91,12 @@ def update_name_image_by_email(
     if name:
         db_user.name = name
     if image:
-        db_user.image = save_image(image)
+        db_user.image_url = save_image(image)
 
     db.commit()
     db.refresh(db_user)
     return {
         "message": "Name & image updated successfully",
         "user_id": db_user.user_id,
-        "image_url": db_user.image
+        "image_url": db_user.image_url
     }

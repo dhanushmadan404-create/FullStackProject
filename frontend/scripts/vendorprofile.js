@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const userData = await res.json();
 
     // Render profile info
-    profile_image.innerHTML = `<img src="${userData.image || '../assets/default.png'}" class="card-image"/>`;
+    profile_image.innerHTML = `<img src="${userData.image_url || '../assets/default.png'}" class="card-image"/>`;
     vendorName.innerHTML = `
       <h2>${userData.name}</h2>
       <p>${userData.email}</p>

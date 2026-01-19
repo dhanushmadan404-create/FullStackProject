@@ -11,7 +11,7 @@ class UserRole(str, Enum):
 class UserBase(BaseModel):
     email: str
     name: str
-    image: str | None
+    image_url: str | None
     role: UserRole
 
 class UserCreate(UserBase):
@@ -28,7 +28,7 @@ class UserResponse(UserBase):
 class UserUpdateNameImage(BaseModel):
 
     name: Optional[str] = None
-    image: Optional[str] = None   #
+    image_url: Optional[str] = None   #
 
 
 # schemas/auth.py

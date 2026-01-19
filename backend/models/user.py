@@ -11,7 +11,7 @@ class User(Base):
     password_hash = Column(String, nullable=False)
     name = Column(String, nullable=False)
     role = Column(String, nullable=False)
-    image = Column(Text, nullable=True)
+    image_url = Column(Text, nullable=True)
 
     created_at = Column(
         TIMESTAMP,
