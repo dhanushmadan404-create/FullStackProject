@@ -20,12 +20,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     cardContainer.innerHTML = "";
     foods.forEach(food => {
       const div = document.createElement("div");
+      const imgUrl = food.food_image_url ? (food.food_image_url.startsWith('http') ? food.food_image_url : (food.food_image_url.startsWith('/') ? food.food_image_url : '/' + food.food_image_url)) : '../../assets/annesana.png';
+
       div.innerHTML = `
                 <div class="card">
                     <div class="image_container">
                         <h2 class="food_name">${food.food_name}</h2>
                         <img
-                            src="${food.food_image_url || '../assets/annesana.png'}"
+                            src="${imgUrl}"
                             class="card-image"
                         />
                     </div>
@@ -50,5 +52,5 @@ window.foodloc = function (food_id) {
     alert("Food ID missing");
     return;
   }
-  window.location.href = `../pages/map.html?food_id=${food_id}`;
+  window.location.href = "../map.html?food_id=" + food_id;
 };

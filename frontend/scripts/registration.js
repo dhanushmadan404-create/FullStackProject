@@ -87,7 +87,11 @@ map.on("click", (e) => {
 // ---------------- CURRENT LOCATION ----------------
 document.getElementById("location")?.addEventListener("click", () => {
   navigator.geolocation.getCurrentPosition((pos) => {
-    map.setView([pos.coords.latitude, pos.coords.longitude], 15);
+    latitude = pos.coords.latitude;
+    longitude = pos.coords.longitude;
+    map.setView([latitude, longitude], 15);
+    if (marker) map.removeLayer(marker);
+    marker = L.marker([latitude, longitude], { icon: foodIcon }).addTo(map);
   });
 });
 

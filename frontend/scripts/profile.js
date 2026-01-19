@@ -26,8 +26,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const user_details = await res.json();
     localStorage.setItem("user_details", JSON.stringify(user_details));
 
+    const imgUrl = user_details.image_url ? (user_details.image_url.startsWith('http') ? user_details.image_url : (user_details.image_url.startsWith('/') ? user_details.image_url : '/' + user_details.image_url)) : '../assets/annesana.png';
     profile.innerHTML = `
-      <img src="${user_details.image_url || '../assets/default.png'}" alt="${user_details.name}" class="profile-image" />
+      <img src="${imgUrl}" alt="${user_details.name}" class="profile-image" />
       <br />
       <h2>${user_details.name}</h2>
       <p class="about">${user_details.email}</p>
