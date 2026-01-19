@@ -1,32 +1,37 @@
-const API_URL =
-    window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-        ? 'http://127.0.0.1:8000/api'
-        : '/api';
+// Using centralized api-helper.js for API_URL and fetchAPI
+
 const token = localStorage.getItem("token");
-const userDetails = JSON.parse(localStorage.getItem("user_details") || "{}");
-const vendorId = JSON.parse(localStorage.getItem("vendor") || "{}").vendor_id;
+const vendorStr = localStorage.getItem("vendor");
+const vendorId = vendorStr ? JSON.parse(vendorStr).vendor_id : null;
 
 let list = [];
 let menu = document.querySelector(".menu-list");
 let inputList = document.getElementById("list");
 
 // ---------------- MENU LIST ----------------
-document.getElementById("send").addEventListener("click", () => {
-    const value = inputList.value.trim();
-    if (value === "") return;
-    list.push(value);
-    let food = document.createElement("b");
-    food.innerHTML = `${value}<br/>`;
-    menu.appendChild(food);
-    inputList.value = "";
-});
+const sendBtn = document.getElementById("send");
+if (sendBtn) {
+    sendBtn.addEventListener("click", () => {
+        const value = inputList.value.trim();
+        if (value === "") return;
+        list.push(value);
+        let food = document.createElement("b");
+        food.innerHTML = `${value}<br/>`;
+        menu.appendChild(food);
+        inputList.value = "";
+    });
+}
 
 // ---------------- MAP ----------------
 let mapCon = document.getElementById("mapContainer");
-document.querySelector(".location-group").addEventListener("click", () => {
-    mapCon.style.display = "block";
-    setTimeout(() => map.invalidateSize(), 100);
-});
+const locGroup = document.querySelector(".location-group");
+if (locGroup) {
+    locGroup.addEventListener("click", () => {
+        mapCon.style.display = "block";
+        setTimeout(() => map.invalidateSize(), 100);
+    });
+}
+
 document.getElementById("back").addEventListener("click", () => {
     mapCon.style.display = "none";
 });
@@ -42,6 +47,10 @@ document.getElementById("location").addEventListener("click", () => {
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
         map.setView([lat, lon], 15);
+        if (marker) map.removeLayer(marker);
+        marker = L.marker([lat, lon], { icon: foodIcon }).addTo(map);
+        latitude = lat;
+        longitude = lon;
     });
 });
 
@@ -67,91 +76,83 @@ let currentVendorData = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
     if (!token) return location.href = "./login.html";
+    if (!vendorId) {
+        alert("Vendor ID missing. Redirecting to profile.");
+        return location.href = "./vendor-profile.html";
+    }
 
     try {
-        const res = await fetch(`${API_URL}/vendors/${vendorId}`, {
-            headers: { "Authorization": `Bearer ${token}` }
-        });
-        if (!res.ok) throw new Error("Failed to fetch vendor");
-        currentVendorData = await res.json();
+        currentVendorData = await fetchAPI(`/vendors/${vendorId}`);
 
-        document.getElementById("number").value = currentVendorData.phone_number;
-        document.getElementById("openTime").value = currentVendorData.opening_time;
-        document.getElementById("closeTime").value = currentVendorData.closing_time;
+        document.getElementById("number").value = currentVendorData.phone_number || "";
+        document.getElementById("openTime").value = currentVendorData.opening_time || "";
+        document.getElementById("closeTime").value = currentVendorData.closing_time || "";
 
     } catch (err) {
         console.error(err);
-        alert("Error loading profile data");
+        alert("Error loading profile data: " + err.message);
     }
 });
 
 // ---------------- SUBMIT (UPDATE) ----------------
-document.getElementById("vendorEditForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
+const editForm = document.getElementById("vendorEditForm");
+if (editForm) {
+    editForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-    if (!currentVendorData) return;
+        if (!currentVendorData) return;
 
-    const phone = document.getElementById("number").value;
-    const openTime = document.getElementById("openTime").value;
-    const closeTime = document.getElementById("closeTime").value;
-    const vId = currentVendorData.vendor_id;
+        const phone = document.getElementById("number").value;
+        const openTime = document.getElementById("openTime").value;
+        const closeTime = document.getElementById("closeTime").value;
+        const vId = currentVendorData.vendor_id;
 
-    try {
-        // 1. Update Vendor Details (FormData)
-        const vendorForm = new FormData();
-        vendorForm.append("phone_number", phone);
-        vendorForm.append("opening_time", openTime);
-        vendorForm.append("closing_time", closeTime);
+        try {
+            // 1. Update Vendor Details (FormData)
+            const vendorForm = new FormData();
+            vendorForm.append("phone_number", phone);
+            vendorForm.append("opening_time", openTime);
+            vendorForm.append("closing_time", closeTime);
 
-        const updateRes = await fetch(`${API_URL}/vendors/${vId}`, {
-            method: "PUT",
-            headers: { "Authorization": `Bearer ${token}` },
-            body: vendorForm
-        });
+            await fetchAPI(`/vendors/${vId}`, {
+                method: "PUT",
+                body: vendorForm
+            });
 
-        if (!updateRes.ok) {
-            const err = await updateRes.json();
-            throw new Error(err.detail || "Update vendor details failed");
-        }
+            // 2. Add New Foods (POST)
+            const menuContainer = document.querySelector(".menu-list");
+            const newFoodItems = [...menuContainer.children].map(item => item.textContent.trim());
+            const imageInput = document.getElementById("image");
+            const foodType = document.getElementById("foodType").value;
 
-        // 2. Add New Foods (POST)
-        const menuContainer = document.querySelector(".menu-list");
-        const newFoodItems = [...menuContainer.children].map(item => item.textContent.trim());
-        const imageInput = document.getElementById("image");
-        const foodType = document.getElementById("foodType").value;
+            if (newFoodItems.length > 0) {
+                if (!imageInput.files[0]) throw new Error("Please upload an image for new foods.");
+                if (!foodType) throw new Error("Please select a food type for new foods.");
+                if (latitude === null || longitude === null) throw new Error("Please select a location for new foods.");
 
-        if (newFoodItems.length > 0) {
-            if (!imageInput.files[0]) throw new Error("Please upload an image for new foods.");
-            if (!foodType) throw new Error("Please select a food type for new foods.");
-            if (latitude === null || longitude === null) throw new Error("Please select a location for new foods.");
+                for (const foodName of newFoodItems) {
+                    if (!foodName) continue;
+                    const fd = new FormData();
+                    fd.append("food_name", foodName);
+                    fd.append("category", foodType.toLowerCase());
+                    fd.append("latitude", latitude);
+                    fd.append("longitude", longitude);
+                    fd.append("vendor_id", vId);
+                    fd.append("image", imageInput.files[0]);
 
-            for (const foodName of newFoodItems) {
-                const fd = new FormData();
-                fd.append("food_name", foodName);
-                fd.append("category", foodType.toLowerCase());
-                fd.append("latitude", latitude);
-                fd.append("longitude", longitude);
-                fd.append("vendor_id", vId);
-                fd.append("image", imageInput.files[0]); // ✅ Send file directly
-
-                const foodRes = await fetch(`${API_URL}/foods`, {
-                    method: "POST",
-                    headers: { "Authorization": `Bearer ${token}` },
-                    body: fd
-                });
-
-                if (!foodRes.ok) {
-                    const err = await foodRes.json();
-                    throw new Error(`Failed to add food '${foodName}': ${err.detail}`);
+                    await fetchAPI(`/foods`, {
+                        method: "POST",
+                        body: fd
+                    });
                 }
             }
+
+            alert("Profile Updated Successfully! ✅");
+            window.location.href = "./vendor-profile.html";
+
+        } catch (err) {
+            console.error(err);
+            alert("Update failed: " + err.message);
         }
-
-        alert("Profile Updated Successfully! ✅");
-        window.location.href = "./vendor-profile.html";
-
-    } catch (err) {
-        console.error(err);
-        alert("Update failed: " + err.message);
-    }
-});
+    });
+}

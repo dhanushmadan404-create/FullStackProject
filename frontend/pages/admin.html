@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>Admin Dashboard</title>
@@ -14,20 +15,13 @@
   <!-- ================= HEADER ================= -->
   <header class="admin-header">
     <div style="display:flex; align-items:center; gap:10px;">
-      <img
-        src="../assets/annesana.png"
-        alt="Logo"
-        style="height:40px;"
-      />
+      <img src="../assets/annesana.png" alt="Logo" style="height:40px; cursor:pointer;"
+        onclick="window.location.href='../../index.html'" />
       <h2>Admin Panel</h2>
     </div>
 
     <div class="admin-right">
-      <img
-        id="adminImage"
-        src="../assets/location.png"
-        alt="Admin"
-      />
+      <img id="adminImage" src="../assets/location.png" alt="Admin" />
       <span id="adminName">Admin</span>
       <button onclick="logout()">Logout</button>
     </div>
@@ -49,39 +43,34 @@
     <!-- Content -->
     <main class="content">
 
-     <!-- Vendors Section -->
-<section id="vendors" class="section">
-  <h3>Vendor List</h3>
+      <!-- Vendors Section -->
+      <section id="vendors" class="section">
+        <h3>Vendor List</h3>
 
-  <div id="vendorList">
-    <table border="1" id="vendorTable">
-      <thead>
-        <tr>
-          <th>Vendor ID</th>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Phone</th>
-          <th>Opening Time</th>
-          <th>Closing Time</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-</section>
+        <div id="vendorList">
+          <table border="1" id="vendorTable">
+            <thead>
+              <tr>
+                <th>Vendor ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Opening Time</th>
+                <th>Closing Time</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
 
     </main>
   </div>
 
   <!-- ================= JS ================= -->
-  <script src="/scripts/admin.js"></script>
+  <script src="../scripts/admin.js"></script>
 
 </body>
+
 </html>
-
-
-
-
-
-

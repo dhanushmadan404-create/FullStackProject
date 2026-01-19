@@ -1,80 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login / Register</title>
-  <link rel="stylesheet" href="../../frontend/styles/login.css" />
+  <link rel="stylesheet" href="../styles/login.css" />
 </head>
 
 <body>
-<header>
-  <h2 class="logo">ANNESALA</h2>
-</header>
+  <header>
+    <div style="padding: 10px 20px;">
+      <img src="../assets/annesana.png" alt="Annesana" style="height:50px; cursor:pointer;"
+        onclick="window.location.href='../../index.html'" />
+    </div>
+  </header>
 
-<main>
+  <main>
 
-  <!-- LOGIN FORM -->
-  <form id="loginForm" class="form visible">
-    <h1>Login</h1>
+    <!-- LOGIN FORM -->
+    <form id="loginForm" class="form visible">
+      <h1>Login</h1>
 
-    <label>Email</label>
-    <input id="loginEmail" type="email" />
-    <span class="error" id="loginEmailError"></span>
+      <label>Email</label>
+      <input id="loginEmail" type="email" />
+      <span class="error" id="loginEmailError"></span>
 
-    <label>Password</label>
-    <input id="loginPassword" type="password" />
-    <span class="error" id="loginPasswordError"></span>
+      <label>Password</label>
+      <input id="loginPassword" type="password" />
+      <span class="error" id="loginPasswordError"></span>
 
-    <button type="button" id="loginBtn">Login</button>
+      <button type="button" id="loginBtn">Login</button>
 
-    <p class="switch">
-      Don’t have an account?
-      <button type="button" class="link-btn" onclick="toggleForm('registerForm')">Register</button>
+      <p class="switch">
+        Don’t have an account?
+        <button type="button" class="link-btn" onclick="toggleForm('registerForm')">Register</button>
 
-    </p>
-  </form>
+      </p>
+    </form>
 
-  <!-- REGISTER FORM -->
-  <form id="registerForm" class="form">
-    <h1>Register</h1>
+    <!-- REGISTER FORM -->
+    <form id="registerForm" class="form">
+      <h1>Register</h1>
 
-    <label>Name</label>
-    <input id="name" type="text" />
-    <span class="error" id="nameError"></span>
+      <label>Name</label>
+      <input id="name" type="text" />
+      <span class="error" id="nameError"></span>
 
-    <label>Email</label>
-    <input id="regEmail" type="email" />
-    <span class="error" id="emailError"></span>
+      <label>Email</label>
+      <input id="regEmail" type="email" />
+      <span class="error" id="emailError"></span>
 
-    <label>Password</label>
-    <input id="regPassword" type="password" />
-    <span class="error" id="passwordError"></span>
+      <label>Password</label>
+      <input id="regPassword" type="password" />
+      <span class="error" id="passwordError"></span>
 
-    <label>Role</label>
-    <select id="role">
-      <option value="">Select role</option>
-      <option value="user">User</option>
-      <option value="vendor">Vendor</option>
-      <option value="admin">Admin</option>
-    </select>
-    <span class="error" id="roleError"></span>
-    <label for="img">Profile Image</label>
-    <input type="file" id="img" accept="image/*">
-    <label class="error" for="img"></label>
+      <label>Role</label>
+      <select id="role">
+        <option value="">Select role</option>
+        <option value="user">User</option>
+        <option value="vendor">Vendor</option>
+        <option value="admin">Admin</option>
+      </select>
+      <span class="error" id="roleError"></span>
+      <label for="img">Profile Image</label>
+      <input type="file" id="img" accept="image/*">
+      <label class="error" for="img"></label>
 
-    <button type="button" id="registerBtn">Register</button>
+      <button type="button" id="registerBtn">Register</button>
 
-    <p class="switch">
-      Already have an account?
-      <button type="button" class="link-btn" onclick="toggleForm('loginForm')">Login</button>
+      <p class="switch">
+        Already have an account?
+        <button type="button" class="link-btn" onclick="toggleForm('loginForm')">Login</button>
 
-    </p>
-  </form>
+      </p>
+    </form>
 
-</main>
+  </main>
 
-<script src="../scripts/api-helper.js"></script>
-<script src="../scripts/login.js"></script>
+  <script src="../scripts/api-helper.js"></script>
+  <script src="../scripts/login.js"></script>
 </body>
+
 </html>

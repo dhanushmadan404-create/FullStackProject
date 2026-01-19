@@ -1,11 +1,8 @@
-const API_URL =
-  window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'http://127.0.0.1:8000/api'
-    : '/api';
-const token = localStorage.getItem("token");
+// Using centralized api-helper.js for API_URL and fetchAPI
 
 // ---------------- LOAD PROFILE ----------------
 document.addEventListener("DOMContentLoaded", async () => {
+  const token = localStorage.getItem("token");
   if (!token) {
     location.href = "./login.html";
     return;
@@ -13,20 +10,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const profile = document.getElementById("profile_details");
   try {
-    const res = await fetch(`${API_URL}/users/me`, {
-      headers: { "Authorization": `Bearer ${token}` }
-    });
-
-    if (!res.ok) {
-      localStorage.clear();
-      location.href = "./login.html";
-      return;
-    }
-
-    const user_details = await res.json();
+    const user_details = await fetchAPI("/users/me");
     localStorage.setItem("user_details", JSON.stringify(user_details));
 
-    const imgUrl = user_details.image_url ? (user_details.image_url.startsWith('http') ? user_details.image_url : (user_details.image_url.startsWith('/') ? user_details.image_url : '/' + user_details.image_url)) : '../assets/annesana.png';
+    const imgUrl = getImageUrl(user_details.image_url);
     profile.innerHTML = `
       <img src="${imgUrl}" alt="${user_details.name}" class="profile-image" />
       <br />
@@ -36,7 +23,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     `;
   } catch (err) {
     console.error("Profile load error:", err);
-    alert("Connection error ❌");
+    // If 401, fetchAPI might have already logged us out or handled it, 
+    // but we'll ensure we handle it here if it's a critical auth failure.
+    if (err.message.includes("401") || err.message.includes("Unauthorized")) {
+      localStorage.clear();
+      location.href = "./login.html";
+    } else {
+      alert("Error loading profile: " + err.message);
+    }
   }
 });
 
@@ -44,61 +38,61 @@ document.addEventListener("DOMContentLoaded", async () => {
 const editBtn = document.getElementById("editBtn");
 const user_edit = document.getElementById("edit");
 
-editBtn.addEventListener("click", () => {
-  const user_document = JSON.parse(localStorage.getItem("user_details") || "{}");
+if (editBtn) {
+  editBtn.addEventListener("click", () => {
+    const user_document = JSON.parse(localStorage.getItem("user_details") || "{}");
+    const previewUrl = getImageUrl(user_document.image_url);
 
-  user_edit.innerHTML = `
+    user_edit.innerHTML = `
     <form id="editForm" enctype="multipart/form-data">
-      <label>Name</label>
-      <input 
-        type="text" 
-        id="name" 
-        value="${user_document.name || ''}" 
-        minlength="3"
-        required
-      />
+      <div class="form-group">
+        <label>Name</label>
+        <input 
+          type="text" 
+          id="name" 
+          value="${user_document.name || ''}" 
+          minlength="3"
+          required
+        />
+      </div>
 
-      <label>Profile Image</label>
-      <input
-        id="image"
-        type="file"
-        accept="image/*"
-      />
+      <div class="form-group">
+        <label>Profile Image</label>
+        <input
+          id="image"
+          type="file"
+          accept="image/*"
+        />
+        <img src="${previewUrl}" width="80" id="preview" style="display: block; margin-top: 10px; border-radius: 50%; object-fit: cover; aspect-ratio: 1/1;"/>
+      </div>
 
-      <img src="${user_document.image_url || ''}" width="80" id="preview" style="display: block; margin-top: 10px;"/>
-
-      <button type="submit">Update Profile</button>
+      <button type="submit" class="submit-btn" style="padding: 10px 20px; background: orange; color: white; border: none; border-radius: 5px; cursor: pointer;">Update Profile</button>
     </form>
   `;
 
-  document.getElementById("editForm").addEventListener("submit", submitEditForm);
-});
+    document.getElementById("editForm").addEventListener("submit", submitEditForm);
+  });
+}
 
 // ---------------- SUBMIT EDIT FORM ----------------
 async function submitEditForm(e) {
   e.preventDefault();
   const name = document.getElementById("name").value.trim();
   const imageFile = document.getElementById("image").files[0];
+  const user_details = JSON.parse(localStorage.getItem("user_details") || "{}");
+
+  if (!user_details.email) return alert("User detail missing");
 
   const formData = new FormData();
   if (name) formData.append("name", name);
-  if (imageFile) formData.append("image", imageFile); // ✅ send file directly
+  if (imageFile) formData.append("image", imageFile);
 
   try {
-    const res = await fetch(`${API_URL}/users/email/${JSON.parse(localStorage.getItem("user_details")).email}`, {
+    const updatedUser = await fetchAPI(`/users/email/${user_details.email}`, {
       method: "PUT",
-      headers: {
-        "Authorization": `Bearer ${token}` // DO NOT set Content-Type for FormData
-      },
       body: formData
     });
 
-    if (!res.ok) {
-      const errorData = await res.json();
-      throw new Error(errorData.detail || "Update failed");
-    }
-
-    const updatedUser = await res.json();
     localStorage.setItem("user_details", JSON.stringify(updatedUser));
     alert("Profile updated ✅");
     location.reload();
@@ -109,7 +103,7 @@ async function submitEditForm(e) {
 }
 
 // ---------------- LOGOUT ----------------
-const logoutBtn = document.querySelector("a[href='#']");
+const logoutBtn = document.getElementById("logOut");
 if (logoutBtn) {
   logoutBtn.addEventListener("click", (e) => {
     e.preventDefault();

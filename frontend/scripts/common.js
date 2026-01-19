@@ -4,14 +4,14 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function checkLoginStatus() {
-    const user = localStorage.getItem("user");
+    const token = localStorage.getItem("token");
     const loginBtn = document.getElementById("login");
     const profileBtn = document.getElementById("profile");
 
     // If login button doesn't exist, we can't do anything
     if (!loginBtn) return;
 
-    if (user) {
+    if (token) {
         // user logged in
         loginBtn.style.display = "none";
         if (profileBtn) profileBtn.style.display = "inline-block";

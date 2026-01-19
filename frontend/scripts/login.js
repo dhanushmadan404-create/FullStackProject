@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Role-based navigation
       if (data.role === "user") location.href = "../../index.html";
-      else if (data.role === "admin") location.href = "./admin.html";
+      else if (data.role === "admin") location.href = "admin.html";
       else if (data.role === "vendor") {
         console.log("Vendor login detected, checking shop profile...");
         const checkData = await fetchAPI(`/vendors/user/${data.user_id}`);

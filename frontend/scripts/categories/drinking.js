@@ -1,4 +1,5 @@
-const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://127.0.0.1:8000/api' : '/api';
+// Using centralized api-helper.js for API_URL, fetchAPI, and getImageUrl
+
 const category = "drinking";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -6,8 +7,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!cardContainer) return;
 
   try {
-    const res = await fetch(`${API_URL}/foods/category/${category}`);
-    const foods = await res.json();
+    const foods = await fetchAPI(`/foods/category/${category}`);
 
     if (!Array.isArray(foods) || foods.length === 0) {
       cardContainer.innerHTML = `
@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     cardContainer.innerHTML = "";
     foods.forEach(food => {
       const div = document.createElement("div");
-      const imgUrl = food.food_image_url ? (food.food_image_url.startsWith('http') ? food.food_image_url : (food.food_image_url.startsWith('/') ? food.food_image_url : '/' + food.food_image_url)) : '../../assets/annesana.png';
+      const imgUrl = getImageUrl(food.food_image_url, '../../assets/annesana.png');
 
       div.innerHTML = `
                 <div class="card">
@@ -43,14 +43,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   } catch (err) {
     console.error("Fetch Error:", err);
-    cardContainer.innerHTML = "<p style='text-align:center;'>Failed to load records ❌</p>";
+    cardContainer.innerHTML = `<p style='text-align:center;'>Failed to load records: ${err.message} ❌</p>`;
   }
 });
 
 window.foodloc = function (food_id) {
-  if (!food_id) {
-    alert("Food ID missing");
-    return;
-  }
+  if (!food_id) return alert("Food ID missing");
   window.location.href = "../map.html?food_id=" + food_id;
 };

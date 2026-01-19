@@ -1,5 +1,4 @@
-// Redundant API_URL removed - using centralized api-helper.js
-const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://127.0.0.1:8000/api' : '/api';
+// Using centralized api-helper.js (API_URL is already defined there)
 
 // ---------------- GLOBAL STATE ----------------
 let map = null;
@@ -9,7 +8,7 @@ let foodLat = null;
 let foodLng = null;
 let routingControl = null;
 
-// Icons (initialized inside DomContentLoaded or lazily)
+// Icons
 let foodIcon, shopIcon, userIcon;
 
 // ---------------- GET FOOD ID FROM URL ----------------
@@ -21,19 +20,19 @@ async function loadFoodLocation() {
   if (!foodId) return;
 
   try {
-    const res = await fetch(`${API_URL}/foods/${foodId}`);
-    if (!res.ok) throw new Error("Food not found");
+    const food = await fetchAPI(`/foods/${foodId}`);
 
-    const food = await res.json();
     foodLat = food.latitude;
     foodLng = food.longitude;
 
     if (!foodLat || !foodLng) return;
 
-    L.marker([foodLat, foodLng], { icon: foodIcon })
-      .addTo(map)
-      .bindPopup(`<b>${food.food_name}</b>`)
-      .openPopup();
+    if (foodIcon) {
+      L.marker([foodLat, foodLng], { icon: foodIcon })
+        .addTo(map)
+        .bindPopup(`<b>${food.food_name}</b>`)
+        .openPopup();
+    }
 
     tryRouting();
   } catch (err) {
@@ -53,50 +52,57 @@ function getUserLocation() {
       userLat = position.coords.latitude;
       userLng = position.coords.longitude;
 
-      map.setView([userLat, userLng], 15);
+      if (map) {
+        map.setView([userLat, userLng], 15);
 
-      L.marker([userLat, userLng], { icon: userIcon })
-        .addTo(map)
-        .bindPopup("You are here")
-        .openPopup();
+        if (userIcon) {
+          L.marker([userLat, userLng], { icon: userIcon })
+            .addTo(map)
+            .bindPopup("You are here")
+            .openPopup();
+        }
+      }
 
       tryRouting();
     },
-    () => alert("Please enable location access")
+    (err) => {
+      console.warn("Geolocation error:", err);
+      // Only alert if the user explicitly clicked the button, 
+      // but since this runs on init, maybe just log.
+    }
   );
 }
 
 // ---------------- ROUTING ----------------
 function tryRouting() {
-  if (!userLat || !userLng || !foodLat || !foodLng) return;
+  if (!userLat || !userLng || !foodLat || !foodLng || !map) return;
 
   if (routingControl) {
     map.removeControl(routingControl);
   }
 
-  routingControl = L.Routing.control({
-    waypoints: [
-      L.latLng(userLat, userLng),
-      L.latLng(foodLat, foodLng),
-    ],
-    routeWhileDragging: false,
-    lineOptions: {
-      styles: [{ color: "blue", weight: 5 }],
-    },
-    createMarker: () => null, // hide default markers
-  }).addTo(map);
+  if (typeof L.Routing !== 'undefined') {
+    routingControl = L.Routing.control({
+      waypoints: [
+        L.latLng(userLat, userLng),
+        L.latLng(foodLat, foodLng),
+      ],
+      routeWhileDragging: false,
+      lineOptions: {
+        styles: [{ color: "blue", weight: 5 }],
+      },
+      createMarker: () => null, // hide default markers
+    }).addTo(map);
+  }
 }
 
 // ---------------- LOAD ALL FOOD LOCATIONS ----------------
 async function loadAllFoodLocations() {
   try {
-    const res = await fetch(`${API_URL}/foods`);
-    if (!res.ok) throw new Error("Failed to load food locations");
-
-    const foods = await res.json();
+    const foods = await fetchAPI(`/foods`);
 
     foods.forEach(food => {
-      if (food.latitude && food.longitude) {
+      if (food.latitude && food.longitude && map && shopIcon) {
         L.marker([food.latitude, food.longitude], { icon: shopIcon })
           .addTo(map)
           .bindPopup(`<b>${food.food_name}</b>`);
@@ -111,11 +117,14 @@ async function loadAllFoodLocations() {
 document.addEventListener("DOMContentLoaded", () => {
   // Check if L exists
   if (typeof L === 'undefined') {
-    console.error("Leaflet (L) is not defined. Ensure script is loaded correctly.");
+    console.error("Leaflet (L) is not defined. Ensure map.html is loading the Leaflet library correctly.");
     return;
   }
 
   // 1. Init Map
+  const mapElement = document.getElementById("map");
+  if (!mapElement) return;
+
   map = L.map("map").setView([13.0827, 80.2707], 11);
   L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 20 }).addTo(map);
 
@@ -140,4 +149,10 @@ document.addEventListener("DOMContentLoaded", () => {
   getUserLocation();
   loadFoodLocation();
   loadAllFoodLocations();
+
+  // 4. Hook up the footer button if it exists
+  const locationBtn = document.getElementById("getCurrent");
+  if (locationBtn) {
+    locationBtn.addEventListener("click", getUserLocation);
+  }
 });

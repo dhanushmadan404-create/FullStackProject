@@ -3,9 +3,9 @@
  * Prevents [object Object] errors and handles non-JSON / 500 errors gracefully.
  */
 const API_URL =
-  window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'http://127.0.0.1:8000/api'
-    : '/api';
+    window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://127.0.0.1:8000/api'
+        : '/api';
 
 async function fetchAPI(endpoint, options = {}) {
     const url = endpoint.startsWith('http') ? endpoint : `${API_URL}${endpoint}`;
@@ -72,4 +72,17 @@ async function fetchAPI(endpoint, options = {}) {
         }
         throw new Error(finalMsg);
     }
+}
+
+/**
+ * Robustly formats image URLs from the backend.
+ * @param {string} rawUrl - The URL from the API.
+ * @param {string} fallback - Fallback asset path.
+ * @returns {string} - Formatted URL.
+ */
+function getImageUrl(rawUrl, fallback = '../assets/annesana.png') {
+    if (!rawUrl) return fallback;
+    if (rawUrl.startsWith('http')) return rawUrl;
+    // Ensure leading slash for local uploads
+    return rawUrl.startsWith('/') ? rawUrl : '/' + rawUrl;
 }
