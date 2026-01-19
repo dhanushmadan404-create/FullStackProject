@@ -41,20 +41,19 @@ async def global_exception_handler(request: Request, exc: Exception):
 # ---------------- CORS ----------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://silly-custard-b54606.netlify.app",  # your frontend
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-    ],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # ---------------- STATIC FILES / UPLOADS ----------------
-# Save uploaded images in a persistent folder
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
+if os.environ.get("VERCEL"):
+    UPLOAD_DIR = "/tmp/uploads"
+else:
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
+
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 # Mount static files for access via /uploads/<filename>
