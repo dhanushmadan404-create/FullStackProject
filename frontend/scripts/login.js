@@ -96,11 +96,17 @@ document.addEventListener("DOMContentLoaded", () => {
       if (data.role === "user") location.href = "../../index.html";
       else if (data.role === "admin") location.href = "./admin.html";
       else if (data.role === "vendor") {
-        console.log("Vendor login detected");
+        console.log("Vendor login detected, checking shop profile...");
         const checkData = await fetchAPI(`/vendors/user/${data.user_id}`);
-        location.href = checkData.exists
-          ? "./vendor-profile.html"
-          : "./registration.html";
+
+        if (checkData.exists) {
+          console.log("Shop profile found, redirecting to profile.");
+          localStorage.setItem("vendor", JSON.stringify(checkData));
+          location.href = "./vendor-profile.html";
+        } else {
+          console.log("No shop profile found, redirecting to registration.");
+          location.href = "./registration.html";
+        }
       }
 
 

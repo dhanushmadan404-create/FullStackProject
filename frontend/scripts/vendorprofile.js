@@ -43,39 +43,43 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (vendorRes.ok) {
         const vendorData = await vendorRes.json();
 
-        // Keep vendor data in localStorage for other pages
-        localStorage.setItem("vendor", JSON.stringify(vendorData));
+        if (vendorData.exists) {
+          // Keep vendor data in localStorage for other pages
+          localStorage.setItem("vendor", JSON.stringify(vendorData));
 
-        TimeStatus.textContent = `${vendorData.opening_time} - ${vendorData.closing_time}`;
+          TimeStatus.textContent = `${vendorData.opening_time} - ${vendorData.closing_time}`;
 
-        // 3️⃣ Get foods added by this vendor
-        const foodRes = await fetch(`${API_URL}/foods/vendor/${vendorData.vendor_id}`, {
-          headers: { "Authorization": `Bearer ${token}` }
-        });
+          // 3️⃣ Get foods added by this vendor
+          const foodRes = await fetch(`${API_URL}/foods/vendor/${vendorData.vendor_id}`, {
+            headers: { "Authorization": `Bearer ${token}` }
+          });
 
-        if (foodRes.ok) {
-          const foods = await foodRes.json();
-          food_container.innerHTML = "";
+          if (foodRes.ok) {
+            const foods = await foodRes.json();
+            food_container.innerHTML = "";
 
-          if (foods.length === 0) {
-            food_container.innerHTML = "<p>No food items added yet.</p>";
-          } else {
-            foods.forEach(food => {
-              const div = document.createElement("div");
-              div.classList.add("review-card");
-              div.id = `food-${food.food_id}`;
-              div.innerHTML = `
-                                <img src="${food.food_image_url}" class="card-image"/>
-                                <div class="card-info">
-                                    <p><strong>${food.food_name}</strong></p>
-                                    <p>${food.category}</p>
-                                    <button onclick="deleteFood(${food.food_id})" 
-                                        style="background:red;color:white;border:none;padding:5px;cursor:pointer;border-radius:4px;">Remove</button>
-                                </div>
-                            `;
-              food_container.appendChild(div);
-            });
+            if (foods.length === 0) {
+              food_container.innerHTML = "<p>No food items added yet.</p>";
+            } else {
+              foods.forEach(food => {
+                const div = document.createElement("div");
+                div.classList.add("review-card");
+                div.id = `food-${food.food_id}`;
+                div.innerHTML = `
+                            <img src="${food.food_image_url}" class="card-image"/>
+                            <div class="card-info">
+                                <p><strong>${food.food_name}</strong></p>
+                                <p>${food.category}</p>
+                                <button onclick="deleteFood(${food.food_id})" 
+                                    style="background:red;color:white;border:none;padding:5px;cursor:pointer;border-radius:4px;">Remove</button>
+                            </div>
+                        `;
+                food_container.appendChild(div);
+              });
+            }
           }
+        } else {
+          TimeStatus.textContent = "Vendor profile not found. Please register.";
         }
       } else {
         TimeStatus.textContent = "Vendor profile not found. Please register.";

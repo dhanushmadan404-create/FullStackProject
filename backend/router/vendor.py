@@ -81,12 +81,22 @@ def get_all_vendors(db: Session = Depends(get_db)):
     return db.query(Vendor).options(joinedload(Vendor.user)).all()
 
 
-@router.get("/user/{user_id}", response_model=VendorResponse)
+@router.get("/user/{user_id}")
 def get_vendor_by_user(user_id: int, db: Session = Depends(get_db)):
     vendor = db.query(Vendor).filter(Vendor.user_id == user_id).first()
     if not vendor:
-        raise HTTPException(status_code=404, detail="Vendor not found")
-    return vendor
+        return {"exists": False}
+    
+    # Return full data plus exists flag
+    return {
+        "exists": True,
+        "vendor_id": vendor.vendor_id,
+        "phone_number": vendor.phone_number,
+        "cart_image_url": vendor.cart_image_url,
+        "opening_time": vendor.opening_time.strftime("%H:%M:%S") if vendor.opening_time else None,
+        "closing_time": vendor.closing_time.strftime("%H:%M:%S") if vendor.closing_time else None,
+        "user_id": vendor.user_id
+    }
 
 # vendor id
 @router.get("/{vendor_id}", response_model=VendorResponse)
