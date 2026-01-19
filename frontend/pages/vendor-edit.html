@@ -1,0 +1,131 @@
+<!-- loading for version 2 -->
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Profile - Annesana</title>
+    <link rel="stylesheet" href="../styles/registration-style.css" />
+   <link rel="icon" href="../assets/icons8-a-64.png" />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+</head>
+
+<body>
+    <header>
+        <div class="header_container">
+            <img class="logo" src="../assets/annesana.png" alt="Annesana" onclick="window.location.href='../index.html'" />
+           
+            <div class="right-align right">
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- map -->
+        <div id="mapContainer">
+            <h1>Select Location for NEW Foods <b id="location">CurrentLocation</b> <b id="save">SAVE</b>👈<b
+                    id="back">Back</b>
+            </h1>
+            <div id="map"></div>
+        </div>
+        <!-- map -->
+
+        <div class="registration-container">
+            <div class="header">
+              
+                <h1>Edit Profile</h1>
+            </div>
+
+            <form id="vendorEditForm">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input id="name" type="text" placeholder="Enter Shop Name" required maxlength="30" />
+                    <label for="name"></label>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="number">Phone Number:</label>
+                    <input id="number" type="tel" placeholder="Enter Your Number" required minlength="10" />
+                </div>
+
+                <div class="operating-hours">
+                    <h3>Operating Hours:</h3>
+                    <div class="time-inputs">
+                        <div class="time-group">
+                            <label>Opening Time</label>
+                            <input type="time" id="openTime" required />
+                        </div>
+                        <div class="time-group">
+                            <label>Closing Time</label>
+                            <input type="time" id="closeTime" required />
+                        </div>
+                    </div>
+                </div>
+
+                <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+                <h3>Add New Foods</h3>
+                <p style="font-size: 0.9em; color: #666; margin-bottom: 10px;">Select location and add items below.</p>
+
+                <div class="form-group">
+                    <label>Food Type:</label>
+                    <select id="foodType">
+                        <option value="">Select food type</option>
+                        <option value="breakFast ">Break Fast</option>
+                        <option value="drinking">Drinking</option>
+                        <option value="dinner">Dinner</option>
+                        <option value="lunch">Lunch</option>
+                        <option value="snacks">Snacks</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>New Food Location:</label>
+                    <div class="location-group">
+                        <div class="location-icon">Select on Map 📍</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Image for New Foods</label>
+                    <input id="image" type="file" class="image-upload" accept="image/*" />
+                    <small>Required if adding new foods.</small>
+                </div>
+
+                <div class="form-group">
+                    <div class="menu-list" id="menuList"></div>
+
+                    <div class="menu">
+                        <input id="list" type="text" placeholder="Add food item" maxlength="15" />
+                        <b id="send">✅</b>
+                    </div>
+                </div>
+
+                <button id="submit" type="submit" class="submit-btn" style="background-color: var(--color-primary);">
+                    Update Profile & Add Foods
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <script src="../scripts/vendor-edit.js"></script>
+</body>
+
+</html>
+
+
+
+
+
+

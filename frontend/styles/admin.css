@@ -1,0 +1,316 @@
+/* =========================
+   Admin Dashboard Styles
+   (Standalone – No theme.css)
+   ========================= */
+
+body {
+  height: 100vh;
+  overflow: hidden;
+  background-color: #f4f6f8;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Header */
+.admin-header {
+  height: 60px;
+  background-color: #1f2937; /* dark header */
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.admin-header h2 {
+  font-size: 18px;
+  margin: 0;
+  color: white;
+}
+/* Logo */
+header .logo {
+  height: 90px;
+  border-radius: 50px;
+  transition: transform 0.3s ease;
+  background: transparent;
+}
+
+header .logo:hover {
+  transform: scale(1.05);
+}
+
+.admin-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#adminImage {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+#adminName {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.admin-header button {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.admin-header button:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Layout */
+.admin-container {
+  display: flex;
+  height: calc(100vh - 60px);
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background-color: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 16px 0;
+  margin: 0;
+}
+
+.sidebar li {
+  padding: 14px 24px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #6b7280;
+  font-weight: 500;
+  border-left: 3px solid transparent;
+}
+
+.sidebar li:hover,
+.sidebar li.active {
+  background-color: rgba(255, 111, 0, 0.08);
+  color: #ff6f00;
+  border-left-color: #ff6f00;
+}
+
+/* Main Content */
+.content {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.section {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.section.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+h3 {
+  font-size: 20px;
+  margin-bottom: 16px;
+  color: #111827;
+  border-bottom: 2px solid #ff6f00;
+  display: inline-block;
+  padding-bottom: 4px;
+}
+
+/* Tables */
+#foodTable {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+#foodTable th,
+#foodTable td {
+  padding: 14px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+#foodTable th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #6b7280;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+#foodTable tr:hover td {
+  background-color: #f9fafb;
+}
+
+/* Clear Button */
+#clear {
+  margin-bottom: 16px;
+  float: right;
+  background-color: #e53935; /* replaced --color-error */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#clear:hover {
+  background-color: #b71c1c;
+}
+
+/* =========================
+   RESPONSIVE SUPPORT
+   (ADD AT BOTTOM ONLY)
+   ========================= */
+
+/* ---------- Small Laptops & Tablets (≤ 1024px) ---------- */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 220px;
+  }
+
+  .content {
+    padding: 20px;
+  }
+
+  h3 {
+    font-size: 18px;
+  }
+
+  #foodTable th,
+  #foodTable td {
+    padding: 12px;
+  }
+}
+
+/* ---------- Tablets (≤ 768px) ---------- */
+@media (max-width: 768px) {
+  body {
+    overflow: auto;
+  }
+
+  .admin-header {
+    padding: 0 16px;
+  }
+
+  .admin-header h2 {
+    font-size: 16px;
+  }
+
+  .admin-container {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .sidebar ul {
+    display: flex;
+    padding: 0;
+    width: 100%;
+  }
+
+  .sidebar li {
+    flex: 1;
+    text-align: center;
+    padding: 14px 12px;
+    border-left: none;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+  }
+
+  .sidebar li.active {
+    border-bottom-color: #ff6f00;
+  }
+
+  .content {
+    padding: 16px;
+  }
+
+  #clear {
+    float: none;
+    margin-bottom: 12px;
+  }
+}
+
+/* ---------- Mobile Phones (≤ 480px) ---------- */
+@media (max-width: 480px) {
+  .admin-header {
+    flex-direction: column;
+    height: auto;
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .admin-right {
+    gap: 8px;
+  }
+
+  #adminName {
+    display: none;
+  }
+
+  .sidebar li {
+    font-size: 13px;
+    padding: 12px 8px;
+  }
+
+  h3 {
+    font-size: 16px;
+  }
+
+  #foodTable {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  #foodTable th,
+  #foodTable td {
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  #clear {
+    width: 100%;
+    text-align: center;
+  }
+}

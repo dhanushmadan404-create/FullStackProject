@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vendor Profile</title>
+  <link rel="stylesheet" href="../styles/vendor-profile-style.css" />
+ <link rel="icon" href="../assets/icons8-a-64.png" />
+</head>
+
+<body>
+  <header>
+    <div class="header_container">
+      <img class="logo" src="../assets/annesana.png" alt="Annesana" />
+     
+      <div class="right-align right">
+        <!-- No search/login needed for vendor dashboard usually, or keep consistent? keeping minimal -->
+      </div>
+    </div>
+  </header>
+  <main>
+    <!-- Profile Section -->
+    <div id="vendorProfile">
+      <div class="profile-section">
+        <div id="DB">
+
+        </div>
+        <div id="vendor_details" class="profile-info">
+
+        </div>
+      </div>
+
+      <!-- Operating Hours -->
+      <div class="operating-hours">
+        <h3 id="timeStatus"></h3>
+       
+        <button disabled class="edit-btn" onclick="window.location.href='../pages/vendor-edit.html'">
+          Edit
+        </button>
+      </div>
+      <!-- Logout Button -->
+      <!-- Fixed logout link to not go to registration.html -->
+      <button class="logout-btn" onclick="logout()">LOG OUT</button>
+
+      <!-- Food Cards -->
+      <div id="food_container" class="review-cards">
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <small>© 2025 Annesana. All Rights Reserved.</small>
+  </footer>
+
+  <script src="../scripts/vendorprofile.js">
+
+  </script>
+</body>
+
+</html>
+
+
+
+
+
+

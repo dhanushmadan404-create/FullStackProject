@@ -1,0 +1,222 @@
+/* =========================
+   Map Page Styles
+   Responsive + Standalone
+   ========================= */
+
+/* ---------- Reset ---------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ---------- Base Layout ---------- */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #fff6e6;
+  color: #3b1f00;
+}
+
+/* ---------- HERO SECTION ---------- */
+.hero-section {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  background-color: #ffe2b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #5a2d00;
+  overflow: hidden;
+}
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* Header Container */
+.header_container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+/* Logo */
+header .logo {
+  height: 90px;
+  border-radius: 50px;
+  transition: transform 0.3s ease;
+  background: transparent;
+}
+
+header .logo:hover {
+  transform: scale(1.05);
+}
+/* Header Buttons */
+#profile,
+#login {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.25s ease;
+}
+
+#profile {
+  background-color: transparent;
+  color: #111827;
+}
+
+#profile:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+#login {
+  background-color: #ff6f00;
+  color: white;
+  text-decoration: none;
+}
+
+#login:hover {
+  background-color: #e65100;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+/* Diagonal Decoration */
+.diagonal-line::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom right,
+    transparent 49.5%,
+    #ff9f1c 49.5%,
+    #ff9f1c 50.5%,
+    transparent 50.5%
+  );
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+/* ---------- MAP ---------- */
+#map {
+  width: 100%;
+  height: 600px;
+  border-top: 4px solid #ff9f1c;
+  border-bottom: 4px solid #ff9f1c;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.12);
+}
+
+/* ---------- CURRENT LOCATION BUTTON ---------- */
+#getCurrent {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  padding: 14px 26px;
+  background-color: #ff9f1c;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  transition: transform 0.25s ease, background-color 0.25s ease;
+  z-index: 1000;
+}
+
+#getCurrent:hover {
+  transform: scale(1.1);
+  background-color: #e67e00;
+}
+
+/* ---------- FOOTER ---------- */
+footer {
+  background-color: #2b1a00;
+  color: #f9fafb;
+  padding: 20px;
+  text-align: center;
+  font-size: 14px;
+  margin-top: auto;
+}
+
+/* ==================================================
+   RESPONSIVE BREAKPOINTS
+   ================================================== */
+
+/* ---------- Tablet (≤ 1024px) ---------- */
+@media (max-width: 1024px) {
+  .hero-section {
+    height: 240px;
+    font-size: 1.9rem;
+    padding: 30px;
+  }
+
+  #map {
+    height: 520px;
+  }
+
+  #getCurrent {
+    padding: 12px 22px;
+    font-size: 14px;
+    bottom: 70px;
+  }
+}
+
+/* ---------- Mobile (≤ 768px) ---------- */
+@media (max-width: 768px) {
+  .hero-section {
+    height: 200px;
+    font-size: 1.6rem;
+    padding: 24px;
+  }
+
+  #map {
+    height: 450px;
+  }
+
+  #getCurrent {
+    right: 16px;
+    bottom: 65px;
+    padding: 12px 20px;
+    font-size: 13px;
+  }
+}
+
+/* ---------- Small Mobile (≤ 480px) ---------- */
+@media (max-width: 480px) {
+  .hero-section {
+    height: 180px;
+    font-size: 1.4rem;
+    padding: 18px;
+  }
+
+  #map {
+    height: 380px;
+  }
+
+  #getCurrent {
+    width: 52px;
+    height: 52px;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 0;
+    background-image: url("location-icon.svg"); /* optional */
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 22px;
+  }
+}

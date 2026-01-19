@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../styles/login.css" />
+  <link rel="icon" href="../assets/icons8-a-64.png" />
+  <title>Login / Register - Annesana</title>
+</head>
+
+<body>
+  <header>
+    <div class="header_container">
+      <img class="logo" src="../assets/annesana.png" alt="Annesana"
+        onclick="window.location.href='/index.html'" />
+    </div>
+  </header>
+
+  <main>
+  
+
+    <!-- REGISTER -->
+<form id="registerForm" class="form">
+        <h1>Register</h1>
+
+      <label>Name</label>
+      <input id="name" type="text" required />
+      <label id="nameError"></label>
+
+      <label>Email</label>
+      <input id="registrationEmail" type="text" required />
+      <label id="emailError"></label>
+
+      <label>Password</label>
+      <input id="registrationPassword" type="password" required />
+      <label id="passwordError"></label>
+
+      <label>Role</label>
+      <select id="role">
+        <option value="">Select role</option>
+        <option value="user">User</option>
+        <option value="vendor">Vendor</option>
+      </select>
+      <label id="roleError"></label>
+
+      <label>Profile Image</label>
+      <input id="image" type="file" accept="image/*" />
+      <label id="imageError"></label>
+
+      <button type="button" id="append">Register</button>
+
+      <button class="change" onclick="location.href='./login.html'">nav</button>
+    </form>
+  <script src="../scripts/api-helper.js"></script>
+  <script src="../scripts/login.js"></script>
+</body>
+</html>

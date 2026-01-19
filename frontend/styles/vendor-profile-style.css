@@ -1,0 +1,355 @@
+/* =========================
+   Vendor Profile Styles
+   Standalone Version
+   ========================= */
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f4f6;
+  color: #333;
+}
+header .logo {
+  height: 90px;
+  border-radius: 50px;
+  transition: transform 0.3s ease;
+  background: transparent;
+}
+
+
+/* Base Container */
+#vendorProfile {
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  max-width: 1200px;
+  width: 90%;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Profile Header Section */
+.profile-section {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  margin-bottom: 50px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .profile-section {
+    justify-content: flex-start;
+  }
+}
+
+.profile-image {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 4px solid #007BFF; /* Primary color */
+  background-color: #e9ecef;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-info {
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .profile-info {
+    text-align: left;
+  }
+}
+
+.profile-info h2 {
+  font-size: 28px;
+  color: #007BFF;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.profile-info p {
+  font-size: 16px;
+  color: #6c757d;
+}
+
+/* Operating Hours & Status */
+.operating-hours {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+}
+
+.operating-hours h3 {
+  font-size: 20px;
+  margin-bottom: 12px;
+  color: #343a40;
+}
+
+.status {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.status button {
+  padding: 10px 24px;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.2s ease-in-out;
+  text-transform: uppercase;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.open-btn {
+  background-color: #28a745; /* Green */
+  color: white;
+  border: none;
+}
+
+.open-btn:hover {
+  background-color: #218838;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.close-btn {
+  background-color: #ffffff;
+  color: #6c757d;
+  border: 1px solid #6c757d;
+}
+
+.close-btn:hover {
+  background-color: #f1f1f1;
+  color: #343a40;
+}
+
+/* Action Buttons */
+.edit-btn,
+.logout-btn {
+  padding: 10px 24px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 14px;
+  display: inline-block;
+}
+
+.edit-btn {
+  background-color: #007BFF;
+  color: white;
+  border: none;
+}
+
+.edit-btn:hover {
+  background-color: #0056b3;
+}
+
+.logout-btn {
+  background-color: transparent;
+  color: #dc3545;
+  border: 1px solid #dc3545;
+  margin: 40px auto 0;
+  display: block;
+  max-width: 200px;
+}
+
+.logout-btn:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* Reviews Grid */
+.review-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.review-card {
+  background-color: #f8f9fa;
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease-in-out;
+}
+
+.review-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card-image {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  background-color: #ddd;
+}
+
+.card-info p {
+  font-size: 14px;
+  color: #343a40;
+  margin-bottom: 6px;
+}
+
+.com-btn {
+  width: 100%;
+  margin-top: 12px;
+  background-color: transparent;
+  color: #007BFF;
+  border: 1px solid #007BFF;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+
+.com-btn:hover {
+  background-color: #007BFF;
+  color: white;
+}
+
+/* Animations */
+.signal {
+  animation: pulse 0.5s ease;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Footer */
+footer {
+  margin-top: auto;
+  background-color: #343a40;
+  color: #ffffff;
+  padding: 24px;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* =========================
+   RESPONSIVE DESIGN
+   (Add below existing CSS)
+   ========================= */
+
+/* ---------- Tablets (<= 1024px) ---------- */
+@media (max-width: 1024px) {
+  #vendorProfile {
+    padding: 24px;
+  }
+
+  .profile-section {
+    gap: 24px;
+  }
+
+  .profile-image {
+    width: 130px;
+    height: 130px;
+  }
+
+  .profile-info h2 {
+    font-size: 24px;
+  }
+}
+
+/* ---------- Tablets & Large Phones (<= 768px) ---------- */
+@media (max-width: 768px) {
+  header .logo {
+    width: 60px;
+    height: 60px;
+  }
+
+  #vendorProfile {
+    margin: 20px auto;
+    padding: 20px;
+    width: 95%;
+  }
+
+  .profile-section {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .profile-info {
+    text-align: center;
+  }
+
+  .status {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .status button {
+    width: 100%;
+  }
+
+  .edit-btn,
+  .logout-btn {
+    width: 100%;
+  }
+
+  .review-cards {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+}
+
+/* ---------- Mobile Phones (<= 480px) ---------- */
+@media (max-width: 480px) {
+  body {
+    font-size: 14px;
+  }
+
+  .profile-image {
+    width: 110px;
+    height: 110px;
+  }
+
+  .profile-info h2 {
+    font-size: 20px;
+  }
+
+  .operating-hours h3 {
+    font-size: 18px;
+  }
+
+  .review-cards {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .card-image {
+    height: 140px;
+  }
+
+  footer {
+    font-size: 12px;
+    padding: 16px;
+  }
+}

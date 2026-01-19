@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home Page</title>
+
+  <!-- Map integration and cloth for map-->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <!-- give function to map in js -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+
+
+  <link rel="stylesheet" href="../styles/map-style.css" />
+  <link rel="icon" href="../assets/icons8-a-64.png" />
+</head>
+
+<body>
+  <!-- Header -->
+  <header>
+    <div class="header_container">
+      <img class="logo" src="../assets/annesana.png" alt="not able to see"
+        onclick="window.location.href='/index.html'" />
+
+
+
+      <div class="right-align right">
+        <button id="profile" onclick="window.location.href='../pages/profile.html'">Profile</button>
+        <a href="../pages/login.html" id="login">Log in</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Navigation -->
+    <div id="map"></div>
+    <!-- Hero Section with Diagonal Line -->
+  </main>
+  <footer>
+    <button id="getCurrent">location</button>
+    <small>© 2025 Annesana. All Rights Reserved.</small>
+  </footer>
+  <script src="../scripts/api-helper.js"></script>
+  <script src="../scripts/map.js"></script>
+  <script src="../scripts/common.js"></script>
+</body>
+
+</html>

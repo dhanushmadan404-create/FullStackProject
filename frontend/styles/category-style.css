@@ -1,0 +1,395 @@
+  /* =========================
+    Category Page Styles
+    Standalone (Clean & Modern)
+    ========================= */
+
+  /* Base Reset */
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f9fafb;
+    color: #111827;
+  }
+
+  /* ================= HEADER ================= */
+
+  header {
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+  }
+/* Logo */
+header .logo {
+  height: 90px;
+  border-radius: 50px;
+  transition: transform 0.3s ease;
+  background: transparent;
+}
+
+header .logo:hover {
+  transform: scale(1.05);
+}
+
+
+  .header_container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* Logo */
+  .logo {
+    height: 90px;
+    transition: transform 0.25s ease;
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.15));
+  }
+
+  .logo:hover {
+    transform: scale(1.08);
+  }
+
+  .logo.location {
+    height: 70px;
+    filter: none;
+  }
+/* Header Buttons */
+#profile,
+#login {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.25s ease;
+}
+
+#profile {
+  background-color: transparent;
+  color: #111827;
+}
+
+#profile:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+#login {
+  background-color: #ff6f00;
+  color: white;
+  text-decoration: none;
+}
+
+#login:hover {
+  background-color: #e65100;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+  /* ================= SECTION TITLE ================= */
+
+  .section-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 28px 16px 14px;
+    padding-left: 12px;
+    border-left: 4px solid #ff6f00;
+    line-height: 1.2;
+  }
+/* ================= TOP CATEGORIES ================= */
+
+.categories {
+  display: flex;
+  gap: 24px;
+  padding: 16px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+}
+
+/* Big Card */
+.category {
+  min-width: 220px;
+  height: 260px;
+  background: #ffffff;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  box-shadow: 0 18px 35px rgba(0, 0, 0, 0.18);
+  transition: all 0.35s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+/* Hover effect */
+.category:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 28px 50px rgba(0, 0, 0, 0.28);
+}
+
+/* Large Circular Image */
+.cat-img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+/* Image hover zoom */
+.category:hover .cat-img {
+  transform: scale(1.08);
+}
+
+/* Category Title */
+.category .title {
+  position: static;
+  background: none;
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+  padding: 0;
+}
+
+  /* ================= RECOMMENDED ================= */
+
+  .for-you {
+    padding: 0 16px;
+    margin-bottom: 56px;
+  }
+
+  /* ================= CARD GRID ================= */
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 22px;
+  }
+
+  /* Card */
+  .card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 30px rgba(0, 0, 0, 0.18);
+  }
+
+  /* Card Image */
+  .card-image {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    background-color: #e5e7eb;
+  }
+
+  /* Food Name */
+  .food_name {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  /* ================= CARD BUTTONS ================= */
+
+  .card-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: auto;
+  }
+
+  .details-btn {
+    flex: 1;
+    background: #ff6f00;
+    color: #ffffff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.25s ease, transform 0.2s ease;
+  }
+
+  .details-btn:hover {
+    background: #e65100;
+    transform: translateY(-1px);
+  }
+
+  .find-btn {
+    background: transparent;
+    color: #ff6f00;
+    border: 1px solid #ff6f00;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+
+  .find-btn:hover {
+    background: #ff6f00;
+    color: #ffffff;
+  }
+
+  /* ================= FOOTER ================= */
+
+  footer {
+    background: #1f2937;
+    color: #e5e7eb;
+    padding: 28px 16px;
+    text-align: center;
+    margin-top: 64px;
+    font-size: 14px;
+  }
+/* =========================
+   EXTRA RESPONSIVE SUPPORT
+   (ADD ONLY – SAFE OVERRIDES)
+   ========================= */
+
+/* ---------- Large Tablets (≤ 1024px) ---------- */
+@media (max-width: 1024px) {
+  header .logo {
+    height: 80px;
+  }
+
+  .section-title {
+    font-size: 20px;
+  }
+
+  .categories {
+    gap: 20px;
+  }
+
+  .category {
+    min-width: 200px;
+    height: 240px;
+  }
+
+  .cat-img {
+    width: 130px;
+    height: 130px;
+  }
+}
+
+/* ---------- Tablets (≤ 768px) ---------- */
+@media (max-width: 768px) {
+  header .logo {
+    height: 70px;
+  }
+
+  .logo.location {
+    height: 55px;
+  }
+
+  .section-title {
+    font-size: 18px;
+    margin: 22px 14px 12px;
+  }
+
+  .categories {
+    padding: 12px;
+    gap: 16px;
+  }
+
+  .category {
+    min-width: 180px;
+    height: 220px;
+  }
+
+  .cat-img {
+    width: 120px;
+    height: 120px;
+  }
+
+  .category .title {
+    font-size: 18px;
+  }
+
+  .card-image {
+    height: 140px;
+  }
+
+  .food_name {
+    font-size: 16px;
+  }
+}
+
+/* ---------- Mobile Phones (≤ 480px) ---------- */
+@media (max-width: 480px) {
+  header {
+    padding: 6px 0;
+  }
+
+  header .logo {
+    height: 60px;
+  }
+
+  .header_container {
+    padding: 8px 12px;
+  }
+
+  .section-title {
+    font-size: 16px;
+    padding-left: 8px;
+    border-left-width: 3px;
+  }
+
+  .categories {
+    gap: 14px;
+    padding: 10px;
+  }
+
+  .category {
+    min-width: 160px;
+    height: 200px;
+    border-radius: 20px;
+  }
+
+  .cat-img {
+    width: 100px;
+    height: 100px;
+  }
+
+  .category .title {
+    font-size: 16px;
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .card-image {
+    height: 130px;
+  }
+
+  .card-buttons {
+    flex-direction: column;
+  }
+
+  .details-btn,
+  .find-btn {
+    width: 100%;
+  }
+
+  footer {
+    font-size: 12px;
+    padding: 20px 12px;
+  }
+}

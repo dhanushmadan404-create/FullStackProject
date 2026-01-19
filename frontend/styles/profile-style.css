@@ -1,0 +1,390 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  text-decoration: none;
+}
+
+
+body {
+  background: #fff6e6; /* warm beige background */
+  color: #3b1f00; /* dark brown text */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.header_container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background: #ffb347; /* spicy orange-yellow */
+  box-shadow: 0 2px 10px rgba(255, 140, 0, 0.3);
+  border-bottom: 3px solid #e85d04;
+  flex-wrap: wrap;
+}
+header .logo {
+  height: 90px;
+  border-radius: 50px;
+  transition: transform 0.3s ease;
+  background: transparent;
+}
+
+header .logo:hover {
+  transform: scale(1.05);
+}
+header .logo.location {
+  height: 70px;
+  margin-left: 12px;
+  opacity: 0.9;
+}
+
+header .logo.location:hover {
+  opacity: 1;
+  transform: rotate(5deg);
+}
+
+header h1 {
+  font-size: 28px;
+  font-weight: 800;
+  color: #3b1f00;
+  text-shadow: 1px 1px 4px rgba(255, 255, 255, 0.5);
+  letter-spacing: 2px;
+}
+.logo-align {
+  display: flex;
+}
+
+.logo {
+  width: 200px;
+  height: 70px;
+  object-fit: cover;
+  background: transparent;
+  mix-blend-mode: multiply;
+  transition: 0.3s ease;
+}
+
+/* Search Bar */
+.search-bar,
+.right-align {
+  display: flex;
+  align-items: center;
+}
+.right {
+  gap: 20px;
+}
+
+
+.right-align a {
+  color: #3f3f3e;
+}
+.right-align a:hover {
+  color: #090908;
+}
+
+
+/* Navigation */
+nav {
+  display: flex;
+  justify-content: center;
+  /* background: #ffedd8; */
+  padding: 12px 0;
+  /* border-top: 2px solid #e85d04; */
+  /* border-bottom: 2px solid #e85d04; */
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+nav a {
+  color: #3b1f00;
+  text-decoration: none;
+  font-weight: bold;
+  /* border: 2px solid #e85d04; */
+  padding: 10px 20px;
+  border-radius: 10px;
+  transition: 0.3s;
+  /* background: #fffaf2; */
+}
+
+nav a:hover {
+  background: #e85d04;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(232, 93, 4, 0.6);
+} /* Main Content */
+main {
+  padding: 40px 60px;
+  flex: 1;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.photo-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.banner {
+  object-fit: contain;
+  height: 200px;
+  width: 200px;
+  margin: 7px 0px 0px 10px;
+  /* background: linear-gradient(135deg, #ffb347, #ffcc33); */
+  /* border: 2px solid #e85d04; */
+  border-radius: 7px;
+}
+.about {
+  overflow-x: hidden;
+  width: 250px;
+}
+
+.profile-image {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: 2px solid #e85d04;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  object-fit: fill;
+}
+.option_list {
+  width: 300px;
+  height: 50px;
+  font-size: xx-large;
+  color: white;
+  background-color: #3b1f00;
+  text-align: center;
+  border: 3px solid green;
+  margin-bottom: 8px;
+}
+.option_list:hover {
+  transform: scale(1.1);
+  transition: 0.2s;
+  box-shadow: 2px 2px 9px 2px rgb(20, 87, 20);
+}
+
+/* Feedback Section */
+/* .ad-section {
+  background: #fff3d0; /* very light warm tone 
+  padding: 40px;
+  margin-top: 40px;
+  width: 100%;
+  min-height: 200px;
+} */
+footer {
+  background: #ffb347;
+  padding: 20px;
+  text-align: center;
+  border-top: 2px solid #e85d04;
+  color: #3b1f00;
+  font-weight: bold;
+  position: relative;
+  top: 40px;
+}
+/* edit */
+/* Container styling for the form */
+#editForm {
+  width: 100%;
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Labels */
+#editForm label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Inputs */
+#editForm input[type="text"],
+#editForm input[type="file"] {
+  width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+/* Focus effect for inputs */
+#editForm input[type="text"]:focus,
+#editForm input[type="file"]:focus {
+  border-color: #007BFF;
+  outline: none;
+}
+
+/* Profile image preview */
+#editForm img {
+  display: block;
+  margin: 0 auto 20px auto;
+  border-radius: 50%;
+  object-fit: cover;
+  width: 80px;
+  height: 80px;
+  border: 2px solid #007BFF;
+}
+
+/* Submit button */
+#editForm button {
+  width: 100%;
+  padding: 12px 0;
+  background-color: #007BFF;
+  color: #fff;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+/* Button hover effect */
+#editForm button:hover {
+  background-color: #0056b3;
+}
+/* =========================
+   EXTRA RESPONSIVE SUPPORT
+   (ADD ONLY – SAFE OVERRIDES)
+   ========================= */
+
+/* ---------- Large Tablets & Small Laptops (≤ 1024px) ---------- */
+@media (max-width: 1024px) {
+  main {
+    flex-direction: column;
+    gap: 30px;
+    align-items: center;
+  }
+
+  .about {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .option_list {
+    width: 260px;
+    font-size: large;
+  }
+}
+
+/* ---------- Tablets (≤ 768px) ---------- */
+@media (max-width: 768px) {
+  .logo {
+    width: 160px;
+    height: auto;
+  }
+
+  header h1 {
+    font-size: 22px;
+    text-align: center;
+  }
+
+  .search-bar input {
+    width: 100%;
+  }
+
+  .search-bar {
+    flex: 1;
+  }
+
+  main {
+    flex-direction: column;
+    gap: 25px;
+    text-align: center;
+  }
+
+  .photo-details {
+    align-items: center;
+  }
+
+  .about {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .banner {
+    width: 160px;
+    height: auto;
+  }
+
+  .option_list {
+    width: 240px;
+    height: 45px;
+    font-size: large;
+  }
+}
+
+/* responsive design */
+@media (max-width: 480px) {
+  header {
+    padding: 12px 15px;
+  }
+
+  header h1 {
+    font-size: 18px;
+    letter-spacing: 1px;
+  }
+
+  .logo {
+    width: 130px;
+  }
+
+  .search-bar {
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .search-bar input,
+  .search-bar button {
+    width: 100%;
+    border-radius: 4px;
+  }
+
+  nav {
+    gap: 8px;
+  }
+
+  nav a {
+    width: 100%;
+    text-align: center;
+  }
+
+  main {
+    padding: 15px;
+  }
+
+  .profile-image {
+    width: 110px;
+    height: 110px;
+  }
+
+  .option_list {
+    width: 200px;
+    height: 40px;
+    font-size: medium;
+  }
+
+  footer {
+    font-size: 12px;
+    padding: 15px;
+  }
+}
+/* Responsive for small screens */
+@media (max-width: 480px) {
+  #editForm {
+    padding: 20px;
+  }
+}

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Annesana</title>
+
+  <!-- favicon -->
+  <link rel="icon" href="./frontend/assets/icons8-a-64.png" />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="./index-style.css" />
+</head>
+
+<body>
+
+  <!-- ================= HEADER ================= -->
+  <header>
+    <div class="header_container">
+
+      <!-- Logo -->
+      <img class="logo" src="./frontend/assets/annesana.png" alt="Annesana Logo"
+        onclick="window.location.href='/index.html'" />
+
+      <!-- Location icon -->
+      <img class="logo location" src="./frontend/assets/location.png" alt="Location"
+        onclick="window.location.href='./frontend/pages/map.html'" />
+
+      <div class="right-align right">
+        <button id="profile" onclick="window.location.href='./frontend/pages/profile.html'">Profile</button>
+        <a href="./frontend/pages/login.html" id="login">Log in</a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ================= MAIN ================= -->
+  <main>
+
+    <!-- ===== Trending ===== -->
+    <section class="trending-section">
+      <h2>Trending</h2>
+
+      <div class="trending_prod">
+        <a href="./frontend/pages/map.html">
+          <div class="prod_container">
+            <img src="./frontend/assets/food_image/items/dinner/chicken_rice.jpg" alt="Chicken Rice">
+            <b>Chicken Rice</b>
+          </div>
+        </a>
+
+        <a href="./frontend/pages/map.html">
+          <div class="prod_container">
+            <img src="./frontend/assets/food_image/items/dinner/fired_fish.jpg" alt="Fried Fish">
+            <b>Fried Fish</b>
+          </div>
+        </a>
+
+        <a href="./frontend/pages/map.html">
+          <div class="prod_container">
+            <img src="./frontend/assets/food_image/items/break_fast/dosa-idly.jpg" alt="Dosa Idly">
+            <b>Dosa Idly</b>
+          </div>
+        </a>
+
+        <a href="./frontend/pages/map.html">
+          <div class="prod_container">
+            <img src="./frontend/assets/food_image/items/drinking/rose-milk-recipe.webp" alt="Rose Milk">
+            <b>Rose Milk</b>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ===== Categories ===== -->
+    <section class="categories">
+      <h2 class="category-title">Categories</h2>
+
+      <div class="category-grid vertical">
+
+        <a href="./frontend/pages/categories/category_breakFast.html" class="category-card">
+          <img src="./frontend/assets/food_image/Categories/break_fast.jpg" alt="Breakfast">
+          <span>Breakfast</span>
+        </a>
+
+        <a href="./frontend/pages/categories/categories_lunch.html" class="category-card">
+          <img src="./frontend/assets/food_image/Categories/lunch.avif" alt="Lunch">
+          <span>Lunch</span>
+        </a>
+
+        <a href="./frontend/pages/categories/categories_dinner.html" class="category-card">
+          <img src="./frontend/assets/food_image/Categories/dinner.webp" alt="Dinner">
+          <span>Dinner</span>
+        </a>
+
+        <a href="./frontend/pages/categories/categories_snacks.html" class="category-card">
+          <img src="./frontend/assets/food_image/Categories/snacks.jpg" alt="Snacks">
+          <span>Snacks</span>
+        </a>
+
+        <a href="./frontend/pages/categories/categories_drinking.html" class="category-card">
+          <img src="./frontend/assets/food_image/Categories/drinking.JPG" alt="Drinks">
+          <span>Drinks</span>
+        </a>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer>
+    <small>© 2025 Annesana. All Rights Reserved.</small>
+  </footer>
+
+  <!-- ================= JS ================= -->
+  <script src="./frontend/scripts/common.js"></script>
+  <script src="./frontend/scripts/api-helper.js"></script>
+  <script src="./frontend/scripts/index.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,80 @@
+INSERT INTO users (email, password_hash, name, role, image, created_at)
+VALUES
+('arun@gmail.com',   'hash123', 'Arun Kumar',   'user',   'user1.png', NOW()),
+('bala@gmail.com',   'hash124', 'Bala Murugan', 'user',   'user2.png', NOW()),
+('charan@gmail.com', 'hash125', 'Charan Raj',   'vendor', 'vendor1.png', NOW()),
+('divya@gmail.com',  'hash126', 'Divya Sri',    'user',   'user3.png', NOW()),
+('eshwar@gmail.com', 'hash127', 'Eshwaran',     'vendor', 'vendor2.png', NOW()),
+('farah@gmail.com',  'hash128', 'Farah Khan',   'user',   'user4.png', NOW()),
+('ganesh@gmail.com', 'hash129', 'Ganesh',       'vendor', 'vendor3.png', NOW()),
+('hari@gmail.com',   'hash130', 'Hari Prasad',  'user',   'user5.png', NOW()),
+('indra@gmail.com',  'hash131', 'Indra Devi',   'user',   'user6.png', NOW()),
+('jaya@gmail.com',   'hash132', 'Jaya Kumar',   'vendor', 'vendor4.png', NOW());
+('vendor1@gmail.com', 'hashvendor', 'Vendor One', 'vendor', 'vendor1.png', NOW());
+
+
+INSERT INTO users (email, password_hash, name, role, image, created_at)
+VALUES
+('arun@gmail.com',   'arun@123',   'Arun Kumar',   'user',   'user1.png', NOW()),
+('bala@gmail.com',   'bala@123',   'Bala Murugan', 'user',   'user2.png', NOW()),
+('charan@gmail.com', 'charan@123', 'Charan Raj',   'vendor', 'vendor1.png', NOW()),
+('divya@gmail.com',  'divya@123',  'Divya Sri',    'user',   'user3.png', NOW()),
+('eshwar@gmail.com', 'eshwar@123', 'Eshwaran',     'vendor', 'vendor2.png', NOW()),
+('farah@gmail.com',  'farah@123',  'Farah Khan',   'user',   'user4.png', NOW()),
+('ganesh@gmail.com', 'ganesh@123', 'Ganesh',       'vendor', 'vendor3.png', NOW()),
+('hari@gmail.com',   'hari@123',   'Hari Prasad',  'user',   'user5.png', NOW()),
+('indra@gmail.com',  'indra@123',  'Indra Devi',   'user',   'user6.png', NOW()),
+('jaya@gmail.com',   'jaya@123',   'Jaya Kumar',   'vendor', 'vendor4.png', NOW());
+
+
+
+
+INSERT INTO vendors (
+  phone_number,
+  cart_image_url,
+  opening_time,
+  closing_time,
+  user_id
+)
+VALUES
+('9876543210', 'cart1.png', '07:00', '14:00', 3),
+('9123456780', 'cart2.png', '10:00', '22:00', 5),
+('9988776655', 'cart3.png', '16:00', '23:30', 7),
+('9001122334', 'cart4.png', '06:30', '12:30', 10),
+('9001122339', 'cart5.png', '07:30', '19:30', 11); 
+
+
+
+INSERT INTO foods (
+    vendor_id,
+    food_name,
+    food_image_url,
+    category,
+    latitude,
+    longitude
+)
+VALUES
+-- Vendor 3: breakfast
+(3, 'veg sandwich', 'food1.png', 'breakfast', 12.9716, 77.5946),
+(3, 'pancakes', 'food2.png', 'breakfast', 12.9716, 77.5946),
+(3, 'omelette', 'food3.png', 'breakfast', 12.9716, 77.5946),
+
+-- Vendor 5: drinking
+(5, 'cold coffee', 'food4.png', 'drinking', 13.0358, 77.5970),
+(5, 'lemonade', 'food5.png', 'drinking', 13.0358, 77.5970),
+(5, 'masala chai', 'food6.png', 'drinking', 13.0358, 77.5970),
+
+-- Vendor 7: lunch
+(7, 'paneer butter masala', 'food7.png', 'lunch', 12.9250, 77.5938),
+(7, 'veg biryani', 'food8.png', 'lunch', 12.9250, 77.5938),
+(7, 'pasta alfredo', 'food9.png', 'lunch', 12.9250, 77.5938),
+
+-- Vendor 10: dinner
+(10, 'grilled chicken', 'food10.png', 'dinner', 12.9710, 77.5800),
+(10, 'fish curry', 'food11.png', 'dinner', 12.9710, 77.5800),
+(10, 'veg curry', 'food12.png', 'dinner', 12.9710, 77.5800);
+
+-- Vendor 11: vendor1@gmail.com (snacks)
+(11, 'samosa', 'food13.png', 'snacks', 12.9780, 77.5920),
+(11, 'spring rolls', 'food14.png', 'snacks', 12.9780, 77.5920),
+(11, 'french fries', 'food15.png', 'snacks', 12.9780, 77.5920);
