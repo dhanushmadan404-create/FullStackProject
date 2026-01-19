@@ -2,6 +2,10 @@ const API_URL =
     window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
         ? 'http://127.0.0.1:8000/api'
         : '/api';
+const token = localStorage.getItem("token");
+const userDetails = JSON.parse(localStorage.getItem("user_details") || "{}");
+const vendorId = JSON.parse(localStorage.getItem("vendor") || "{}").vendor_id;
+
 let list = [];
 let menu = document.querySelector(".menu-list");
 let inputList = document.getElementById("list");
@@ -21,7 +25,7 @@ document.getElementById("send").addEventListener("click", () => {
 let mapCon = document.getElementById("mapContainer");
 document.querySelector(".location-group").addEventListener("click", () => {
     mapCon.style.display = "block";
-    setTimeout(() => map.invalidateSize(), 100); // Fix rendering
+    setTimeout(() => map.invalidateSize(), 100);
 });
 document.getElementById("back").addEventListener("click", () => {
     mapCon.style.display = "none";
@@ -62,14 +66,15 @@ map.on("click", (e) => {
 let currentVendorData = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
+    if (!token) return location.href = "./login.html";
 
     try {
-        // Fetch vendor details
-        const res = await fetch(`${API_URL}/vendors/${vendorId}`);
+        const res = await fetch(`${API_URL}/vendors/${vendorId}`, {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
         if (!res.ok) throw new Error("Failed to fetch vendor");
         currentVendorData = await res.json();
 
-        // Pre-fill form
         document.getElementById("number").value = currentVendorData.phone_number;
         document.getElementById("openTime").value = currentVendorData.opening_time;
         document.getElementById("closeTime").value = currentVendorData.closing_time;
@@ -89,82 +94,64 @@ document.getElementById("vendorEditForm").addEventListener("submit", async (e) =
     const phone = document.getElementById("number").value;
     const openTime = document.getElementById("openTime").value;
     const closeTime = document.getElementById("closeTime").value;
-
-    // Validate Times
-    if (!openTime || !closeTime) return alert("Select opening & closing time");
-    // (Add detailed time validation if consistent with registration)
-
-    const vendorId = currentVendorData.vendor_id;
+    const vId = currentVendorData.vendor_id;
 
     try {
-        // 1. Update Vendor Details (PUT)
-        const updateBody = {
-            phone_number: parseInt(phone), // Schema says int
-            cart_image_url: currentVendorData.cart_image_url, // Reuse existing path
-            opening_time: openTime,
-            closing_time: closeTime,
-            user_id: currentVendorData.user_id
-        };
+        // 1. Update Vendor Details (FormData)
+        const vendorForm = new FormData();
+        vendorForm.append("phone_number", phone);
+        vendorForm.append("opening_time", openTime);
+        vendorForm.append("closing_time", closeTime);
 
-        const updateRes = await fetch(`${API_URL}/vendors/${vendorId}`, {
+        const updateRes = await fetch(`${API_URL}/vendors/${vId}`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(updateBody)
+            headers: { "Authorization": `Bearer ${token}` },
+            body: vendorForm
         });
 
         if (!updateRes.ok) {
             const err = await updateRes.json();
-            throw new Error(err.detail || "Update failed");
-        }
-
-        // Utility to convert file to Base64
-        function getBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = error => reject(error);
-            });
+            throw new Error(err.detail || "Update vendor details failed");
         }
 
         // 2. Add New Foods (POST)
         const menuContainer = document.querySelector(".menu-list");
-        const newFoods = [...menuContainer.children].map(item => item.textContent.trim());
+        const newFoodItems = [...menuContainer.children].map(item => item.textContent.trim());
         const imageInput = document.getElementById("image");
         const foodType = document.getElementById("foodType").value;
 
-        if (newFoods.length > 0) {
-            if (!imageInput.files[0]) return alert("Please upload an image for new foods.");
-            if (!foodType) return alert("Please select a food type for new foods.");
-            if (latitude === null || longitude === null) return alert("Please select a location for new foods.");
+        if (newFoodItems.length > 0) {
+            if (!imageInput.files[0]) throw new Error("Please upload an image for new foods.");
+            if (!foodType) throw new Error("Please select a food type for new foods.");
+            if (latitude === null || longitude === null) throw new Error("Please select a location for new foods.");
 
-            const imageBase64 = await getBase64(imageInput.files[0]);
-
-            for (const foodName of newFoods) {
+            for (const foodName of newFoodItems) {
                 const fd = new FormData();
                 fd.append("food_name", foodName);
                 fd.append("category", foodType.toLowerCase());
                 fd.append("latitude", latitude);
                 fd.append("longitude", longitude);
-                fd.append("vendor_id", vendorId);
-                fd.append("image_base64", imageBase64);
+                fd.append("vendor_id", vId);
+                fd.append("image", imageInput.files[0]); // ✅ Send file directly
 
-                await fetch(`${API_URL}/foods`, {
+                const foodRes = await fetch(`${API_URL}/foods`, {
                     method: "POST",
+                    headers: { "Authorization": `Bearer ${token}` },
                     body: fd
                 });
+
+                if (!foodRes.ok) {
+                    const err = await foodRes.json();
+                    throw new Error(`Failed to add food '${foodName}': ${err.detail}`);
+                }
             }
         }
 
         alert("Profile Updated Successfully! ✅");
-        window.location.href = "/pages/vendor-profile.html";
+        window.location.href = "./vendor-profile.html";
 
     } catch (err) {
         console.error(err);
         alert("Update failed: " + err.message);
     }
 });
-
-
-
-

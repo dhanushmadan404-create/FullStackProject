@@ -108,7 +108,8 @@ def delete_food(
 
     # delete image file
     if food.food_image_url:
-        file_path = food.food_image_url.lstrip("/")
+        filename = food.food_image_url.split("/")[-1]
+        file_path = os.path.join(UPLOAD_DIR, filename)
         if os.path.exists(file_path):
             os.remove(file_path)
 
@@ -143,7 +144,8 @@ def delete_foods_by_vendor(
     # Delete images from disk
     for food in foods:
         if food.food_image_url:
-            file_path = food.food_image_url.lstrip("/")
+            filename = food.food_image_url.split("/")[-1]
+            file_path = os.path.join(UPLOAD_DIR, filename)
             if os.path.exists(file_path):
                 os.remove(file_path)
         db.delete(food)

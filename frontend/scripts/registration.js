@@ -1,4 +1,6 @@
 // Redundant API_URL removed - using centralized api-helper.js
+const token = localStorage.getItem("token");
+const vendor = JSON.parse(localStorage.getItem("vendor") || "{}");
 
 // ---------------- MENU LIST ----------------
 const ul = document.getElementById("list_container");
@@ -198,7 +200,7 @@ document.getElementById("vendorRegistration")?.addEventListener("submit", async 
     }
 
     alert("Vendor registration successful ✅");
-    location.href = "../pages/vendor-profile.html";
+    location.href = "./vendor-profile.html";
   } catch (err) {
     alert("Upload failed ❌");
     console.error(err);

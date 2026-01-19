@@ -87,7 +87,10 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       localStorage.setItem("token", data.access_token);
-      localStorage.setItem(`${data.role}`, JSON.stringify(data));
+      localStorage.setItem("user_role", data.role);
+      localStorage.setItem("user_details", JSON.stringify(data));
+      // Keep role-specific key for backward compatibility if needed by other scripts
+      localStorage.setItem(data.role, JSON.stringify(data));
 
       // Role-based navigation
       if (data.role === "user") location.href = "../../index.html";
@@ -97,7 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const checkData = await fetchAPI(`/vendors/user/${data.user_id}`);
         location.href = checkData.exists
           ? "./vendor-profile.html"
-          : "./vendor-register.html";
+          : "./registration.html";
       }
 
 

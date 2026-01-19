@@ -89,7 +89,7 @@ async function deleteVendor(vendorId, btn) {
 };
 // ---------------- DOM CONTENT LOADED ----------------
 document.addEventListener("DOMContentLoaded", async () => {
-  const role = localStorage.getItem("admin");
+  const role = localStorage.getItem("user_role");
   const userDetails = JSON.parse(localStorage.getItem("user_details") || "{}");
 
   if (!token || role !== "admin") {
