@@ -21,8 +21,19 @@ from database import init_db
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+from contextlib import asynccontextmanager
+
+# ---------------- LIFESPAN ----------------
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup logic
+    logger.info("Initializing database...")
+    init_db()
+    yield
+    # Shutdown logic (none needed yet)
+
 # ---------------- APP SETUP ----------------
-app = FastAPI(title="Annesana API", version="1.0.0")
+app = FastAPI(title="Annesana API", version="1.0.0", lifespan=lifespan)
 
 # ---------------- EXCEPTIONS ----------------
 @app.exception_handler(HTTPException)
@@ -83,7 +94,4 @@ def health_check():
 def root():
     return {"message": "Welcome to Annesana API"}
 
-# ---------------- INIT DATABASE ----------------
-@app.on_event("startup")
-def on_startup():
-    init_db()
+# Database initialization handled via lifespan

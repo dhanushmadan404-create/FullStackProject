@@ -3,9 +3,12 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 import os
-from fastapi import HTTPException # Added for get_db error handling
+from fastapi import HTTPException 
 
-load_dotenv()  # 🔥 REQUIRED
+# Get absolute path to backend/.env
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ENV_PATH = os.path.join(BASE_DIR, ".env")
+load_dotenv(ENV_PATH)  # 🔥 REQUIRED
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 

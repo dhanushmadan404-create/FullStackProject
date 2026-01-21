@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, Form
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, Form, File
 from sqlalchemy.orm import Session
 import os, uuid, shutil
 
@@ -29,13 +29,13 @@ def save_image(image: UploadFile) -> str:
     return f"/uploads/users/{filename}"
 
 # ---------------- REGISTER USER ----------------
-@router.post("/", response_model=UserResponse)
+@router.post("", response_model=UserResponse)
 def register_user(
     name: str = Form(...),
     email: str = Form(...),
     password: str = Form(...),
     role: str = Form(...),
-    image: UploadFile | None = None,
+    image: UploadFile | None = File(None),
     db: Session = Depends(get_db)
 ):
     # check existing user

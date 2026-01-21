@@ -12,7 +12,10 @@ from jwt import PyJWTError
 from database import SessionLocal
 from models.user import User
 
-load_dotenv()
+# Get absolute path to backend/.env
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ENV_PATH = os.path.join(BASE_DIR, ".env")
+load_dotenv(ENV_PATH)
 
 SECRET_KEY = os.getenv("SECRET_KEY", "CHANGE_ME")
 ALGORITHM = "HS256"
