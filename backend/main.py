@@ -49,11 +49,11 @@ async def global_exception_handler(request: Request, exc: Exception):
     import traceback
     logger.error(f"Unhandled error: {exc}", exc_info=True)
     
-    content = {"detail": "Internal Server Error"}
-    if os.environ.get("VERCEL"):
-        content["message"] = str(exc)
-        content["traceback"] = traceback.format_exc()
-        
+    content = {
+        "detail": "Internal Server Error",
+        "message": str(exc),
+        "traceback": traceback.format_exc()
+    }
     return JSONResponse(status_code=500, content=content)
 
 # ---------------- CORS ----------------
