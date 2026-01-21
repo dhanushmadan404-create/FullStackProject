@@ -32,7 +32,7 @@ def save_image(image: UploadFile) -> str:
     return f"/uploads/foods/{filename}"
 
 # ================= GET ALL FOODS =================
-@router.get("", response_model=List[FoodResponse])
+@router.get("/all", response_model=List[FoodResponse])
 def get_all_foods(db: Session = Depends(get_db)):
     return db.query(Food).all()
 

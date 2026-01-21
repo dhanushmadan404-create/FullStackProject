@@ -99,7 +99,7 @@ function tryRouting() {
 // ---------------- LOAD ALL FOOD LOCATIONS ----------------
 async function loadAllFoodLocations() {
   try {
-    const foods = await fetchAPI(`/foods`);
+    const foods = await fetchAPI(`/foods/all`);
 
     foods.forEach(food => {
       if (food.latitude && food.longitude && map && shopIcon) {
