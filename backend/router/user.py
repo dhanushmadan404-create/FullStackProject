@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, Form, File
 from sqlalchemy.orm import Session
-import os, uuid, shutil, logging
-logger = logging.getLogger(__name__)
+import os, uuid, shutil
 
 from database import get_db
 from models.user import User
@@ -39,34 +38,27 @@ def register_user(
     image: UploadFile | None = File(None),
     db: Session = Depends(get_db)
 ):
-    try:
-        # check existing user
-        if db.query(User).filter(User.email == email).first():
-            raise HTTPException(status_code=400, detail="Email already registered")
+    # check existing user
+    if db.query(User).filter(User.email == email).first():
+        raise HTTPException(status_code=400, detail="Email already registered")
 
-        # save image
-        logger.info(f"Registering user {email}. Saving image...")
-        image_path = save_image(image) if image else None
+    # save image
+    image_path = save_image(image) if image else None
 
-        # create user
-        db_user = User(
-            name=name,
-            email=email,
-            password_hash=hash_password(password),
-            role=role,
-            image_url=image_path
-        )
+    # create user
+    db_user = User(
+        name=name,
+        email=email,
+        password_hash=hash_password(password),
+        role=role,
+        image_url=image_path
+    )
 
-        db.add(db_user)
-        logger.info("Committing user to database...")
-        db.commit()
-        db.refresh(db_user)
-        logger.info(f"User {email} registered successfully.")
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
 
-        return db_user
-    except Exception as e:
-        logger.error(f"Error during registration for {email}: {str(e)}", exc_info=True)
-        raise e
+    return db_user
 
 # ---------------- GET CURRENT USER ----------------
 @router.get("/me", response_model=UserResponse)
