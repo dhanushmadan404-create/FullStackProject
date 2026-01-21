@@ -83,6 +83,13 @@ async function fetchAPI(endpoint, options = {}) {
 function getImageUrl(rawUrl, fallback = '../assets/annesana.png') {
     if (!rawUrl) return fallback;
     if (rawUrl.startsWith('http')) return rawUrl;
-    // Ensure leading slash for local uploads
+
+    // Fix: If on localhost, prepend the API_URL (minus /api) to local paths
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        const baseUrl = API_URL.replace('/api', '');
+        return `${baseUrl}${rawUrl.startsWith('/') ? '' : '/'}${rawUrl}`;
+    }
+
+    // Ensure leading slash for relative paths on production
     return rawUrl.startsWith('/') ? rawUrl : '/' + rawUrl;
 }

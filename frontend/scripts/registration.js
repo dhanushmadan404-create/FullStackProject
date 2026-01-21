@@ -107,6 +107,7 @@ if (registrationForm) {
 
     try {
       // 1. Create Vendor
+      console.log("Creating vendor profile...");
       const vendorFD = new FormData();
       vendorFD.append("phone_number", phone);
       vendorFD.append("opening_time", openTime);
@@ -118,23 +119,33 @@ if (registrationForm) {
         body: vendorFD
       });
 
-      // 2. Add Food Items
-      for (const item of menuItems) {
-        const foodFD = new FormData();
-        foodFD.append("food_name", item.name);
-        foodFD.append("category", foodType.toLowerCase());
-        foodFD.append("latitude", latitude);
-        foodFD.append("longitude", longitude);
-        foodFD.append("vendor_id", vendor.vendor_id);
-        foodFD.append("image", item.image);
+      console.log("Vendor created:", vendor);
 
-        await fetchAPI("/foods", {
-          method: "POST",
-          body: foodFD
-        });
+      // 2. Add Food Items
+      console.log(`Uploading ${menuItems.length} food items...`);
+      for (let i = 0; i < menuItems.length; i++) {
+        const item = menuItems[i];
+        try {
+          const foodFD = new FormData();
+          foodFD.append("food_name", item.name);
+          foodFD.append("category", foodType.toLowerCase());
+          foodFD.append("latitude", latitude);
+          foodFD.append("longitude", longitude);
+          foodFD.append("vendor_id", vendor.vendor_id);
+          foodFD.append("image", item.image);
+
+          await fetchAPI("/foods", {
+            method: "POST",
+            body: foodFD
+          });
+          console.log(`Food item ${i + 1}/${menuItems.length} uploaded: ${item.name}`);
+        } catch (itemErr) {
+          console.error(`Failed to upload food item ${item.name}:`, itemErr);
+          alert(`Warning: Failed to upload "${item.name}". You can add it later from your profile. Error: ${itemErr.message}`);
+        }
       }
 
-      alert("Registration Successful! ✅");
+      alert("Registration Successful! ✅ All items uploaded.");
       window.location.href = "./vendor-profile.html";
 
     } catch (err) {

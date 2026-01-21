@@ -14,6 +14,30 @@ function getImageUrl(rawUrl, fallback = './frontend/assets/annesana.png') {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-    // We could make trending dynamic here if endpoints exist, 
-    // but for now let's ensure existing images are robust if they were dynamic.
+    const trendingContainer = document.querySelector(".trending_prod");
+    if (!trendingContainer) return;
+
+    try {
+        // Fetch all foods and just show the first 4 as "trending" for now
+        const foods = await fetchAPI("/foods");
+
+        if (foods && foods.length > 0) {
+            trendingContainer.innerHTML = "";
+            foods.slice(0, 4).forEach(food => {
+                const imgUrl = getImageUrl(food.food_image_url, './frontend/assets/food_image/items/dinner/chicken_rice.jpg');
+                const card = document.createElement("a");
+                card.href = "./frontend/pages/map.html?food_id=" + food.food_id;
+                card.innerHTML = `
+                  <div class="prod_container">
+                    <img src="${imgUrl}" alt="${food.food_name}">
+                    <b>${food.food_name}</b>
+                  </div>
+                `;
+                trendingContainer.appendChild(card);
+            });
+        }
+    } catch (err) {
+        console.error("Failed to load trending items:", err);
+        // Fallback to static items is already in HTML, so we just log the error.
+    }
 });

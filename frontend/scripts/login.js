@@ -51,14 +51,16 @@ document.addEventListener("DOMContentLoaded", () => {
       formData.append("email", email);
       formData.append("password", password);
       formData.append("role", role);
-      formData.append("image", imageFile); // Method 1 file upload
+      formData.append("image", imageFile);
 
       await fetchAPI("/users", { method: "POST", body: formData });
 
-      alert("Registration successful ✅");
+      alert("Registration successful ✅. Please login.");
       toggleForm("loginForm");
     } catch (err) {
-      alert(err.message);
+      console.error("Registration failed:", err);
+      // Show error near the relevant field if possible, or alert
+      alert("Registration failed: " + err.message);
     }
   });
 
@@ -75,7 +77,6 @@ document.addEventListener("DOMContentLoaded", () => {
     emailError.textContent = "";
     passwordError.textContent = "";
 
-
     if (!email) { emailError.textContent = "Email required"; return; }
     if (!password) { passwordError.textContent = "Password required"; return; }
 
@@ -86,30 +87,36 @@ document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify({ email, password })
       });
 
+      // Securely store details
       localStorage.setItem("token", data.access_token);
       localStorage.setItem("user_role", data.role);
+      localStorage.setItem("user_id", data.user_id);
       localStorage.setItem("user_details", JSON.stringify(data));
-      // Keep role-specific key for backward compatibility if needed by other scripts
-      localStorage.setItem(data.role, JSON.stringify(data));
 
       // Role-based navigation
-      if (data.role === "user") location.href = "../../index.html";
-      else if (data.role === "admin") location.href = "admin.html";
-      else if (data.role === "vendor") {
+      if (data.role === "user") {
+        window.location.href = "../../index.html";
+      } else if (data.role === "admin") {
+        window.location.href = "admin.html";
+      } else if (data.role === "vendor") {
         console.log("Vendor login detected, checking shop profile...");
-        const checkData = await fetchAPI(`/vendors/user/${data.user_id}`);
-
-        if (checkData.exists) {
-          console.log("Shop profile found, redirecting to profile.");
-          localStorage.setItem("vendor", JSON.stringify(checkData));
-          location.href = "./vendor-profile.html";
-        } else {
-          console.log("No shop profile found, redirecting to registration.");
-          location.href = "./registration.html";
+        try {
+          const checkData = await fetchAPI(`/vendors/user/${data.user_id}`);
+          if (checkData.exists) {
+            localStorage.setItem("vendor", JSON.stringify(checkData));
+            window.location.href = "./vendor-profile.html";
+          } else {
+            window.location.href = "./registration.html";
+          }
+        } catch (vendorErr) {
+          console.error("Error checking vendor status:", vendorErr);
+          // Fallback to registration if checking fails but we know they are a vendor
+          window.location.href = "./registration.html";
         }
+      } else {
+        // Default fallback
+        window.location.href = "../../index.html";
       }
-
-
     } catch (err) {
       passwordError.textContent = err.message;
     }
