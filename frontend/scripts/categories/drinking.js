@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     foods.forEach(food => {
       const div = document.createElement("div");
       const imgUrl = getImageUrl(food.food_image_url, '../../assets/annesana.png');
-
+       console.log(food.food_id)
       div.innerHTML = `
                 <div class="card">
                     <div class="image_container">
