@@ -29,7 +29,7 @@ def save_image(image: UploadFile) -> str:
     return f"/uploads/users/{filename}"
 
 # ---------------- REGISTER USER ----------------
-@router.post("/", response_model=UserResponse)
+@router.post("", response_model=UserResponse)
 def register_user(
     name: str = Form(...),
     email: str = Form(...),
@@ -50,7 +50,7 @@ def register_user(
         name=name,
         email=email,
         password_hash=hash_password(password),
-        role=role,
+        role=role.lower(),
         image_url=image_path
     )
 
