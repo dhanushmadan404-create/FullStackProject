@@ -49,7 +49,6 @@ def init_db():
     from models import user, food, vendor
     from sqlalchemy import text
     
-    # 🚀 AUTO-MIGRATION: Rename 'image' to 'image_url' if it exists
     try:
         with engine.connect() as conn:
             # Check if old column 'image' exists and 'image_url' does NOT exist

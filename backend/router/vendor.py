@@ -12,7 +12,7 @@ from datetime import time
 import os
 import uuid
 import shutil
-
+# universal unique identity
 from database import get_db
 from core.security import get_current_user
 from models.user import User
@@ -35,7 +35,7 @@ def save_image(image: UploadFile) -> str:
     ext = image.filename.split(".")[-1]
     filename = f"{uuid.uuid4().hex}.{ext}"
     file_path = os.path.join(UPLOAD_DIR, filename)
-
+# write binary
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(image.file, buffer)
 

@@ -24,6 +24,7 @@ async function fetchAPI(endpoint, options = {}) {
         const response = await fetch(url, { ...options, headers });
 
         const contentType = response.headers.get('content-type');
+        // Framework HTML error page anuppum
         let data;
 
         if (contentType && contentType.includes('application/json')) {
