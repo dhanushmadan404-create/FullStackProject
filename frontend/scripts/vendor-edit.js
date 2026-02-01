@@ -1,158 +1,166 @@
-// Using centralized api-helper.js for API_URL and fetchAPI
-
+// ---------------- AUTH ----------------
 const token = localStorage.getItem("token");
 const vendorStr = localStorage.getItem("vendor");
 const vendorId = vendorStr ? JSON.parse(vendorStr).vendor_id : null;
 
-let list = [];
-let menu = document.querySelector(".menu-list");
-let inputList = document.getElementById("list");
+if (!token) location.href = "./login.html";
+if (!vendorId) location.href = "./vendor-profile.html";
 
-// ---------------- MENU LIST ----------------
-const sendBtn = document.getElementById("send");
-if (sendBtn) {
-    sendBtn.addEventListener("click", () => {
-        const value = inputList.value.trim();
-        if (value === "") return;
-        list.push(value);
-        let food = document.createElement("b");
-        food.innerHTML = `${value}<br/>`;
-        menu.appendChild(food);
-        inputList.value = "";
-    });
-}
+// ---------------- STATE ----------------
+let currentVendorData = null;
+let newMenuItems = [];
 
-// ---------------- MAP ----------------
-let mapCon = document.getElementById("mapContainer");
-const locGroup = document.querySelector(".location-group");
-if (locGroup) {
-    locGroup.addEventListener("click", () => {
-        mapCon.style.display = "block";
-        setTimeout(() => map.invalidateSize(), 100);
-    });
-}
-
-document.getElementById("back").addEventListener("click", () => {
-    mapCon.style.display = "none";
-});
-document.getElementById("save").addEventListener("click", () => {
-    mapCon.style.display = "none";
-});
-
-const map = L.map("map").setView([13.0827, 80.2707], 11);
-L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 20 }).addTo(map);
-
-document.getElementById("location").addEventListener("click", () => {
-    navigator.geolocation.getCurrentPosition((position) => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-        map.setView([lat, lon], 15);
-        if (marker) map.removeLayer(marker);
-        marker = L.marker([lat, lon], { icon: foodIcon }).addTo(map);
-        latitude = lat;
-        longitude = lon;
-    });
-});
-
-const foodIcon = L.icon({
-    iconUrl: "../assets/3448609.png",
-    iconSize: [40, 40],
-    iconAnchor: [20, 40],
-});
-
-let marker = null;
 let latitude = null;
 let longitude = null;
+let marker = null;
+
+// ---------------- MAP ----------------
+const map = L.map("map").setView([13.0827, 80.2707], 11);
+
+L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  maxZoom: 19
+}).addTo(map);
+
+const foodIcon = L.icon({
+  iconUrl: "../assets/3448609.png",
+  iconSize: [40, 40],
+  iconAnchor: [20, 40]
+});
 
 map.on("click", (e) => {
+  if (marker) map.removeLayer(marker);
+  marker = L.marker(e.latlng, { icon: foodIcon }).addTo(map);
+  latitude = e.latlng.lat;
+  longitude = e.latlng.lng;
+});
+
+// ---------------- MAP UI ----------------
+const mapContainer = document.getElementById("mapContainer");
+
+document.querySelector(".location-group").onclick = () => {
+  mapContainer.style.display = "block";
+  setTimeout(() => map.invalidateSize(), 100);
+};
+
+document.getElementById("back").onclick = () => {
+  mapContainer.style.display = "none";
+};
+
+document.getElementById("save").onclick = () => {
+  mapContainer.style.display = "none";
+};
+
+document.getElementById("location").onclick = () => {
+  navigator.geolocation.getCurrentPosition((pos) => {
+    const lat = pos.coords.latitude;
+    const lon = pos.coords.longitude;
+    map.setView([lat, lon], 15);
     if (marker) map.removeLayer(marker);
-    marker = L.marker([e.latlng.lat, e.latlng.lng], { icon: foodIcon }).addTo(map);
-    latitude = e.latlng.lat;
-    longitude = e.latlng.lng;
-});
+    marker = L.marker([lat, lon], { icon: foodIcon }).addTo(map);
+    latitude = lat;
+    longitude = lon;
+  });
+};
 
-// ---------------- LOAD EXISTING DATA ----------------
-let currentVendorData = null;
-
+// ---------------- LOAD VENDOR DATA ----------------
 document.addEventListener("DOMContentLoaded", async () => {
-    if (!token) return location.href = "./login.html";
-    if (!vendorId) {
-        alert("Vendor ID missing. Redirecting to profile.");
-        return location.href = "./vendor-profile.html";
-    }
+  try {
+    currentVendorData = await fetchAPI(`/vendors/${vendorId}`);
 
-    try {
-        currentVendorData = await fetchAPI(`/vendors/${vendorId}`);
+    document.getElementById("number").value =
+      currentVendorData.phone_number || "";
 
-        document.getElementById("number").value = currentVendorData.phone_number || "";
-        document.getElementById("openTime").value = currentVendorData.opening_time || "";
-        document.getElementById("closeTime").value = currentVendorData.closing_time || "";
+    document.getElementById("openTime").value =
+      currentVendorData.opening_time || "";
 
-    } catch (err) {
-        console.error(err);
-        alert("Error loading profile data: " + err.message);
-    }
+    document.getElementById("closeTime").value =
+      currentVendorData.closing_time || "";
+
+  } catch (err) {
+    alert("Failed to load vendor data ❌");
+    console.error(err);
+  }
 });
 
-// ---------------- SUBMIT (UPDATE) ----------------
-const editForm = document.getElementById("vendorEditForm");
-if (editForm) {
-    editForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
+// ---------------- MENU ADD ----------------
+function addMenuItem() {
+  const input = document.getElementById("list");
+  const value = input.value.trim();
+  if (!value) return;
 
-        if (!currentVendorData) return;
+  newMenuItems.push(value);
 
-        const phone = document.getElementById("number").value;
-        const openTime = document.getElementById("openTime").value;
-        const closeTime = document.getElementById("closeTime").value;
-        const vId = currentVendorData.vendor_id;
+  const b = document.createElement("b");
+  b.innerHTML = `${value} <button type="button" onclick="removeMenuItem('${value}')">❌</button><br/>`;
 
-        try {
-            // 1. Update Vendor Details (FormData)
-            const vendorForm = new FormData();
-            vendorForm.append("phone_number", phone);
-            vendorForm.append("opening_time", openTime);
-            vendorForm.append("closing_time", closeTime);
-
-            await fetchAPI(`/vendors/${vId}`, {
-                method: "PUT",
-                body: vendorForm
-            });
-
-            // 2. Add New Foods (POST)
-            const menuContainer = document.querySelector(".menu-list");
-            const newFoodItems = [...menuContainer.children].map(item => item.textContent.trim());
-            const imageInput = document.getElementById("image");
-            const foodType = document.getElementById("foodType").value;
-
-            if (newFoodItems.length > 0) {
-                if (!imageInput.files[0]) throw new Error("Please upload an image for new foods.");
-                if (!foodType) throw new Error("Please select a food type for new foods.");
-                if (latitude === null || longitude === null) throw new Error("Please select a location for new foods.");
-
-                for (const foodName of newFoodItems) {
-                    if (!foodName) continue;
-                    const fd = new FormData();
-                    fd.append("food_name", foodName);
-                    fd.append("category", foodType.toLowerCase());
-                    fd.append("latitude", latitude);
-                    fd.append("longitude", longitude);
-                    fd.append("vendor_id", vId);
-                    fd.append("image", imageInput.files[0]);
-
-                    await fetchAPI(`/foods`, {
-                        method: "POST",
-                        body: fd
-                    });
-                }
-            }
-
-            alert("Profile Updated Successfully! ✅");
-            window.location.href = "./vendor-profile.html";
-
-        } catch (err) {
-            console.error(err);
-            alert("Update failed: " + err.message);
-        }
-    });
+  document.querySelector(".menu-list").appendChild(b);
+  input.value = "";
 }
+
+function removeMenuItem(name) {
+  newMenuItems = newMenuItems.filter(item => item !== name);
+  renderMenu();
+}
+
+function renderMenu() {
+  const menu = document.querySelector(".menu-list");
+  menu.innerHTML = "";
+  newMenuItems.forEach(item => {
+    const b = document.createElement("b");
+    b.innerHTML = `${item} <button type="button" onclick="removeMenuItem('${item}')">❌</button><br/>`;
+    menu.appendChild(b);
+  });
+}
+
+// ---------------- SUBMIT UPDATE ----------------
+const editForm = document.getElementById("vendorEditForm");
+
+editForm.onsubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    // ---- UPDATE VENDOR ----
+    const vendorFD = new FormData();
+    vendorFD.append("phone_number", number.value);
+    vendorFD.append("opening_time", openTime.value);
+    vendorFD.append("closing_time", closeTime.value);
+
+    await fetchAPI(`/vendors/${vendorId}`, {
+      method: "PUT",
+      body: vendorFD
+    });
+
+    // ---- ADD NEW FOODS ----
+    if (newMenuItems.length > 0) {
+      const imageFile = image.files[0];
+      const foodType = document.getElementById("foodType").value;
+
+      if (!imageFile) throw new Error("Upload image for new foods");
+      if (!foodType) throw new Error("Select food type");
+      if (latitude === null || longitude === null)
+        throw new Error("Pick location for foods");
+
+      for (const foodName of newMenuItems) {
+        const fd = new FormData();
+        fd.append("food_name", foodName);
+        fd.append("category", foodType.toLowerCase());
+        fd.append("latitude", latitude);
+        fd.append("longitude", longitude);
+        fd.append("vendor_id", vendorId);
+        fd.append("image", imageFile);
+
+        await fetchAPI("/foods", {
+          method: "POST",
+          body: fd
+        });
+      }
+    }
+
+    alert("Vendor Profile Updated Successfully ✅");
+    location.href = "./vendor-profile.html";
+
+  } catch (err) {
+    alert("Update failed ❌ " + err.message);
+    console.error(err);
+  }
+};

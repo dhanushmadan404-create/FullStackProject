@@ -29,10 +29,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         <img
                             src="${imgUrl}"
                             class="card-image"
-                            onError={(e) => {
-    e.target.onerror = null;
-    e.target.src = "../../assets/default_food.png";
-  }}
+                       onerror="this.onerror=null; this.src='../../assets/default_food.png';"
                         />
                     </div>
                     <div class="card-buttons">
