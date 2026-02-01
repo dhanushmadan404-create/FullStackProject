@@ -18,9 +18,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     cardContainer.innerHTML = "";
-    foods.forEach(food => {
+    foods.forEach((food) => {
       const div = document.createElement("div");
-      const imgUrl = getImageUrl(food.food_image_url, '../../assets/annesana.png');
+      const imgUrl = getImageUrl(
+        food.food_image_url,
+        "../../assets/annesana.png",
+      );
 
       div.innerHTML = `
                 <div class="card">
@@ -29,6 +32,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                         <img
                             src="${imgUrl}"
                             class="card-image"
+                              onError={(e) => {
+    e.target.onerror = null;
+    e.target.src = "../../assets/default_food.png";
+  }}
                         />
                     </div>
                     <div class="card-buttons">
@@ -40,7 +47,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             `;
       cardContainer.appendChild(div);
     });
-
   } catch (err) {
     console.error("Fetch Error:", err);
     cardContainer.innerHTML = `<p style='text-align:center;'>Failed to load records: ${err.message} ❌</p>`;

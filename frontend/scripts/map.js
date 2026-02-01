@@ -30,7 +30,7 @@ async function loadFoodLocation() {
     if (foodIcon) {
       L.marker([foodLat, foodLng], { icon: foodIcon })
         .addTo(map)
-        .bindPopup(`<b>${food.food_name}</b>`)
+        .bindPopup(`<b>${food.category}</b>`)
         .openPopup();
     }
 
@@ -105,7 +105,7 @@ async function loadAllFoodLocations() {
       if (food.latitude && food.longitude && map && shopIcon) {
         L.marker([food.latitude, food.longitude], { icon: shopIcon })
           .addTo(map)
-          .bindPopup(`<b>${food.food_name}</b>`);
+          .bindPopup(`<b>${food.category}</b>`);
       }
     });
   } catch (err) {

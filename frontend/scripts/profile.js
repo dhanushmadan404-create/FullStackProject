@@ -15,7 +15,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const imgUrl = getImageUrl(user_details.image_url);
     profile.innerHTML = `
-      <img src="${imgUrl}" alt="${user_details.name}" class="profile-image" />
+      <img src="${imgUrl}" alt="${user_details.name}" class="profile-image" 
+      onError={(e) => {
+    e.target.onerror = null;
+    e.target.src = "../../assets/default_user.png";
+  }}/>
       <br />
       <h2>${user_details.name}</h2>
       <p class="about">${user_details.email}</p>

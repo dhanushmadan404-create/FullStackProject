@@ -81,7 +81,7 @@ async function fetchAPI(endpoint, options = {}) {
  * @param {string} fallback - Fallback asset path.
  * @returns {string} - Formatted URL.
  */
-function getImageUrl(rawUrl, fallback = '../assets/annesana.png') {
+function getImageUrl(rawUrl, fallback = '..assets/annesana.png') {
     if (!rawUrl) return fallback;
     if (rawUrl.startsWith('http')) return rawUrl;
 
