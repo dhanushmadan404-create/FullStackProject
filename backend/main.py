@@ -1,17 +1,18 @@
-import sys
 import os
+import sys
 import logging
+from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.exceptions import RequestValidationError
 
 # ---------------- PATH FIX ----------------
-current_dir = os.path.dirname(os.path.abspath(__file__))
-if current_dir not in sys.path:
-    sys.path.append(current_dir)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+if BASE_DIR not in sys.path:
+    sys.path.append(BASE_DIR)
 
 # ---------------- IMPORT ROUTERS ----------------
 from router import auth, user, vendor, food
@@ -21,60 +22,55 @@ from database import init_db
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-from contextlib import asynccontextmanager
-
-# ---------------- LIFESPAN ----------------
+# ---------------- LIFESPAN (APP STARTUP) ----------------
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup logic
-    logger.info("Initializing database...")
-    init_db()
+    logger.info("Starting application...")
+    init_db()   # Connect / create DB tables
     yield
-    # Shutdown logic (none needed yet)
 
-# ---------------- APP SETUP ----------------
-app = FastAPI(title="Annesana API", version="1.0.0", lifespan=lifespan)
+# ---------------- APP ----------------
+app = FastAPI(
+    title="Annesana API",
+    version="1.0.0",
+    lifespan=lifespan
+)
 
-# ---------------- EXCEPTIONS ----------------
+# ---------------- ERROR HANDLING ----------------
 @app.exception_handler(HTTPException)
-async def http_exception_handler(request: Request, exc: HTTPException):
-    return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
+async def http_error(_, exc: HTTPException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail}
+    )
 
 @app.exception_handler(RequestValidationError)
-async def validation_exception_handler(request: Request, exc: RequestValidationError):
-    return JSONResponse(status_code=422, content={"detail": exc.errors()})
+async def validation_error(_, exc: RequestValidationError):
+    return JSONResponse(
+        status_code=422,
+        content={"detail": exc.errors()}
+    )
 
 @app.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception):
-    import traceback
-    logger.error(f"Unhandled error: {exc}", exc_info=True)
-    
-    content = {"detail": "Internal Server Error"}
-    if os.environ.get("VERCEL"):
-        content["message"] = str(exc)
-        content["traceback"] = traceback.format_exc()
-        
-    return JSONResponse(status_code=500, content=content)
+async def server_error(_, exc: Exception):
+    logger.error(exc)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal Server Error"}
+    )
 
 # ---------------- CORS ----------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=["*"],   # frontend can access API
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# ---------------- STATIC FILES / UPLOADS ----------------
-if os.environ.get("VERCEL"):
-    UPLOAD_DIR = "/tmp/uploads"
-else:
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
-
+# ---------------- FILE UPLOADS ----------------
+UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
-# Mount static files for access via /uploads/<filename>
 app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
 # ---------------- ROUTERS ----------------
@@ -86,12 +82,10 @@ app.include_router(food.router, prefix=API_PREFIX)
 
 # ---------------- HEALTH CHECK ----------------
 @app.get("/api/health")
-def health_check():
-    return {"status": "ok", "service": "Annesana Backend"}
+def health():
+    return {"status": "ok"}
 
 # ---------------- ROOT ----------------
 @app.get("/")
 def root():
     return {"message": "Welcome to Annesana API"}
-
-# Database initialization handled via lifespan

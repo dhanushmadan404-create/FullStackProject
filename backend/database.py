@@ -51,7 +51,6 @@ def init_db():
     
     try:
         with engine.connect() as conn:
-            # Check if old column 'image' exists and 'image_url' does NOT exist
             check_sql = text("""
                 SELECT column_name 
                 FROM information_schema.columns 
