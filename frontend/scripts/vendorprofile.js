@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", async () => {
               const foodImg = getImageUrl(food.food_image_url);
               div.innerHTML = `
                                 <img src="${foodImg}" class="card-image"
-                                 onerror="this.onerror=null; this.src='../../assets/default_vendor.png';"/>
+                                 onerror="this.onerror=null; this.src='../assets/default_vendor.png';"/>
                                 <div class="card-info">
                                     <p><strong>${food.food_name}</strong></p>
                                     <p>${food.category}</p>
