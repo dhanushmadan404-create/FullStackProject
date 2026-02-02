@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     [nameError, emailError, passwordError, roleError, imageError].forEach(el => el.textContent = "");
 
+    
     let valid = true;
     if (name.length < 3) { nameError.textContent = "Name min 3 chars"; valid = false; }
     if (!/\S+@\S+\.\S+/.test(email)) { emailError.textContent = "Invalid email"; valid = false; }
