@@ -71,10 +71,10 @@ async function loadFoodLocation() {
 
   try {
     const food = await fetchAPI(`/foods/${foodId}`);
-
+console.log(food)
     foodLat = food.latitude;
     foodLng = food.longitude;
-
+  
     if (!foodLat || !foodLng) return;
 
     if (foodIcon) {
