@@ -76,6 +76,11 @@ def get_foods_by_category(category: str, db: Session = Depends(get_db)):
     foods = db.query(Food).filter(Food.category == category.lower().strip()).all()
     return foods
 
+# ================= GET FOOD BY CATEGORY =================
+@router.get("/{foodId}", response_model=List[FoodResponse])
+def get_foods_by_category(foodId: str, db: Session = Depends(get_db)):
+    foods = db.query(Food).filter(Food.food_id == foodId.strip()).first()
+    return foods
 # ================= GET FOOD BY VENDOR =================
 @router.get("/vendor/{vendor_id}", response_model=List[FoodResponse])
 def get_foods_by_vendor(vendor_id: int, db: Session = Depends(get_db)):
