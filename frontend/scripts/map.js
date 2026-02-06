@@ -11,32 +11,20 @@ let routingControl = null;
 // Icons
 let foodIcon, shopIcon, userIcon;
 
-// ---------------- GET FOOD ID FROM URL ----------------
-const params = new URLSearchParams(window.location.search);
-const foodId = Number(params.get("food_id"));
-
-// ---------------- FETCH FOOD LOCATION ----------------
-async function loadFoodLocation() {
-  if (!foodId) return;
-
+// ---------------- LOAD ALL FOOD LOCATIONS ----------------
+async function loadAllFoodLocations() {
   try {
-    const food = await fetchAPI(`/foods/${foodId}`);
+    const foods = await fetchAPI(`/foods/all`);
 
-    foodLat = food.latitude;
-    foodLng = food.longitude;
-
-    if (!foodLat || !foodLng) return;
-
-    if (foodIcon) {
-      L.marker([foodLat, foodLng], { icon: foodIcon })
-        .addTo(map)
-        .bindPopup(`<b>${food.category}</b>`)
-        .openPopup();
-    }
-
-    tryRouting();
+    foods.forEach(food => {
+      if (food.latitude && food.longitude && map && shopIcon) {
+        L.marker([food.latitude, food.longitude], { icon: shopIcon })
+          .addTo(map)
+          .bindPopup(`<b>${food.category}</b>`);
+      }
+    });
   } catch (err) {
-    console.error("Error loading food location:", err);
+    console.error("Error loading all food locations:", err);
   }
 }
 
@@ -72,6 +60,35 @@ function getUserLocation() {
     }
   );
 }
+// ---------------- GET FOOD ID FROM URL ----------------
+const params = new URLSearchParams(window.location.search);
+const foodId = Number(params.get("food_id"));
+
+// ---------------- FETCH FOOD LOCATION ----------------
+async function loadFoodLocation() {
+  console.log(foodId)
+  if (!foodId) return;
+
+  try {
+    const food = await fetchAPI(`/foods/${foodId}`);
+
+    foodLat = food.latitude;
+    foodLng = food.longitude;
+
+    if (!foodLat || !foodLng) return;
+
+    if (foodIcon) {
+      L.marker([foodLat, foodLng], { icon: foodIcon })
+        .addTo(map)
+        .bindPopup(`<b>${food.category}</b>`)
+        .openPopup();
+    }
+
+    tryRouting();
+  } catch (err) {
+    console.error("Error loading food location:", err);
+  }
+}
 
 // ---------------- ROUTING ----------------
 function tryRouting() {
@@ -96,22 +113,6 @@ function tryRouting() {
   }
 }
 
-// ---------------- LOAD ALL FOOD LOCATIONS ----------------
-async function loadAllFoodLocations() {
-  try {
-    const foods = await fetchAPI(`/foods/all`);
-
-    foods.forEach(food => {
-      if (food.latitude && food.longitude && map && shopIcon) {
-        L.marker([food.latitude, food.longitude], { icon: shopIcon })
-          .addTo(map)
-          .bindPopup(`<b>${food.category}</b>`);
-      }
-    });
-  } catch (err) {
-    console.error("Error loading all food locations:", err);
-  }
-}
 
 // ---------------- INIT ----------------
 document.addEventListener("DOMContentLoaded", () => {
