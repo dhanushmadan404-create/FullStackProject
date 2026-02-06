@@ -64,9 +64,9 @@ function getUserLocation() {
 const params = new URLSearchParams(window.location.search);
 const foodId = Number(params.get("food_id"));
 
+console.log(foodId)
 // ---------------- FETCH FOOD LOCATION ----------------
 async function loadFoodLocation() {
-  console.log(foodId)
   if (!foodId) return;
 
   try {
