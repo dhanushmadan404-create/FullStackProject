@@ -1,111 +1,132 @@
-// Using centralized api-helper.js for API_URL and fetchAPI
-
-// ---------------- LOAD PROFILE ----------------
-document.addEventListener("DOMContentLoaded", async () => {
+// --- Main Execution ---
+document.addEventListener("DOMContentLoaded", () => {
+  // Check if logged in
   const token = localStorage.getItem("token");
   if (!token) {
-    location.href = "./login.html";
+    window.location.href = "./login.html";
     return;
   }
 
-  const profile = document.getElementById("profile_details");
-  try {
-    const user_details = await fetchAPI("/users/me");
-    localStorage.setItem("user_details", JSON.stringify(user_details));
-
-    const imgUrl = getImageUrl(user_details.image_url);
-    profile.innerHTML = `
-      <img src="${imgUrl}" alt="${user_details.name}" class="profile-image" 
-       onerror="this.onerror=null; this.src='../assets/default_user.png';"/>
-      <br />
-      <h2>${user_details.name}</h2>
-      <p class="about">${user_details.email}</p>
-      <p><strong>Role:</strong> ${user_details.role}</p>
-    `;
-  } catch (err) {
-    console.error("Profile load error:", err);
-    // If 401, fetchAPI might have already logged us out or handled it, 
-    // but we'll ensure we handle it here if it's a critical auth failure.
-    if (err.message.includes("401") || err.message.includes("Unauthorized")) {
-      localStorage.clear();
-      location.href = "./login.html";
-    } else {
-      alert("Error loading profile: " + err.message);
-    }
-  }
+  loadProfile();
+  setupEditForm();
+  setupLogout();
 });
 
-// ---------------- EDIT PROFILE ----------------
-const editBtn = document.getElementById("editBtn");
-const user_edit = document.getElementById("edit");
 
-if (editBtn) {
+// --- Load Profile ---
+async function loadProfile() {
+  try {
+    // Fetch current user details
+    const user = await fetchAPI("/users/me");
+
+    // Save for later use
+    localStorage.setItem("user_details", JSON.stringify(user));
+
+    // Update UI
+    const profileContainer = document.getElementById("profile_details");
+    const imgUrl = getImageUrl(user.image_url); // api-helper function
+
+    profileContainer.innerHTML = `
+            <img src="${imgUrl}" alt="${user.name}" class="profile-image" 
+             onerror="this.onerror=null; this.src='../assets/default_user.png';"/>
+            <br />
+            <h2>${user.name}</h2>
+            <p class="about">${user.email}</p>
+            <p><strong>Role:</strong> ${user.role}</p>
+        `;
+
+  } catch (error) {
+    console.error("Error loading profile:", error);
+    if (error.message.includes("401")) {
+      alert("Session expired. Please login again.");
+      localStorage.clear();
+      window.location.href = "./login.html";
+    } else {
+      alert("Could not load profile.");
+    }
+  }
+}
+
+
+// --- Edit Profile Setup ---
+function setupEditForm() {
+  const editBtn = document.getElementById("editBtn");
+  const editContainer = document.getElementById("edit");
+
+  if (!editBtn) return;
+
   editBtn.addEventListener("click", () => {
-    const user_document = JSON.parse(localStorage.getItem("user_details") || "{}");
-    const previewUrl = getImageUrl(user_document.image_url);
+    // Get current data from storage (or could fetch again)
+    const userString = localStorage.getItem("user_details");
+    const user = userString ? JSON.parse(userString) : {};
 
-    user_edit.innerHTML = `
-    <form id="editForm" enctype="multipart/form-data">
-      <div class="form-group">
-        <label>Name</label>
-        <input 
-          type="text" 
-          id="name" 
-          value="${user_document.name || ''}" 
-          minlength="3"
-          required
-        />
-      </div>
+    const previewImg = getImageUrl(user.image_url);
 
-      <div class="form-group">
-        <label>Profile Image</label>
-        <input
-          id="image"
-          type="file"
-          accept="image/*"
-        />
-        <img src="${previewUrl}" width="80" id="preview" style="display: block; margin-top: 10px; border-radius: 50%; object-fit: cover; aspect-ratio: 1/1;"/>
-      </div>
+    // Render Edit Form
+    editContainer.innerHTML = `
+            <form id="editForm">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="name" value="${user.name || ''}" minlength="3" required />
+                </div>
 
-      <button type="submit" class="submit-btn" style="padding: 10px 20px; background: orange; color: white; border: none; border-radius: 5px; cursor: pointer;">Update Profile</button>
-    </form>
-  `;
+                <div class="form-group">
+                    <label>Profile Image</label>
+                    <input id="image" type="file" accept="image/*" />
+                    <img src="${previewImg}" width="80" id="preview" 
+                         style="display: block; margin-top: 10px; border-radius: 50%; width: 80px; height: 80px; object-fit: cover;"/>
+                </div>
 
-    document.getElementById("editForm").addEventListener("submit", submitEditForm);
+                <button type="submit" class="submit-btn" style="padding: 10px 20px; background: orange; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    Update Profile
+                </button>
+            </form>
+        `;
+
+    // Attach Submit Listener
+    document.getElementById("editForm").addEventListener("submit", handleEditSubmit);
   });
 }
 
-// ---------------- SUBMIT EDIT FORM ----------------
-async function submitEditForm(e) {
-  e.preventDefault();
+
+// --- Handle Edit Submit ---
+async function handleEditSubmit(event) {
+  event.preventDefault();
+
   const name = document.getElementById("name").value.trim();
   const imageFile = document.getElementById("image").files[0];
-  const user_details = JSON.parse(localStorage.getItem("user_details") || "{}");
+  const user = JSON.parse(localStorage.getItem("user_details") || "{}");
 
-  if (!user_details.email) return alert("User detail missing");
-
-  const formData = new FormData();
-  if (name) formData.append("name", name);
-  if (imageFile) formData.append("image", imageFile);
+  if (!user.email) return alert("Error: User email missing.");
 
   try {
-    const updatedUser = await fetchAPI(`/users/email/${user_details.email}`, {
+    const formData = new FormData();
+    if (name) formData.append("name", name);
+    if (imageFile) formData.append("image", imageFile);
+
+    // Update User
+    const updatedUser = await fetchAPI(`/users/email/${user.email}`, {
       method: "PUT",
       body: formData
     });
 
+    // Update Storage and UI
     localStorage.setItem("user_details", JSON.stringify(updatedUser));
-    alert("Profile updated ✅");
-    location.reload();
-  } catch (err) {
-    console.error("Update error:", err);
-    alert(`Update failed ❌: ${err.message}`);
+    alert("Profile updated successfully! ✅");
+    location.reload(); // Refresh to show new data
+
+  } catch (error) {
+    console.error("Update failed:", error);
+    alert(`Update failed: ${error.message}`);
   }
 }
 
-// ---------------- LOGOUT ----------------
-const logoutBtn = document.getElementById("logOut");
-if (logoutBtn) {
+
+// --- Logout ---
+function setupLogout() {
+  const logoutBtn = document.getElementById("logOut");
+  if (!logoutBtn) return;
+
   logoutBtn.addEventListener("click", (e) => {
     e.preventDefault();
     localStorage.clear();

@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", () => {
     checkLoginStatus();
 });
@@ -8,17 +7,25 @@ function checkLoginStatus() {
     const loginBtn = document.getElementById("login");
     const profileBtn = document.getElementById("profile");
 
-    // If login button doesn't exist, we can't do anything
+    // If there is no login button on this page, we don't need to do anything
     if (!loginBtn) return;
 
     if (token) {
-        // user logged in
+        // User is logged in
         loginBtn.style.display = "none";
-        if (profileBtn) profileBtn.style.display = "inline-block";
+
+        // Show profile button if it exists
+        if (profileBtn) {
+            profileBtn.style.display = "inline-block";
+        }
     } else {
-        // user not logged in
+        // User is NOT logged in
         loginBtn.style.display = "inline-block";
-        if (profileBtn) profileBtn.style.display = "none";
+
+        // Hide profile button if it exists
+        if (profileBtn) {
+            profileBtn.style.display = "none";
+        }
     }
 }
 

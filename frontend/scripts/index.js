@@ -1,30 +1,5 @@
-// Redundant API_URL and getImageUrl removed - using centralized api-helper.js
-
-document.addEventListener("DOMContentLoaded", async () => {
-    const trendingContainer = document.querySelector(".trending_prod");
-    if (!trendingContainer) return;
-
-    try {
-        // Fetch all foods and just show the first 4 as "trending" for now
-        const foods = await fetchAPI("/foods");
-
-        if (foods && foods.length > 0) {
-            trendingContainer.innerHTML = "";
-            foods.slice(0, 4).forEach(food => {
-                const imgUrl = getImageUrl(food.food_image_url, './frontend/assets/annesana.png');
-                const card = document.createElement("a");
-                card.href = "./frontend/pages/map.html?food_id=" + food.food_id;
-                card.innerHTML = `
-                  <div class="prod_container">
-                    <img src="${imgUrl}" alt="${food.food_name}">
-                    <b>${food.food_name}</b>
-                  </div>
-                `;
-                trendingContainer.appendChild(card);
-            });
-        }
-    } catch (err) {
-        console.error("Failed to load trending items:", err);
-        // Fallback to static items is already in HTML, so we just log the error.
-    }
-});
+// breackfast=./frontend/pages/categories/category_breakFast.html
+// Lunch=./frontend/pages/categories/categories_lunch.html
+// dinner=./frontend/pages/categories/categories_dinner.html
+// snack=./frontend/pages/categories/categories_snacks.html
+// drinks./frontend/pages/categories/categories_drinking.html

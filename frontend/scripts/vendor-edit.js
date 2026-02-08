@@ -1,64 +1,89 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // get vendor data from localStorage
-  const vendor = JSON.parse(localStorage.getItem("vendor"));
-
-  if (vendor) {
-    // change title & button (edit mode)
-    document.querySelector(".header h1").innerText =
-      "Edit Vendor Registration";
-    document.getElementById("submit").innerText = "Update";
-
-    // prefill values
-    if (vendor.phone_number) {
-      document.getElementById("number").value = vendor.phone_number;
-    }
-
-    if (vendor.opening_time) {
-      document.getElementById("openingTime").value =
-        vendor.opening_time.slice(0, 5);
-    }
-
-    if (vendor.closing_time) {
-      document.getElementById("closingTime").value =
-        vendor.closing_time.slice(0, 5);
-    }
-
-    if (vendor.food_type) {
-      document.getElementById("foodType").value = vendor.food_type;
-    }
-  }
+  loadVendorData();
 });
 
-// submit / update vendor
-document
-  .getElementById("vendorRegistration")
-  .addEventListener("submit", async (e) => {
-    e.preventDefault();
+function loadVendorData() {
+  // Get vendor data from localStorage
+  const vendorString = localStorage.getItem("vendor");
 
-    const formData = new FormData();
+  // If no vendor data, stop here
+  if (!vendorString) return;
 
-    const phone = document.getElementById("number").value;
-    const opening = document.getElementById("openingTime").value;
-    const closing = document.getElementById("closingTime").value;
-    const imageFile = document.getElementById("image").files[0];
+  const vendor = JSON.parse(vendorString);
 
-    if (phone) formData.append("phone_number", phone);
-    if (opening) formData.append("opening_time", opening);
-    if (closing) formData.append("closing_time", closing);
-    if (imageFile) formData.append("image", imageFile);
+  // Update Header and Button to show we are in "Edit" mode
+  const titleElement = document.querySelector(".header h1");
+  if (titleElement) titleElement.innerText = "Edit Vendor Registration";
 
-    try {
-      const response = await fetchAPI("/vendors", {
-        method: "PUT",
-        body: formData
-      });
+  const submitBtn = document.getElementById("submit");
+  if (submitBtn) submitBtn.innerText = "Update";
 
-      alert("Vendor details updated successfully ✅");
+  // Pre-fill the form fields with existing data
+  if (vendor.phone_number) {
+    document.getElementById("number").value = vendor.phone_number;
+  }
 
-      // update localStorage
-      localStorage.setItem("vendor", JSON.stringify(response));
-    } catch (error) {
-      console.error(error);
-      alert("Vendor update failed ❌");
-    }
-  });
+  if (vendor.opening_time) {
+    // Time format usually needs HH:MM (slice first 5 chars)
+    document.getElementById("openingTime").value = vendor.opening_time.slice(0, 5);
+  }
+
+  if (vendor.closing_time) {
+    document.getElementById("closingTime").value = vendor.closing_time.slice(0, 5);
+  }
+
+  if (vendor.food_type) {
+    document.getElementById("foodType").value = vendor.food_type;
+  }
+}
+
+// Handle Form Submission
+const form = document.getElementById("vendorRegistration");
+form.addEventListener("submit", async (event) => {
+  event.preventDefault(); // Stop page reload
+
+  const submitBtn = document.getElementById("submit");
+  submitBtn.innerText = "Updating...";
+  submitBtn.disabled = true;
+
+  // Create FormData object to handle text AND file uploads easily
+  const formData = new FormData();
+
+  // Get values from inputs
+  const phone = document.getElementById("number").value;
+  const opening = document.getElementById("openingTime").value;
+  const closing = document.getElementById("closingTime").value;
+  const foodType = document.getElementById("foodType").value;
+  const imageFile = document.getElementById("image").files[0];
+
+  // Append to FormData (only if they exist)
+  if (phone) formData.append("phone_number", phone);
+  if (opening) formData.append("opening_time", opening);
+  if (closing) formData.append("closing_time", closing);
+  if (foodType) formData.append("food_type", foodType);
+  if (imageFile) formData.append("image", imageFile);
+
+  try {
+    // Send PUT request to update vendor
+    // fetchAPI detects FormData and sets headers automatically!
+    const responseResponseData = await fetchAPI("/vendors", {
+      method: "PUT",
+      body: formData,
+    });
+
+    alert("Vendor details updated successfully! ✅");
+
+    // Update localStorage with new data
+    localStorage.setItem("vendor", JSON.stringify(responseResponseData));
+
+    // Optional: Reload or redirect
+    // window.location.reload(); 
+
+  } catch (error) {
+    console.error("Update failed:", error);
+    alert(`Update failed: ${error.message} ❌`);
+  } finally {
+    submitBtn.innerText = "Update";
+    submitBtn.disabled = false;
+  }
+});

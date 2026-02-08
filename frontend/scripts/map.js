@@ -1,159 +1,179 @@
-// Using centralized api-helper.js (API_URL is already defined there)
+// --- API CONFIG ---
+const API_BASE = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+  ? "http://127.0.0.1:8000/api"
+  : "/api";
 
-// ---------------- GLOBAL STATE ----------------
+// --- Global Variables ---
 let map = null;
-let userLat = null;
-let userLng = null;
-let foodLat = null;
-let foodLng = null;
+let userMarker = null;
+let foodMarker = null;
 let routingControl = null;
 
 // Icons
-let foodIcon, shopIcon, userIcon;
+const userIcon = L.icon({
+  iconUrl: "../assets/3448609.png", // User icon
+  iconSize: [40, 40],
+  iconAnchor: [20, 40],
+});
 
-// ---------------- LOAD ALL FOOD LOCATIONS ----------------
-async function loadAllFoodLocations() {
-  try {
-    const foods = await fetchAPI(`/foods/all`);
+const foodIcon = L.icon({
+  iconUrl: "../assets/food.png",   // Targeted food icon
+  iconSize: [40, 40],
+  iconAnchor: [20, 40],
+});
 
-    foods.forEach(food => {
-      if (food.latitude && food.longitude && map && shopIcon) {
-        L.marker([food.latitude, food.longitude], { icon: shopIcon })
-          .addTo(map)
-          .bindPopup(`<b>${food.category}</b>`);
-      }
-    });
-  } catch (err) {
-    console.error("Error loading all food locations:", err);
+const shopIcon = L.icon({
+  iconUrl: "../assets/shop.png",   // Generic shop icon
+  iconSize: [40, 40],
+  iconAnchor: [20, 40],
+});
+
+
+// --- Main Execution ---
+document.addEventListener("DOMContentLoaded", () => {
+  initMap();
+  getUserLocation();
+
+  // Check if we are viewing a specific food item
+  const params = new URLSearchParams(window.location.search);
+  const foodId = params.get("food_id");
+
+  if (foodId) {
+    loadFoodLocation(foodId);
+  } else {
+    // If not specific food, maybe show all?
+    loadAllFoodLocations();
   }
+});
+
+
+// --- Initialize Map ---
+function initMap() {
+  const mapElement = document.getElementById("map");
+  if (!mapElement) return;
+
+  // Default view (Chennai)
+  map = L.map("map").setView([13.0827, 80.2707], 11);
+
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+  }).addTo(map);
 }
 
-// ---------------- GET USER LOCATION ----------------
+
+// --- Get User Location ---
 function getUserLocation() {
   if (!navigator.geolocation) {
-    alert("Geolocation not supported");
+    console.warn("Geolocation not supported");
     return;
   }
 
   navigator.geolocation.getCurrentPosition(
-    position => {
-      userLat = position.coords.latitude;
-      userLng = position.coords.longitude;
+    (position) => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+
+      // Save for routing
+      window.userLat = lat;
+      window.userLng = lng;
 
       if (map) {
-        map.setView([userLat, userLng], 15);
+        map.setView([lat, lng], 13);
 
-        if (userIcon) {
-          L.marker([userLat, userLng], { icon: userIcon })
-            .addTo(map)
-            .bindPopup("You are here")
-            .openPopup();
+        // Remove old marker if exists
+        if (userMarker) map.removeLayer(userMarker);
+
+        userMarker = L.marker([lat, lng], { icon: userIcon })
+          .addTo(map)
+          .bindPopup("You are here")
+          .openPopup();
+
+        // Try routing if we already have a destination
+        if (window.foodLat && window.foodLng) {
+          drawRoute();
         }
       }
-
-      tryRouting();
     },
-    (err) => {
-      console.warn("Geolocation error:", err);
-      // Only alert if the user explicitly clicked the button, 
-      // but since this runs on init, maybe just log.
+    (error) => {
+      console.warn("Location access denied or failed:", error.message);
     }
   );
 }
-// ---------------- GET FOOD ID FROM URL ----------------
-const params = new URLSearchParams(window.location.search);
-const foodId = Number(params.get("food_id"));
 
-console.log(foodId)
-// ---------------- FETCH FOOD LOCATION ----------------
-async function loadFoodLocation() {
-  if (!foodId) return;
 
+// --- Load Specific Food Location ---
+async function loadFoodLocation(foodId) {
   try {
-    const food = await fetchAPI(`/foods/${foodId}`);
-console.log(food)
-    foodLat = food.latitude;
-    foodLng = food.longitude;
-  
-    if (!foodLat || !foodLng) return;
+    const res = await fetch(`${API_BASE}/foods/${foodId}`);
+    if (!res.ok) return;
+    const food = await res.json();
 
-    if (foodIcon) {
-      L.marker([foodLat, foodLng], { icon: foodIcon })
+    if (food.latitude && food.longitude) {
+      window.foodLat = food.latitude;
+      window.foodLng = food.longitude;
+
+      // Add Marker
+      if (foodMarker) map.removeLayer(foodMarker);
+
+      foodMarker = L.marker([food.latitude, food.longitude], { icon: foodIcon })
         .addTo(map)
-        .bindPopup(`<b>${food.category}</b>`)
+        .bindPopup(`<b>${food.food_name}</b><br>${food.category}`)
         .openPopup();
-    }
 
-    tryRouting();
-  } catch (err) {
-    console.error("Error loading food location:", err);
+      // Try routing
+      if (window.userLat && window.userLng) {
+        drawRoute();
+      }
+    }
+  } catch (error) {
+    console.error("Error loading food details:", error);
   }
 }
 
-// ---------------- ROUTING ----------------
-function tryRouting() {
-  if (!userLat || !userLng || !foodLat || !foodLng || !map) return;
 
+// --- Load All Food Locations ---
+async function loadAllFoodLocations() {
+  try {
+    const res = await fetch(`${API_BASE}/foods/all`);
+    if (!res.ok) return;
+    const foods = await res.json();
+
+    foods.forEach(food => {
+      if (food.latitude && food.longitude) {
+        L.marker([food.latitude, food.longitude], { icon: shopIcon })
+          .addTo(map)
+          .bindPopup(`<b>${food.food_name}</b><br>${food.category}`);
+      }
+    });
+  } catch (error) {
+    console.error("Error loading all foods:", error);
+  }
+}
+
+
+// --- Draw Route ---
+function drawRoute() {
+  if (!map || !window.userLat || !window.foodLat) return;
+
+  // Remove old route
   if (routingControl) {
     map.removeControl(routingControl);
   }
 
+  // Check if Routing plugin is loaded
   if (typeof L.Routing !== 'undefined') {
     routingControl = L.Routing.control({
       waypoints: [
-        L.latLng(userLat, userLng),
-        L.latLng(foodLat, foodLng),
+        L.latLng(window.userLat, window.userLng),
+        L.latLng(window.foodLat, window.foodLng)
       ],
       routeWhileDragging: false,
+      // draggableWaypoints: false,
+      addWaypoints: false,
       lineOptions: {
-        styles: [{ color: "blue", weight: 5 }],
+        styles: [{ color: 'blue', opacity: 0.6, weight: 4 }]
       },
-      createMarker: () => null, // hide default markers
+      createMarker: function () { return null; } // We already have custom markers
     }).addTo(map);
   }
 }
-
-
-// ---------------- INIT ----------------
-document.addEventListener("DOMContentLoaded", () => {
-  // Check if L exists
-  if (typeof L === 'undefined') {
-    console.error("Leaflet (L) is not defined. Ensure map.html is loading the Leaflet library correctly.");
-    return;
-  }
-
-  // 1. Init Map
-  const mapElement = document.getElementById("map");
-  if (!mapElement) return;
-
-  map = L.map("map").setView([13.0827, 80.2707], 11);
-  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 20 }).addTo(map);
-
-  // 2. Init Icons
-  foodIcon = L.icon({
-    iconUrl: "../assets/food.png",
-    iconSize: [40, 40],
-    iconAnchor: [20, 40],
-  });
-  shopIcon = L.icon({
-    iconUrl: "../assets/shop.png",
-    iconSize: [40, 40],
-    iconAnchor: [20, 40],
-  });
-  userIcon = L.icon({
-    iconUrl: "../assets/3448609.png",
-    iconSize: [40, 40],
-    iconAnchor: [20, 40],
-  });
-
-  // 3. Kick off location loading
-  getUserLocation();
-  loadFoodLocation();
-  loadAllFoodLocations();
-
-  // 4. Hook up the footer button if it exists
-  const locationBtn = document.getElementById("getCurrent");
-  if (locationBtn) {
-    locationBtn.addEventListener("click", getUserLocation);
-  }
-});

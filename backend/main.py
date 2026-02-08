@@ -5,87 +5,55 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
-from fastapi.exceptions import RequestValidationError
 
-# ---------------- PATH FIX ----------------
+# --- Path Setup ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 if BASE_DIR not in sys.path:
     sys.path.append(BASE_DIR)
 
-# ---------------- IMPORT ROUTERS ----------------
+# --- Imports ---
 from router import auth, user, vendor, food
 from database import init_db
 
-# ---------------- LOGGING ----------------
+# --- Logging ---
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# ---------------- LIFESPAN (APP STARTUP) ----------------
+# --- Startup ---
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("Starting application...")
-    init_db()   # Connect / create DB tables
+    logger.info("Starting up...")
+    init_db()
     yield
 
-# ---------------- APP ----------------
+# --- App Definition ---
 app = FastAPI(
     title="Annesana API",
-    version="1.0.0",
     lifespan=lifespan
 )
 
-# ---------------- ERROR HANDLING ----------------
-@app.exception_handler(HTTPException)
-async def http_error(_, exc: HTTPException):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail": exc.detail}
-    )
-
-@app.exception_handler(RequestValidationError)
-async def validation_error(_, exc: RequestValidationError):
-    return JSONResponse(
-        status_code=422,
-        content={"detail": exc.errors()}
-    )
-
-@app.exception_handler(Exception)
-async def server_error(_, exc: Exception):
-    logger.error(exc)
-    return JSONResponse(
-        status_code=500,
-        content={"detail": "Internal Server Error"}
-    )
-
-# ---------------- CORS ----------------
+# --- CORS (Allow all for simplicity) ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],   # frontend can access API
+    allow_origins=["*"],  
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# ---------------- FILE UPLOADS ----------------
+# --- File Uploads ---
 UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
-
 app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
-# ---------------- ROUTERS ----------------
-API_PREFIX = "/api"
-app.include_router(auth.router, prefix=API_PREFIX)
-app.include_router(user.router, prefix=API_PREFIX)
-app.include_router(vendor.router, prefix=API_PREFIX)
-app.include_router(food.router, prefix=API_PREFIX)
+# --- Routers ---
+app.include_router(auth.router, prefix="/api")
+app.include_router(user.router, prefix="/api")
+app.include_router(vendor.router, prefix="/api")
+app.include_router(food.router, prefix="/api")
 
-# ---------------- HEALTH CHECK ----------------
-@app.get("/api/health")
-def health():
-    return {"status": "ok"}
-
-# ---------------- ROOT ----------------
+# --- Root ---
 @app.get("/")
 def root():
     return {"message": "Welcome to Annesana API"}
+
