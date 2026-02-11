@@ -168,10 +168,21 @@ if (form) {
       vendorFormData.append("image", shopImage);
 
       // fetchAPI handles FormData automatically
-      const vendorResponse = await fetchAPI("/vendors", {
+      // Manual fetch for vendor registration
+      const response = await fetch(`${API_BASE_URL}/vendors`, {
         method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        },
         body: vendorFormData,
       });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Vendor registration failed");
+      }
+
+      const vendorResponse = await response.json();
 
       const vendorId = vendorResponse.vendor_id;
       console.log("Vendor created, ID:", vendorId);
@@ -189,10 +200,17 @@ if (form) {
         foodFormData.append("image", item.image);
 
         try {
-          await fetchAPI("/foods", {
+          const foodResponse = await fetch(`${API_BASE_URL}/foods`, {
             method: "POST",
+            headers: {
+              "Authorization": `Bearer ${token}`
+            },
             body: foodFormData,
           });
+
+          if (!foodResponse.ok) {
+            throw new Error("Failed to upload food item");
+          }
         } catch (foodError) {
           console.error("Error uploading food:", item.name, foodError);
           alert(`Failed to upload ${item.name}. You can add it later.`);

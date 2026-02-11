@@ -47,7 +47,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!cardContainer) return;
 
   try {
-    const foods = await fetchAPI(`/foods/category/${category}`);
+    const response = await fetch(`${API_BASE_URL}/foods/category/${category}`);
+    if (!response.ok) throw new Error("Failed to load foods");
+    const foods = await response.json();
 
     if (!Array.isArray(foods) || foods.length === 0) {
       cardContainer.innerHTML = `

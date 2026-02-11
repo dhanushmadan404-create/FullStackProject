@@ -17,7 +17,19 @@ document.addEventListener("DOMContentLoaded", () => {
 async function loadProfile() {
   try {
     // Fetch current user details
-    const user = await fetchAPI("/users/me");
+    // Fetch current user details
+    const response = await fetch(`${API_BASE_URL}/users/me`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      if (response.status === 401) throw new Error("401");
+      throw new Error("Failed to fetch user");
+    }
+
+    const user = await response.json();
 
     // Save for later use
     localStorage.setItem("user_details", JSON.stringify(user));
@@ -105,10 +117,21 @@ async function handleEditSubmit(event) {
     if (imageFile) formData.append("image", imageFile);
 
     // Update User
-    const updatedUser = await fetchAPI(`/users/email/${user.email}`, {
+    // Update User
+    const response = await fetch(`${API_BASE_URL}/users/email/${user.email}`, {
       method: "PUT",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      },
       body: formData
     });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || "Update failed");
+    }
+
+    const updatedUser = await response.json();
 
     // Update Storage and UI
     localStorage.setItem("user_details", JSON.stringify(updatedUser));

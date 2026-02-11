@@ -22,7 +22,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 // --- Load Vendor Profile ---
 async function loadVendorProfile() {
   // 1. Get User Info
-  const user = await fetchAPI("/users/me");
+  // 1. Get User Info
+  const userResponse = await fetch(`${API_BASE_URL}/users/me`, {
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  });
+
+  if (!userResponse.ok) throw new Error(userResponse.status === 401 ? "401" : "Failed to load user");
+  const user = await userResponse.json();
 
   // Render User Header
   const profileImg = document.getElementById("DB");
@@ -38,7 +46,20 @@ async function loadVendorProfile() {
   // 2. Get Vendor Info
   const userId = user.user_id;
   // We expect this to return vendor details if they exist
-  const vendorData = await fetchAPI(`/vendors/user/${userId}`);
+  // We expect this to return vendor details if they exist
+  const vendorResponse = await fetch(`${API_BASE_URL}/vendors/user/${userId}`, {
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  });
+
+  // If 404, valid logic (no vendor profile), else throw
+  let vendorData = null;
+  if (vendorResponse.ok) {
+    vendorData = await vendorResponse.json();
+  } else if (vendorResponse.status !== 404) {
+    console.error("Vendor fetch failed", vendorResponse.status);
+  }
 
   const timeStatus = document.getElementById("timeStatus");
 
@@ -61,7 +82,11 @@ async function loadFoodItems(vendorId) {
   container.innerHTML = "<p>Loading foods...</p>";
 
   try {
-    const foods = await fetchAPI(`/foods/vendor/${vendorId}`);
+    const response = await fetch(`${API_BASE_URL}/foods/vendor/${vendorId}`);
+
+    if (!response.ok) throw new Error("Failed to load foods");
+
+    const foods = await response.json();
     container.innerHTML = ""; // Clear loading text
 
     if (foods.length === 0) {
@@ -104,9 +129,15 @@ async function deleteFoodItem(foodId) {
   if (!confirm("Are you sure you want to delete this food item?")) return;
 
   try {
-    await fetchAPI(`/foods/${foodId}`, {
-      method: "DELETE"
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_BASE_URL}/foods/${foodId}`, {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
     });
+
+    if (!response.ok) throw new Error("Failed to delete food");
 
     // Remove from UI
     const element = document.getElementById(`food-${foodId}`);

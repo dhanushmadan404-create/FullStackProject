@@ -1,7 +1,6 @@
 // --- API CONFIG ---
-const API_BASE = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-  ? "http://127.0.0.1:8000/api"
-  : "/api";
+// --- API CONFIG ---
+// API_BASE_URL is defined in common.js
 
 // --- Global Variables ---
 let map = null;
@@ -104,7 +103,7 @@ function getUserLocation() {
 // --- Load Specific Food Location ---
 async function loadFoodLocation(foodId) {
   try {
-    const res = await fetch(`${API_BASE}/foods/${foodId}`);
+    const res = await fetch(`${API_BASE_URL}/foods/${foodId}`);
     if (!res.ok) return;
     const food = await res.json();
 
@@ -134,7 +133,7 @@ async function loadFoodLocation(foodId) {
 // --- Load All Food Locations ---
 async function loadAllFoodLocations() {
   try {
-    const res = await fetch(`${API_BASE}/foods/all`);
+    const res = await fetch(`${API_BASE_URL}/foods/all`);
     if (!res.ok) return;
     const foods = await res.json();
 

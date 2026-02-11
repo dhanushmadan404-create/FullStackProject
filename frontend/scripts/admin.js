@@ -23,7 +23,16 @@ async function loadVendors() {
   tableBody.innerHTML = "<tr><td colspan='7' style='text-align:center;'>Loading...</td></tr>";
 
   try {
-    const vendors = await fetchAPI("/vendors");
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_BASE_URL}/vendors`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) throw new Error("Failed to load vendors");
+
+    const vendors = await response.json();
     tableBody.innerHTML = "";
 
     if (vendors.length === 0) {
@@ -57,9 +66,17 @@ async function deleteVendor(vendorId, btn) {
   try {
     // Note: The backend SHOULD handle cascading deletion. 
     // If not, we might need a specific endpoint, but let's try the direct vendor delete first.
-    await fetchAPI(`/vendors/${vendorId}`, {
-      method: "DELETE"
+    const token = localStorage.getItem("token");
+    // Note: The backend SHOULD handle cascading deletion. 
+    // If not, we might need a specific endpoint, but let's try the direct vendor delete first.
+    const response = await fetch(`${API_BASE_URL}/vendors/${vendorId}`, {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
     });
+
+    if (!response.ok) throw new Error("Failed to delete vendor");
 
     // Remove row from table
     btn.closest("tr").remove();

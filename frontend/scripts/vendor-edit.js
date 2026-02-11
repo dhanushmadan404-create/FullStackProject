@@ -66,10 +66,23 @@ form.addEventListener("submit", async (event) => {
   try {
     // Send PUT request to update vendor
     // fetchAPI detects FormData and sets headers automatically!
-    const responseResponseData = await fetchAPI("/vendors", {
+    // Send PUT request to update vendor
+    // fetchAPI detects FormData and sets headers automatically!
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_BASE_URL}/vendors`, {
       method: "PUT",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      },
       body: formData,
     });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || "Update failed");
+    }
+
+    const responseResponseData = await response.json();
 
     alert("Vendor details updated successfully! ✅");
 

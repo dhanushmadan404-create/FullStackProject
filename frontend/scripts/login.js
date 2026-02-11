@@ -35,10 +35,22 @@ async function handleLogin(event) {
   try {
     // Call API
     // Note: fetchAPI automatically sets Content-Type to JSON if body is object
-    const data = await fetchAPI("/auth/login", {
+    // Call API
+    // Manual fetch with JSON headers
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: "POST",
-      body: { email: email, password: password }
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email: email, password: password })
     });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || "Login failed");
+    }
+
+    const data = await response.json();
 
     // Store User Data
     localStorage.setItem("token", data.access_token);
@@ -83,10 +95,17 @@ async function handleRegister(event) {
     formData.append("image", imageFile);
 
     // Call API
-    await fetchAPI("/users", {
+    // Call API
+    // FormData does NOT need Content-Type header (browser sets it)
+    const response = await fetch(`${API_BASE_URL}/users`, {
       method: "POST",
       body: formData
     });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || "Registration failed");
+    }
 
     alert("Registration successful! ✅ Please login.");
     toggleForm("login"); // Switch to login view
@@ -112,7 +131,15 @@ async function redirectUser(role, userId) {
   } else if (role === "vendor") {
     // Check if vendor profile exists
     try {
-      const vendorData = await fetchAPI(`/vendors/user/${userId}`);
+      const response = await fetch(`${API_BASE_URL}/vendors/user/${userId}`, {
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        }
+      });
+
+      if (!response.ok) throw new Error("Vendor not found");
+
+      const vendorData = await response.json();
 
       // If we get data, save it regarding vendor details
       if (vendorData) {
