@@ -75,6 +75,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         />
                     </div>
                     <div class="card-buttons">
+                       
                         <button class="find-btn" onclick="foodloc(${food.food_id})">
                             FIND
                         </button>
@@ -89,6 +90,43 @@ document.addEventListener("DOMContentLoaded", async () => {
     cardContainer.innerHTML = `<p style='text-align:center;'>Failed to load records: ${err.message} ❌</p>`;
   }
 });
+// review
+let Review=document.getElementById("review")
+let ReviewOpen=document.getElementById("review-open")
+let state=false
+
+ReviewOpen.addEventListener("click",()=>{
+
+   if(Review.style.visibility=="hidden"){
+    Review.style.visibility="visible"
+   }else{
+     Review.style.visibility="hidden"
+   }
+
+   Review.innerHTML=`
+   
+             <h1 class="foodName">Food Name</h1>
+        <span onclick='()=>{
+                Review.style.visibility="hidden"
+              }'>X</span>
+             <b> Review </b>
+   
+   `
+   // fetch Review
+   let review_div=document.createElement("div")
+   review_div.innerHTML=`
+   <b>User Name</b>
+               <p>
+                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque
+                 facilis totam eos? Enim molestiae quaerat temporibus possimus sed
+                 ea voluptate at a itaque pariatur quasi, laborum reprehenderit.
+                 Eligendi culpa itaque aliquam corrupti error architecto, quibusdam
+                 voluptatibus similique pariatur praesentium modi?
+               </p>
+   `
+   Review.append(review_div)
+})
+
 
 window.foodloc = function (food_id) {
   if (!food_id) return alert("Food ID missing");

@@ -1,11 +1,8 @@
-  /* =========================
-    Category Page Styles
-    Standalone (Clean & Modern)
-    ========================= */
 
   /* Base Reset */
   * {
     box-sizing: border-box;
+    text-decoration: none;
   }
 
   body {
@@ -155,7 +152,42 @@ header .logo:hover {
   color: #111827;
   padding: 0;
 }
+/* Review Section */
+#review{
+  width: 400px;
+  height: 600px;
+  position: absolute;
+  background-color: #111827;
+  border-radius: 5%;
+  top: 25%;
+  right: 2%;
+  color: white;
+  overflow:scroll;
+  visibility: hidden;
+  
+}
+#review span{
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  padding: 5px;
+  border:2px solid #e65100;
+  border-radius: 70%;
+  cursor: pointer;
+}
 
+.foodName{
+   margin-left: 50%;
+}
+
+#review div{
+  border: 2px solid white;
+  height: fit-content;
+  padding: 10px;
+}
+#review div b{
+  border-bottom: 2px solid white;
+}
   /* ================= RECOMMENDED ================= */
 
   .for-you {

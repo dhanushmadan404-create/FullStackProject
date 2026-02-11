@@ -1,3 +1,4 @@
+
 // --- Toggling Forms (Login vs Register) ---
 function toggleForm(formType) {
   const loginForm = document.getElementById("loginForm");
@@ -33,10 +34,7 @@ async function handleLogin(event) {
   if (!password) return alert("Please enter your password");
 
   try {
-    // Call API
-    // Note: fetchAPI automatically sets Content-Type to JSON if body is object
-    // Call API
-    // Manual fetch with JSON headers
+  
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: "POST",
       headers: {
