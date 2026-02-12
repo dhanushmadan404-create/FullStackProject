@@ -1,3 +1,11 @@
+
+if (!window.API_BASE_URL) {
+  console.error("API_BASE_URL is not defined. Make sure common.js is loaded first.");
+}
+
+const API_BASE_URL = window.API_BASE_URL;
+
+
 // -----------------------------
 // Toggle Login / Register Forms
 // -----------------------------
@@ -106,30 +114,32 @@ async function handleRegister(event) {
     return;
   }
 
-  if (!imageFile) {
-    console.error("Register Error: Profile image required");
-    return;
-  }
-
   try {
     const formData = new FormData();
     formData.append("name", name);
     formData.append("email", email);
     formData.append("password", password);
     formData.append("role", role);
-    formData.append("image", imageFile);
+
+    if (imageFile) {
+      formData.append("image", imageFile);
+    }
 
     const response = await fetch(`${API_BASE_URL}/users`, {
       method: "POST",
       body: formData
     });
 
+    // 🔥 SAFE ERROR HANDLING
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.detail || "Registration failed");
+      const text = await response.text();
+      console.error("Server Response:", text);
+      throw new Error(`Registration failed (Status ${response.status})`);
     }
 
-    console.log("Registration Successful ✅");
+    const data = await response.json();
+
+    console.log("Registration Successful ✅", data);
 
     toggleForm("login");
 
