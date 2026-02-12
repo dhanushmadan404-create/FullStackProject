@@ -3,8 +3,6 @@ if (!window.API_BASE_URL) {
   console.error("API_BASE_URL is not defined. Make sure common.js is loaded first.");
 }
 
-const API_BASE_URL = window.API_BASE_URL;
-
 
 // -----------------------------
 // Toggle Login / Register Forms
@@ -13,15 +11,21 @@ function toggleForm(formType) {
   const loginForm = document.getElementById("loginForm");
   const registerForm = document.getElementById("registerForm");
 
+  if (!loginForm || !registerForm) {
+    console.error("Forms not found in DOM");
+    return;
+  }
+
   if (formType === "login") {
     loginForm.classList.add("visible");
     registerForm.classList.remove("visible");
-  } else {
+  } else if (formType === "register") {
     registerForm.classList.add("visible");
     loginForm.classList.remove("visible");
   }
-}
 
+  console.log("Toggled to:", formType);
+}
 
 // -----------------------------
 // Main Execution

@@ -32,11 +32,12 @@
 
       <button type="button" id="loginBtn">Login</button>
 
-      <p class="switch">
-        Don’t have an account?
-        <button type="button" class="link-btn" onclick="toggleForm('registerForm')">Register</button>
-
-      </p>
+ <p class="switch">
+  Don’t have an account?
+  <button type="button" class="link-btn" onclick="toggleForm('register')">
+    Register
+  </button>
+</p>
     </form>
 
     <!-- REGISTER FORM -->
@@ -68,19 +69,18 @@
       <label class="error" for="img"></label>
 
       <button type="button" id="registerBtn">Register</button>
-
-      <p class="switch">
-        Already have an account?
-        <button type="button" class="link-btn" onclick="toggleForm('loginForm')">Login</button>
-
-      </p>
+<p class="switch">
+  Already have an account?
+  <button type="button" class="link-btn" onclick="toggleForm('login')">
+    Login
+  </button>
+</p>
     </form>
 
   </main>
 
-
-  <script src="../scripts/common.js"></script>
-  <script src="../scripts/login.js"></script>
+<script src="../scripts/common.js"></script>
+<script src="../scripts/login.js"></script>
 </body>
 
 </html>
