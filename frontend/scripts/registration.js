@@ -1,15 +1,23 @@
-// --- Global Variables ---
+// ---------------- GLOBAL VARIABLES ----------------
 let menuItems = [];
 const token = localStorage.getItem("token");
 let marker = null;
 let selectedLat = null;
 let selectedLng = null;
 
-// --- Map Initialization ---
-const map = L.map("map").setView([13.0827, 80.2707], 11); // Default to Chennai
-L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  maxZoom: 19,
-}).addTo(map);
+
+// ---------------- MAP INITIALIZATION ----------------
+const mapElement = document.getElementById("map");
+
+let map = null;
+
+if (mapElement) {
+  map = L.map("map").setView([13.0827, 80.2707], 11);
+
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+  }).addTo(map);
+}
 
 // Custom Icon
 const foodIcon = L.icon({
@@ -19,156 +27,210 @@ const foodIcon = L.icon({
 });
 
 // Map Click Event
-map.on("click", (e) => {
-  // Remove existing marker if any
-  if (marker) {
-    map.removeLayer(marker);
-  }
+if (map) {
+  map.on("click", (e) => {
 
-  // Add new marker
-  marker = L.marker([e.latlng.lat, e.latlng.lng], { icon: foodIcon }).addTo(map);
+    if (marker) {
+      map.removeLayer(marker);
+    }
 
-  // Save coordinates
-  selectedLat = e.latlng.lat;
-  selectedLng = e.latlng.lng;
-});
+    marker = L.marker(
+      [e.latlng.lat, e.latlng.lng],
+      { icon: foodIcon }
+    ).addTo(map);
 
-// --- Map UI Controls ---
+    selectedLat = e.latlng.lat;
+    selectedLng = e.latlng.lng;
+
+    console.log("Selected Location:", selectedLat, selectedLng);
+  });
+}
+
+
+// ---------------- MAP UI CONTROLS ----------------
 const mapContainer = document.getElementById("mapContainer");
 const locationIconBtn = document.querySelector(".location-icon");
 
-// Show Map
-if (locationIconBtn) {
+if (locationIconBtn && mapContainer && map) {
   locationIconBtn.addEventListener("click", () => {
     mapContainer.style.display = "block";
-    // Fix map rendering issue when hidden
+
     setTimeout(() => {
       map.invalidateSize();
     }, 100);
   });
 }
 
-// Hide Map (Back/Save buttons)
-document.getElementById("back").addEventListener("click", () => {
-  mapContainer.style.display = "none";
-});
+const backBtn = document.getElementById("back");
+if (backBtn && mapContainer) {
+  backBtn.addEventListener("click", () => {
+    mapContainer.style.display = "none";
+  });
+}
 
-document.getElementById("save").addEventListener("click", () => {
-  if (!selectedLat || !selectedLng) {
-    alert("Please select a location on the map first!");
-    return;
-  }
-  mapContainer.style.display = "none";
+const saveBtn = document.getElementById("save");
+if (saveBtn && mapContainer) {
+  saveBtn.addEventListener("click", () => {
 
-  // Show selected status (optional UI feedback)
-  const locText = document.querySelector(".location-icon");
-  if (locText) locText.innerHTML = "Location Selected ✅";
-});
-
-// Current Location Button
-document.getElementById("location").addEventListener("click", () => {
-  if (!navigator.geolocation) {
-    return alert("Geolocation is not supported by your browser");
-  }
-
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-
-      // Center map
-      map.setView([lat, lng], 15);
-
-      // Add marker
-      if (marker) map.removeLayer(marker);
-      marker = L.marker([lat, lng], { icon: foodIcon }).addTo(map);
-
-      selectedLat = lat;
-      selectedLng = lng;
-    },
-    () => {
-      alert("Unable to retrieve your location");
+    if (!selectedLat || !selectedLng) {
+      console.log("Please select a location on the map first");
+      return;
     }
-  );
-});
+
+    mapContainer.style.display = "none";
+
+    if (locationIconBtn) {
+      locationIconBtn.innerHTML = "Location Selected ✅";
+    }
+  });
+}
 
 
-// --- Menu Management ---
+// ---------------- CURRENT LOCATION BUTTON ----------------
+const currentLocBtn = document.getElementById("location");
 
+if (currentLocBtn && map) {
+  currentLocBtn.addEventListener("click", () => {
+
+    if (!navigator.geolocation) {
+      console.log("Geolocation not supported");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+
+        map.setView([lat, lng], 15);
+
+        if (marker) map.removeLayer(marker);
+
+        marker = L.marker([lat, lng], { icon: foodIcon }).addTo(map);
+
+        selectedLat = lat;
+        selectedLng = lng;
+
+        console.log("Current Location Selected:", lat, lng);
+      },
+      (error) => {
+        console.log("Unable to retrieve location:", error.message);
+      }
+    );
+  });
+}
+
+
+// ---------------- MENU MANAGEMENT ----------------
 function addMenuItem() {
+
   const nameInput = document.getElementById("menuName");
   const imageInput = document.getElementById("menuImage");
+
+  if (!nameInput || !imageInput) return;
+
   const name = nameInput.value.trim();
   const imageFile = imageInput.files[0];
 
-  if (!name) return alert("Please enter a food name");
-  if (!imageFile) return alert("Please select a food image");
+  if (!name) {
+    console.log("Please enter a food name");
+    return;
+  }
 
-  // Add to list
+  if (!imageFile) {
+    console.log("Please select a food image");
+    return;
+  }
+
   menuItems.push({
     name: name,
     image: imageFile,
   });
 
-  // Update UI
   renderMenu();
 
-  // Clear inputs
   nameInput.value = "";
   imageInput.value = "";
 }
 
-function renderMenu() {
-  const list = document.getElementById("list_container");
-  list.innerHTML = ""; // Clear current list
 
-  // Loop through items and display them
+function renderMenu() {
+
+  const list = document.getElementById("list_container");
+  if (!list) return;
+
+  list.innerHTML = "";
+
   menuItems.forEach((item, index) => {
+
     const li = document.createElement("li");
+
     li.innerHTML = `
-            ${item.name} 
-            <button type="button" onclick="removeMenuItem(${index})" style="margin-left:10px; cursor:pointer;">❌</button>
-        `;
+      ${item.name}
+      <button type="button"
+              onclick="removeMenuItem(${index})"
+              style="margin-left:10px; cursor:pointer;">
+        ❌
+      </button>
+    `;
+
     list.appendChild(li);
   });
 }
 
+
 function removeMenuItem(index) {
-  menuItems.splice(index, 1); // Remove item at index
-  renderMenu(); // Re-render list
+  menuItems.splice(index, 1);
+  renderMenu();
 }
 
 
-// --- Form Submission ---
-
+// ---------------- FORM SUBMISSION ----------------
 const form = document.getElementById("vendorRegistration");
+
 if (form) {
+
   form.addEventListener("submit", async (e) => {
+
     e.preventDefault();
 
-    // 1. Validation
-    if (!token) return alert("You must be logged in to register as a vendor.");
-    if (!selectedLat || !selectedLng) return alert("Please select your shop location on the map.");
-    if (menuItems.length === 0) return alert("Please add at least one item to your menu.");
+    if (!token) {
+      console.log("User must be logged in");
+      return;
+    }
 
-    const phone = document.getElementById("number").value;
-    const opening = document.getElementById("openingTime").value;
-    const closing = document.getElementById("closingTime").value;
-    const foodType = document.getElementById("foodType").value;
-    const shopImage = document.getElementById("image").files[0];
+    if (!selectedLat || !selectedLng) {
+      console.log("Please select shop location");
+      return;
+    }
 
-    if (!foodType) return alert("Please select a food type.");
+    if (menuItems.length === 0) {
+      console.log("Add at least one menu item");
+      return;
+    }
+
+    const phone = document.getElementById("number")?.value;
+    const opening = document.getElementById("openingTime")?.value;
+    const closing = document.getElementById("closingTime")?.value;
+    const foodType = document.getElementById("foodType")?.value;
+    const shopImage = document.getElementById("image")?.files[0];
+
+    if (!foodType) {
+      console.log("Please select food type");
+      return;
+    }
 
     try {
-      // 2. Register Vendor
+
+      // ---------- REGISTER VENDOR ----------
       const vendorFormData = new FormData();
+
       vendorFormData.append("phone_number", phone);
       vendorFormData.append("opening_time", opening);
       vendorFormData.append("closing_time", closing);
       vendorFormData.append("image", shopImage);
 
-      // fetchAPI handles FormData automatically
-      // Manual fetch for vendor registration
       const response = await fetch(`${API_BASE_URL}/vendors`, {
         method: "POST",
         headers: {
@@ -183,46 +245,41 @@ if (form) {
       }
 
       const vendorResponse = await response.json();
-
       const vendorId = vendorResponse.vendor_id;
-      console.log("Vendor created, ID:", vendorId);
 
-      // 3. Upload Menu Items (One by one)
-      for (let i = 0; i < menuItems.length; i++) {
-        const item = menuItems[i];
+      console.log("Vendor created:", vendorId);
+
+
+      // ---------- UPLOAD FOOD ITEMS ----------
+      for (let item of menuItems) {
+
         const foodFormData = new FormData();
 
         foodFormData.append("food_name", item.name);
-        foodFormData.append("category", foodType.toLowerCase()); // e.g., "lunch"
+        foodFormData.append("category", foodType.toLowerCase());
         foodFormData.append("latitude", selectedLat);
         foodFormData.append("longitude", selectedLng);
         foodFormData.append("vendor_id", vendorId);
         foodFormData.append("image", item.image);
 
-        try {
-          const foodResponse = await fetch(`${API_BASE_URL}/foods`, {
-            method: "POST",
-            headers: {
-              "Authorization": `Bearer ${token}`
-            },
-            body: foodFormData,
-          });
+        const foodResponse = await fetch(`${API_BASE_URL}/foods`, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          },
+          body: foodFormData,
+        });
 
-          if (!foodResponse.ok) {
-            throw new Error("Failed to upload food item");
-          }
-        } catch (foodError) {
-          console.error("Error uploading food:", item.name, foodError);
-          alert(`Failed to upload ${item.name}. You can add it later.`);
+        if (!foodResponse.ok) {
+          console.log("Failed to upload:", item.name);
         }
       }
 
-      alert("Registration Successful! Redirecting to profile...");
+      console.log("Registration Successful");
       window.location.href = "./vendor-profile.html";
 
     } catch (error) {
-      console.error("Registration Error:", error);
-      alert(`Registration failed: ${error.message}`);
+      console.error("Registration Error:", error.message);
     }
   });
 }

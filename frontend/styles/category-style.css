@@ -157,22 +157,28 @@ header .logo:hover {
   width: 400px;
   height: 600px;
   position: absolute;
-  background-color: #111827;
+  background-color: #ffffff;
   border-radius: 5%;
   top: 25%;
   right: 2%;
-  color: white;
-  overflow:scroll;
+  color: rgb(0, 0, 0);
+  overflow-y:auto;
   visibility: hidden;
-  
+  border: gold groove 8px;  
+  display: flex;
+  flex-direction: column;
 }
 #review span{
   position: absolute;
   top: 0px;
   right: 0px;
-  padding: 5px;
-  border:2px solid #e65100;
+  padding: 2px;   
+  width: 30px;
+  height: 30px;
+  
+  border:2px solid #080808;
   border-radius: 70%;
+  
   cursor: pointer;
 }
 
@@ -181,12 +187,35 @@ header .logo:hover {
 }
 
 #review div{
-  border: 2px solid white;
+  border: 2px solid gold;
+  box-shadow: 2px 2px 10px gold inset;
   height: fit-content;
   padding: 10px;
 }
 #review div b{
   border-bottom: 2px solid white;
+}
+.commentEntry{
+  padding: 2px;
+  width: 384px;
+  height: 40px;
+  position: absolute;
+  bottom: 0%;
+}
+.commentEntry textarea{
+  position: relative;
+  top: 20px;
+  width: 305px;
+  height: 100px;
+  border: #ffffff solid 5px;
+}
+.commentEntry textarea:focus{
+  border: #e8e8e8 solid 5px;
+}
+.commentEntry button{
+  width: 50px;
+  height: 50px;
+  
 }
   /* ================= RECOMMENDED ================= */
 

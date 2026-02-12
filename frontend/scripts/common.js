@@ -1,37 +1,55 @@
-const API_BASE_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+// -----------------------------
+// API BASE URL (Local + Vercel)
+// -----------------------------
+const API_BASE_URL =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1"
     ? "http://127.0.0.1:8000/api"
     : "/api";
-    document.addEventListener("DOMContentLoaded", () => {
-        checkLoginStatus();
+
+// Make it globally accessible
+window.API_BASE_URL = API_BASE_URL;
+
+
+// -----------------------------
+// Run on page load
+// -----------------------------
+document.addEventListener("DOMContentLoaded", () => {
+  checkLoginStatus();
 });
 
+
+// -----------------------------
+// Check Login Status
+// -----------------------------
 function checkLoginStatus() {
-    const token = localStorage.getItem("token");
-    const loginBtn = document.getElementById("login");
-    const profileBtn = document.getElementById("profile");
+  const token = localStorage.getItem("token");
 
-    // If there is no login button on this page, we don't need to do anything
-    if (!loginBtn) return;
-    
-    if (token) {
-        // User is logged in
-        loginBtn.style.display = "none";
+  const loginBtn = document.getElementById("login");
+  const profileBtn = document.getElementById("profile");
 
-        // Show profile button if it exists
-        if (profileBtn) {
-            profileBtn.style.display = "inline-block";
-        }
-    } else {
-        // User is NOT logged in
-        loginBtn.style.display = "inline-block";
-        
-        // Hide profile button if it exists
-        if (profileBtn) {
-            profileBtn.style.display = "none";
-        }
-    }
+  // If login button doesn't exist on page, skip
+  if (!loginBtn && !profileBtn) return;
+
+  if (token) {
+    // Logged in
+    if (loginBtn) loginBtn.style.display = "none";
+    if (profileBtn) profileBtn.style.display = "inline-block";
+  } else {
+    // Not logged in
+    if (loginBtn) loginBtn.style.display = "inline-block";
+    if (profileBtn) profileBtn.style.display = "none";
+  }
 }
 
 
+// -----------------------------
+// Logout Function
+// -----------------------------
+function logout() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("role");
+  localStorage.removeItem("user_id");
 
-SE_URL
+  window.location.href = "/login.html";
+}

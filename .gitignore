@@ -1,7 +1,21 @@
-.env
-backend/.env
+# ---------------- Python ----------------
 venv/
 __pycache__/
-node_modules/
-.DS_Store
+*.pyc
+*.pyo
+*.pyd
 *.log
+
+# ---------------- Environment Files ----------------
+.env
+backend/.env
+
+# ---------------- Node ----------------
+node_modules/
+
+# ---------------- OS ----------------
+.DS_Store
+Thumbs.db
+
+# ---------------- Vercel ----------------
+.vercel

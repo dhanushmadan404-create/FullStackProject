@@ -1,0 +1,123 @@
+from datetime import datetime, timedelta
+from jose import jwt, JWTError
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM", "HS256")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(
+    os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 60)
+)
+def create_access_token(data: dict):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+def verify_token(token: str):
+    try:
+        return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    except JWTError:
+        return None
+
+# //////////////////////////////
+
+import sys
+import os
+import logging
+
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.exceptions import RequestValidationError
+
+# ---------------- PATH FIX ----------------
+current_dir = os.path.dirname(os.path.abspath(__file__))
+if current_dir not in sys.path:
+    sys.path.append(current_dir)
+
+# ---------------- IMPORT ROUTERS ----------------
+from router import auth, user, vendor, food
+from database import init_db
+
+# ---------------- LOGGING ----------------
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+from contextlib import asynccontextmanager
+
+# ---------------- LIFESPAN ----------------
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup logic
+    logger.info("Initializing database...")
+    init_db()
+    yield
+    # Shutdown logic (none needed yet)
+
+# ---------------- APP SETUP ----------------
+app = FastAPI(title="Annesana API", version="1.0.0", lifespan=lifespan)
+
+# ---------------- EXCEPTIONS ----------------
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    return JSONResponse(status_code=422, content={"detail": exc.errors()})
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    import traceback
+    logger.error(f"Unhandled error: {exc}", exc_info=True)
+    
+    content = {"detail": "Internal Server Error"}
+    if os.environ.get("VERCEL"):
+        content["message"] = str(exc)
+        content["traceback"] = traceback.format_exc()
+        
+    return JSONResponse(status_code=500, content=content)
+
+# ---------------- CORS ----------------
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# ---------------- STATIC FILES / UPLOADS ----------------
+if os.environ.get("VERCEL"):
+    UPLOAD_DIR = "/tmp/uploads"
+else:
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
+
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+# Mount static files for access via /uploads/<filename>
+app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
+
+# ---------------- ROUTERS ----------------
+API_PREFIX = "/api"
+app.include_router(auth.router, prefix=API_PREFIX)
+app.include_router(user.router, prefix=API_PREFIX)
+app.include_router(vendor.router, prefix=API_PREFIX)
+app.include_router(food.router, prefix=API_PREFIX)
+
+# ---------------- HEALTH CHECK ----------------
+@app.get("/api/health")
+def health_check():
+    return {"status": "ok", "service": "Annesana Backend"}
+
+# ---------------- ROOT ----------------
+@app.get("/")
+def root():
+    return {"message": "Welcome to Annesana API"}
+
+# Database initialization handled via lifespan

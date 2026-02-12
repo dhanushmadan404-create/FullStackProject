@@ -1,5 +1,6 @@
-
-// --- Toggling Forms (Login vs Register) ---
+// -----------------------------
+// Toggle Login / Register Forms
+// -----------------------------
 function toggleForm(formType) {
   const loginForm = document.getElementById("loginForm");
   const registerForm = document.getElementById("registerForm");
@@ -14,33 +15,42 @@ function toggleForm(formType) {
 }
 
 
-// --- Main Execution ---
+// -----------------------------
+// Main Execution
+// -----------------------------
 document.addEventListener("DOMContentLoaded", () => {
-  // Attach Event Listeners
-  document.getElementById("loginBtn").addEventListener("click", handleLogin);
-  document.getElementById("registerBtn").addEventListener("click", handleRegister);
+  const loginBtn = document.getElementById("loginBtn");
+  const registerBtn = document.getElementById("registerBtn");
+
+  if (loginBtn) loginBtn.addEventListener("click", handleLogin);
+  if (registerBtn) registerBtn.addEventListener("click", handleRegister);
 });
 
 
-// --- Login Logic ---
+// -----------------------------
+// Login Logic
+// -----------------------------
 async function handleLogin(event) {
-  event.preventDefault(); // Stop page reload
+  event.preventDefault();
 
   const email = document.getElementById("loginEmail").value.trim();
   const password = document.getElementById("loginPassword").value.trim();
 
-  // Simple Validation
-  if (!email) return alert("Please enter your email");
-  if (!password) return alert("Please enter your password");
+  if (!email) {
+    console.error("Login Error: Email is required");
+    return;
+  }
+
+  if (!password) {
+    console.error("Login Error: Password is required");
+    return;
+  }
 
   try {
-  
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ email: email, password: password })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
     });
 
     if (!response.ok) {
@@ -50,41 +60,58 @@ async function handleLogin(event) {
 
     const data = await response.json();
 
-    // Store User Data
+    console.log("Login Successful ✅", data);
+
     localStorage.setItem("token", data.access_token);
     localStorage.setItem("user_role", data.role);
     localStorage.setItem("user_id", data.user_id);
 
-    // Redirect based on role
-    redirectUser(data.role, data.user_id);
+    await redirectUser(data.role, data.user_id);
 
   } catch (error) {
-    console.error("Login Failed:", error);
-    alert(`Login failed: ${error.message}`);
+    console.error("Login Failed ❌:", error.message);
   }
 }
 
 
-// --- Register Logic ---
+// -----------------------------
+// Register Logic
+// -----------------------------
 async function handleRegister(event) {
   event.preventDefault();
 
-  // Get Form Values
   const name = document.getElementById("name").value.trim();
   const email = document.getElementById("regEmail").value.trim();
   const password = document.getElementById("regPassword").value.trim();
   const role = document.getElementById("role").value;
   const imageFile = document.getElementById("img").files[0];
 
-  // Simple Validation
-  if (name.length < 3) return alert("Name must be at least 3 characters");
-  if (!email.includes("@")) return alert("Please enter a valid email");
-  if (password.length < 6) return alert("Password must be at least 6 characters");
-  if (!role) return alert("Please select a role");
-  if (!imageFile) return alert("Please upload a profile image");
+  if (name.length < 3) {
+    console.error("Register Error: Name must be at least 3 characters");
+    return;
+  }
+
+  if (!email.includes("@")) {
+    console.error("Register Error: Invalid email");
+    return;
+  }
+
+  if (password.length < 6) {
+    console.error("Register Error: Password must be at least 6 characters");
+    return;
+  }
+
+  if (!role) {
+    console.error("Register Error: Role not selected");
+    return;
+  }
+
+  if (!imageFile) {
+    console.error("Register Error: Profile image required");
+    return;
+  }
 
   try {
-    // Create FormData for file upload
     const formData = new FormData();
     formData.append("name", name);
     formData.append("email", email);
@@ -92,9 +119,6 @@ async function handleRegister(event) {
     formData.append("role", role);
     formData.append("image", imageFile);
 
-    // Call API
-    // Call API
-    // FormData does NOT need Content-Type header (browser sets it)
     const response = await fetch(`${API_BASE_URL}/users`, {
       method: "POST",
       body: formData
@@ -105,54 +129,57 @@ async function handleRegister(event) {
       throw new Error(errorData.detail || "Registration failed");
     }
 
-    alert("Registration successful! ✅ Please login.");
-    toggleForm("login"); // Switch to login view
+    console.log("Registration Successful ✅");
+
+    toggleForm("login");
 
   } catch (error) {
-    console.error("Registration Failed:", error);
-    alert(`Registration failed: ${error.message}`);
+    console.error("Registration Failed ❌:", error.message);
   }
 }
 
 
-// --- Reset Password Logic ---
-// (Optional: Add if needed later)
-function resetPassword() {
-  alert("Reset Password feature coming soon!");
-}
-
-
-// --- Helper Functions ---
+// -----------------------------
+// Redirect Based on Role
+// -----------------------------
 async function redirectUser(role, userId) {
+
+  console.log("Redirecting user with role:", role);
+
   if (role === "admin") {
     window.location.href = "admin.html";
-  } else if (role === "vendor") {
-    // Check if vendor profile exists
+    return;
+  }
+
+  if (role === "vendor") {
     try {
-      const response = await fetch(`${API_BASE_URL}/vendors/user/${userId}`, {
-        headers: {
-          "Authorization": `Bearer ${localStorage.getItem("token")}`
+      const response = await fetch(
+        `${API_BASE_URL}/vendors/user/${userId}`,
+        {
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("token")}`
+          }
         }
-      });
+      );
 
-      if (!response.ok) throw new Error("Vendor not found");
-
-      const vendorData = await response.json();
-
-      // If we get data, save it regarding vendor details
-      if (vendorData) {
+      if (response.ok) {
+        const vendorData = await response.json();
         localStorage.setItem("vendor", JSON.stringify(vendorData));
+        console.log("Vendor profile found. Redirecting...");
         window.location.href = "./vendor-profile.html";
       } else {
-        // Determine if this ever happens with current backend
+        console.log("Vendor profile not found. Redirecting to registration...");
         window.location.href = "./registration.html";
       }
+
     } catch (err) {
-      // If 404 or error, assume no vendor profile yet
+      console.error("Vendor fetch error:", err.message);
       window.location.href = "./registration.html";
     }
-  } else {
-    // Default User
-    window.location.href = "../../index.html";
+
+    return;
   }
+
+  console.log("Redirecting normal user...");
+  window.location.href = "../../index.html";
 }
