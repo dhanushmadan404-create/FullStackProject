@@ -6,38 +6,26 @@
       "use": "@vercel/python"
     }
   ],
-  "rewrites": [
+  "routes": [
     {
-      "source": "/api/(.*)",
-      "destination": "api/index.py"
+      "src": "/api/(.*)",
+      "dest": "api/index.py"
     },
     {
-      "source": "/uploads/(.*)",
-      "destination": "api/index.py"
+      "src": "/uploads/(.*)",
+      "dest": "api/index.py"
     },
     {
-      "source": "/docs",
-      "destination": "api/index.py"
+      "src": "/docs",
+      "dest": "api/index.py"
     },
     {
-      "source": "/openapi.json",
-      "destination": "api/index.py"
+      "src": "/openapi.json",
+      "dest": "api/index.py"
     },
     {
-      "source": "/login",
-      "destination": "/frontend/pages/login.html"
-    },
-    {
-      "source": "/register",
-      "destination": "/frontend/pages/registration.html"
-    },
-    {
-      "source": "/profile",
-      "destination": "/frontend/pages/profile.html"
-    },
-    {
-      "source": "/map",
-      "destination": "/frontend/pages/map.html"
+      "src": "/(.*)",
+      "dest": "/$1"
     }
   ]
 }
