@@ -143,7 +143,8 @@ function handleUnauthorized() {
 // ---------------- DOM CONTENT LOADED ----------------
 document.addEventListener("DOMContentLoaded", () => {
   const token = localStorage.getItem("token");
-  const role = localStorage.getItem("user_role");
+  const role = localStorage.getItem("role");
+
   const userDetailsStr = localStorage.getItem("user_details");
   const userDetails = userDetailsStr ? JSON.parse(userDetailsStr) : {};
 

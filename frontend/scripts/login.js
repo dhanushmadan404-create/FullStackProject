@@ -76,8 +76,9 @@ async function handleLogin(event) {
     console.log("Login Successful ✅", data);
 
     localStorage.setItem("token", data.access_token);
-    localStorage.setItem("user_role", data.role);
+    localStorage.setItem("role", data.role);
     localStorage.setItem("user_id", data.user_id);
+
 
     await redirectUser(data.role, data.user_id);
 
