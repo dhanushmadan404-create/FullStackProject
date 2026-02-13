@@ -52,6 +52,7 @@ app.include_router(user.router, prefix="/api")
 app.include_router(vendor.router, prefix="/api")
 app.include_router(food.router, prefix="/api")
 
+
 # --- Root ---
 @app.get("/")
 def root():

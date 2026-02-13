@@ -31,6 +31,7 @@ function toggleForm(formType) {
 // Main Execution
 // -----------------------------
 document.addEventListener("DOMContentLoaded", () => {
+  console.log(API_BASE_URL)
   const loginBtn = document.getElementById("loginBtn");
   const registerBtn = document.getElementById("registerBtn");
 

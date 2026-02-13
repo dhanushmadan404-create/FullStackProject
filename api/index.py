@@ -1,13 +1,14 @@
+# Vercel entry point for FastAPI application
+
+import sys
 import os
 
-# Base project directory
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# Get project root directory
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Detect Vercel environment
-IS_VERCEL = os.getenv("VERCEL") == "1"
+# Add project root to Python path
+if BASE_DIR not in sys.path:
+    sys.path.append(BASE_DIR)
 
-# Upload directory
-UPLOAD_DIR = "/tmp/uploads" if IS_VERCEL else os.path.join(BASE_DIR, "uploads")
-
-# Create folder
-os.makedirs(UPLOAD_DIR, exist_ok=True)
+# Import FastAPI app from backend/main.py
+from backend.main import app
