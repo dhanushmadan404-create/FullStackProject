@@ -58,3 +58,7 @@ app.include_router(food.router, prefix="/api")
 def root():
     return {"message": "Welcome to Annesana API"}
 
+@app.get("/health")
+def health_check():
+    return {"status": "ok", "environment": "vercel" if os.environ.get("VERCEL") else "local"}
+

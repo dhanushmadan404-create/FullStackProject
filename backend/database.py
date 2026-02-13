@@ -66,5 +66,8 @@ def init_db():
     except Exception as e:
         print(f"Migration error (might already be fixed): {e}")
 
-    Base.metadata.create_all(bind=engine)
-    print("Database initialized.")
+    try:
+        Base.metadata.create_all(bind=engine)
+        print("Database initialized.")
+    except Exception as e:
+        print(f"Database initialization error (create_all): {e}")

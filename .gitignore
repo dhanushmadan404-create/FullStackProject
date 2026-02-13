@@ -5,6 +5,8 @@ __pycache__/
 *.pyo
 *.pyd
 *.log
+.pytest_cache/
+.coverage
 
 # ---------------- Environment Files ----------------
 .env
@@ -12,6 +14,7 @@ backend/.env
 
 # ---------------- Node ----------------
 node_modules/
+package-lock.json
 
 # ---------------- OS ----------------
 .DS_Store
@@ -19,3 +22,12 @@ Thumbs.db
 
 # ---------------- Vercel ----------------
 .vercel
+
+# ---------------- IDE ----------------
+.vscode/
+.idea/
+
+# ---------------- App Data ----------------
+# User uploads should generally be ignored in source control unless they are sample data
+uploads/
+backend/uploads/
