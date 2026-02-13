@@ -42,7 +42,12 @@ app.add_middleware(
 )
 
 # --- File Uploads ---
-UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
+# --- File Uploads ---
+if os.environ.get("VERCEL"):
+    UPLOAD_DIR = "/tmp/uploads"
+else:
+    UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
+
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 

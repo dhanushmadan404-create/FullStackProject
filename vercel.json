@@ -1,14 +1,43 @@
 {
+  "version": 2,
   "builds": [
     {
       "src": "api/index.py",
       "use": "@vercel/python"
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/(.*)",
-      "dest": "api/index.py"
+      "source": "/api/(.*)",
+      "destination": "api/index.py"
+    },
+    {
+      "source": "/uploads/(.*)",
+      "destination": "api/index.py"
+    },
+    {
+      "source": "/docs",
+      "destination": "api/index.py"
+    },
+    {
+      "source": "/openapi.json",
+      "destination": "api/index.py"
+    },
+    {
+      "source": "/login",
+      "destination": "/frontend/pages/login.html"
+    },
+    {
+      "source": "/register",
+      "destination": "/frontend/pages/registration.html"
+    },
+    {
+      "source": "/profile",
+      "destination": "/frontend/pages/profile.html"
+    },
+    {
+      "source": "/map",
+      "destination": "/frontend/pages/map.html"
     }
   ]
 }

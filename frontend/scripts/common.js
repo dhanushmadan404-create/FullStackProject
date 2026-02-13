@@ -3,7 +3,7 @@
 // -----------------------------
 const API_BASE_URL =
   window.location.hostname === "localhost" ||
-  window.location.hostname === "127.0.0.1"
+    window.location.hostname === "127.0.0.1"
     ? "http://127.0.0.1:8000/api"
     : "/api";
 
@@ -51,5 +51,6 @@ function logout() {
   localStorage.removeItem("role");
   localStorage.removeItem("user_id");
 
-  window.location.href = "/login.html";
+  window.location.href = "/login";
 }
+
