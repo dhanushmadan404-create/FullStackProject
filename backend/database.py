@@ -46,8 +46,10 @@ def init_db():
         print("Skipping init_db: engine not configured.")
         return
         
-    from models import user, food, vendor
+    # 🔥 CRITICAL: Import all models here so SQLAlchemy registers them
+    import models 
     from sqlalchemy import text
+
     
     try:
         with engine.connect() as conn:
