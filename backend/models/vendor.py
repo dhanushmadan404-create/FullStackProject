@@ -30,4 +30,5 @@ class Vendor(Base):
         back_populates="vendor",
         cascade="all, delete-orphan"
     )
-reviews = relationship("Review", back_populates="vendor", cascade="all, delete")
+    reviews = relationship("Review", back_populates="vendor", cascade="all, delete")
+

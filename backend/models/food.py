@@ -22,4 +22,5 @@ class Food(Base):
         "Vendor",
         back_populates="foods"
     )
-reviews = relationship("Review", back_populates="food", cascade="all, delete")
+    reviews = relationship("Review", back_populates="food", cascade="all, delete")
+
