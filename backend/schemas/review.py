@@ -18,10 +18,11 @@ class ReviewUpdate(BaseModel):
 
 class ReviewResponse(ReviewBase):
     review_id: int
-    user_id: int
-    vendor_id: int
+    user_id: Optional[int] = None
+    vendor_id: Optional[int] = None
     food_id: int
+    username: Optional[str] = None
     created_at: datetime
 
     class Config:
-        from_attributes = True   # (if using Pydantic v2)
+        from_attributes = True

@@ -98,11 +98,11 @@ def get_reviews_by_food(food_id: int, db: Session = Depends(get_db)):
 
     return [
         {
-            "id": review.review_id,
+            "review_id": review.review_id,
             "comment": review.comment,
             "food_id": review.food_id,
             "created_at": review.created_at,
-            "username": review.user.name
+            "username": review.user.name if review.user else "User"
         }
         for review in reviews
     ]
