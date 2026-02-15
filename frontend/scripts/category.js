@@ -13,7 +13,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   // ---------- Category Title ----------
   Cate.innerHTML = `
     <h1>${cate.toUpperCase()}</h1>
-    <div class="section-title">TOP CATEGORIES</div>
   `;
 
   // ---------- Load Foods ----------

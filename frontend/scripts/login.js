@@ -178,7 +178,7 @@ async function redirectUser(role, userId) {
         }
       );
 
-      if (response.ok) {
+      if (response.exists) {
         const vendorData = await response.json();
         localStorage.setItem("vendor", JSON.stringify(vendorData));
         console.log("Vendor profile found. Redirecting...");
