@@ -17,7 +17,7 @@ if BASE_DIR not in sys.path:
     sys.path.append(BASE_DIR)
 
 # --- Imports ---
-from router import auth, user, vendor, food
+from router import auth, user, vendor, food, review
 from database import init_db
 
 # --- Logging ---
@@ -60,6 +60,7 @@ app.include_router(auth.router, prefix="/api")
 app.include_router(user.router, prefix="/api")
 app.include_router(vendor.router, prefix="/api")
 app.include_router(food.router, prefix="/api")
+app.include_router(review.router, prefix="/api")
 
 
 # --- Global Exception Handler (for debugging backend errors) ---

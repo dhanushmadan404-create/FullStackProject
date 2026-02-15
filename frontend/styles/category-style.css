@@ -168,8 +168,6 @@ header .logo:hover {
 }
 
 #review div {
-  border: 2px solid gold;
-  box-shadow: 2px 2px 10px gold inset;
   height: fit-content;
   padding: 10px;
 }
