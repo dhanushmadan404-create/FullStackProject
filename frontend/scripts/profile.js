@@ -98,6 +98,7 @@ function setupEditForm() {
                    width:80px;
                    height:80px;
                    object-fit:cover;"
+                    onerror="this.onerror=null; this.src='../assets/default_user.png';"
           />
         </div>
 

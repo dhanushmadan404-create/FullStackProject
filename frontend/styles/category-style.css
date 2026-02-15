@@ -208,7 +208,14 @@ header .logo:hover {
   padding: 0 16px;
   margin-bottom: 56px;
 }
-
+#Cate h1{
+   font-size: 30px;
+  font-weight: 700;
+  margin: 28px 16px 14px;
+  padding-left: 12px;
+  border-left: 4px solid #ff6f00;
+  line-height: 1.2;
+}
 /* ================= CARD GRID ================= */
 
 .card-grid {
@@ -231,7 +238,6 @@ header .logo:hover {
 }
 
 .card:hover {
-  transform: translateY(-6px);
   box-shadow: 0 16px 30px rgba(0, 0, 0, 0.18);
 }
 
@@ -259,7 +265,15 @@ header .logo:hover {
   gap: 10px;
   margin-top: auto;
 }
+.card-buttons button{
+  background-color: #ff6f00 ;
+  color: #f9fafb;
+}
 
+.card-buttons button:hover{
+  background-color: #000000 ;
+  color: #f9fafb;
+}
 .details-btn {
   flex: 1;
   background: #ff6f00;
