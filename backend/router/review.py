@@ -19,18 +19,17 @@ def create_review(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    vendor = db.query(Vendor).filter(Vendor.vendor_id == data.vendor_id).first()
-    if not vendor:
-        raise HTTPException(status_code=404, detail="Vendor not found")
-
     food = db.query(Food).filter(Food.food_id == data.food_id).first()
     if not food:
         raise HTTPException(status_code=404, detail="Food not found")
 
+    # Use provided vendor_id or derive it from food
+    vendor_id = data.vendor_id if data.vendor_id is not None else food.vendor_id
+
     review = Review(
         comment=data.comment,
         user_id=current_user.user_id,
-        vendor_id=data.vendor_id,
+        vendor_id=vendor_id,
         food_id=data.food_id
     )
 

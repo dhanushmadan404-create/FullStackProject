@@ -1,5 +1,6 @@
 from pydantic import BaseModel, ConfigDict
 from datetime import datetime
+from typing import Optional
 
 
 class ReviewBase(BaseModel):
@@ -7,7 +8,7 @@ class ReviewBase(BaseModel):
 
 
 class ReviewCreate(ReviewBase):
-    vendor_id: int
+    vendor_id: Optional[int] = None
     food_id: int
 
 
