@@ -1,3 +1,12 @@
+// ---------------- API BASE URL ----------------
+if (typeof API_BASE_URL === "undefined") {
+  window.API_BASE_URL =
+    window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1"
+      ? "http://127.0.0.1:8000/api"
+      : "/api";
+}
+
 // ---------------- GET category FROM URL ----------------
 const params = new URLSearchParams(window.location.search);
 const category = params.get("category") || "breakfast";
