@@ -10,7 +10,18 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ENV_PATH = os.path.join(BASE_DIR, ".env")
 load_dotenv(ENV_PATH)  # 🔥 REQUIRED
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+# -----------------------------
+# Database Selection (Local vs Vercel)
+# -----------------------------
+if os.environ.get("VERCEL"):
+    # On Vercel: Use the main DATABASE_URL (Supabase)
+    DATABASE_URL = os.getenv("DATABASE_URL")
+    print("Running on Vercel: Using Supabase Database")
+else:
+    # On Localhost: Look for LOCAL_DATABASE_URL, or fallback to DATABASE_URL
+    DATABASE_URL = os.getenv("LOCAL_DATABASE_URL") or os.getenv("DATABASE_URL")
+    print("Running on Localhost: Using Local/Fallback Database")
+
 
 engine = None
 SessionLocal = None

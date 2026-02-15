@@ -55,3 +55,27 @@ function logout() {
 }
 
 
+// -----------------------------
+// Get Image URL
+// -----------------------------
+function getImageUrl(path, fallback = "../assets/default_user.png") {
+  if (!path) return fallback;
+
+  // If it's already a full URL or base64, return it
+  if (path.startsWith("http") || path.startsWith("data:")) return path;
+
+  // Cleanup potential double slashes
+  const cleanPath = path.startsWith("/") ? path.slice(1) : path;
+
+  // Backend uploads usually go to /uploads directory
+  // If the path doesn't start with assets/ or uploads/, assume it's an upload
+  if (!cleanPath.startsWith("assets/") && !cleanPath.startsWith("uploads/")) {
+    // API_BASE_URL is /api or http://127.0.0.1:8000/api
+    const base = API_BASE_URL.replace("/api", "");
+    return `${base}/uploads/${cleanPath}`;
+  }
+
+  // If it's an assets or uploads path already, just join it with the base
+  const base = API_BASE_URL.replace("/api", "");
+  return `${base}/${cleanPath}`;
+}
