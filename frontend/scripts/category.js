@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", async () => {
               REVIEW
             </button>
 
-            <button onclick="foodloc(${food.food_id})">
+            <button onclick="./map.html?foodId:${food.food_id}">
               FIND
             </button>
           </div>

@@ -1,7 +1,7 @@
 // ---------------- GLOBAL TOKEN ----------------
 const token = localStorage.getItem("token");
 
-
+const DefaultProfile="../assets/default_user.png"
 // ---------------- MAIN EXECUTION ----------------
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -45,7 +45,8 @@ async function loadProfile() {
         src="${imgUrl}" 
         alt="${user.name}" 
         class="profile-image"
-        onerror="this.onerror=null; this.src='../assets/default_user.png';"
+        onerror="(e)=>{e.target.src=${DefaultProfile}
+          }"
       />
       <h2>${user.name}</h2>
       <p>${user.email}</p>
