@@ -13,5 +13,6 @@ class FoodCreate(FoodBase):
 class FoodResponse(FoodBase):
     food_id: int
     vendor_id: int
+    total_likes: int    
 
     model_config = ConfigDict(from_attributes=True)

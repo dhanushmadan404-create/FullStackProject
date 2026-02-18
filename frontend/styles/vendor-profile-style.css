@@ -18,7 +18,102 @@ header .logo {
   transition: transform 0.3s ease;
   background: transparent;
 }
+/* profile edit css */
+/* Container */
+#edit {
+display: flex;
+justify-content: center;
+align-items: center;
+margin-top: 50px;
+}
 
+/* Card */
+#edit form {
+background: #ffffff;
+width: 380px;
+padding: 30px;
+border-radius: 16px;
+box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+border-top: 6px solid #ffcc00;
+animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Heading */
+#edit form h2 {
+text-align: center;
+margin-bottom: 20px;
+color: #ffb300;
+}
+
+/* Labels */
+#edit label {
+font-weight: 600;
+font-size: 14px;
+color: #444;
+display: block;
+margin-bottom: 6px;
+}
+
+/* Inputs */
+#edit input[type="text"],
+#edit input[type="file"] {
+width: 100%;
+padding: 10px 12px;
+margin-bottom: 18px;
+border-radius: 8px;
+border: 1px solid #ddd;
+outline: none;
+transition: 0.3s;
+font-size: 14px;
+}
+
+/* Input Focus */
+#edit input:focus {
+border-color: #ffcc00;
+box-shadow: 0 0 5px rgba(255, 204, 0, 0.5);
+}
+
+/* Profile Image */
+#preview {
+display: block;
+margin: 10px auto 20px;
+width: 90px;
+height: 90px;
+border-radius: 50%;
+object-fit: cover;
+border: 3px solid #ffcc00;
+}
+
+/* Button */
+#edit button {
+width: 100%;
+padding: 12px;
+background: #ffcc00;
+color: #333;
+border: none;
+border-radius: 10px;
+font-weight: 600;
+cursor: pointer;
+transition: 0.3s;
+}
+
+/* Button Hover */
+#edit button:hover {
+background: #ffb300;
+transform: translateY(-2px);
+}
+
+/* Small Animation */
+@keyframes fadeIn {
+from {
+opacity: 0;
+transform: translateY(10px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
 /* Base Container */
 #vendorProfile {
   margin: 40px auto;

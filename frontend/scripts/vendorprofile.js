@@ -1,208 +1,124 @@
-// =====================================
-// Vendor Profile Script
-// =====================================
+const API_BASE_URL = "http://127.0.0.1:8000";
 
+// =====================================
+// Load Vendor Data + Prefill Form
+// =====================================
 document.addEventListener("DOMContentLoaded", async () => {
   const token = localStorage.getItem("token");
 
   if (!token) {
-    console.log("No token found. Redirecting to login.");
     window.location.href = "./login.html";
     return;
   }
 
   try {
-    await loadVendorProfile(token);
-  } catch (error) {
-    console.error("Vendor Profile Error:", error);
-
-    if (error.message === "401") {
-      console.log("Session expired. Redirecting...");
-      localStorage.clear();
-      window.location.href = "./login.html";
-    }
-  }
-});
-
-// =====================================
-// Load Vendor Profile
-// =====================================
-async function loadVendorProfile(token) {
-  // -------- Get Logged-in User --------
-  const userResponse = await fetch(`${API_BASE_URL}/users/me`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (!userResponse.ok) {
-    if (userResponse.status === 401) throw new Error("401");
-    throw new Error("Failed to load user");
-  }
-
-  const user = await userResponse.json();
-
-  renderUserHeader(user);
-
-  // -------- Get Vendor Details --------
-  const vendorResponse = await fetch(
-    `${API_BASE_URL}/vendors/user/${user.user_id}`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    },
-  );
-
-  let vendorData = null;
-
-  if (vendorResponse.ok) {
-    vendorData = await vendorResponse.json();
-  } else if (vendorResponse.status !== 404) {
-    console.error("Vendor fetch failed:", vendorResponse.status);
-  }
-
-  const timeStatus = document.getElementById("timeStatus");
-
-  if (vendorData && vendorData.vendor_id) {
-    localStorage.setItem("vendor", JSON.stringify(vendorData));
-
-    if (timeStatus) {
-      timeStatus.textContent = `Open: ${vendorData.opening_time} - ${vendorData.closing_time}`;
-    }
-
-    await loadFoodItems(vendorData.vendor_id, token);
-  } else {
-    if (timeStatus) {
-      timeStatus.textContent = "Vendor profile not found.";
-    }
-  }
-}
-
-// =====================================
-// Render User Header
-// =====================================
-function renderUserHeader(user) {
-  const profileImg = document.getElementById("DB");
-  const vendorDetails = document.getElementById("vendor_details");
-
-  const imgUrl = getImageUrl(user.image_url);
-
-  if (profileImg) {
-    profileImg.innerHTML = `
-      <img src="${imgUrl}" class="card-image"
-           onerror="this.onerror=null; this.src='../assets/default_user.png';"/>
-    `;
-  }
-
-  if (vendorDetails) {
-    vendorDetails.innerHTML = `
-      <h2>${user.name}</h2>
-      <p>${user.email}</p>
-    `;
-  }
-}
-
-// =====================================
-// Load Food Items
-// =====================================
-async function loadFoodItems(vendorId, token) {
-  const container = document.getElementById("food_container");
-  if (!container) return;
-
-  container.innerHTML = "<p>Loading foods...</p>";
-
-  try {
-    const response = await fetch(`${API_BASE_URL}/foods/vendor/${vendorId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) throw new Error("Failed to load foods");
-
-    const foods = await response.json();
-    container.innerHTML = "";
-
-    if (foods.length === 0) {
-      container.innerHTML = "<p>No food items added yet.</p>";
-      return;
-    }
-
-    foods.forEach((food) => {
-      const foodCard = document.createElement("div");
-      foodCard.classList.add("review-card");
-      foodCard.id = `food-${food.food_id}`;
-
-      const foodImg = getImageUrl(food.food_image_url);
-
-      foodCard.innerHTML = `
-        <img src="${foodImg}" class="card-image"
-             onerror="this.onerror=null; this.src='../assets/default_vendor.png';"/>
-        <div class="card-info">
-          <p><strong>${food.food_name}</strong></p>
-          <p>${food.category}</p>
-          <button data-id="${food.food_id}" class="delete-btn"
-              style="background:red; color:white; border:none; padding:5px 10px; cursor:pointer; border-radius:4px; margin-top:5px;">
-              Remove
-          </button>
-        </div>
-      `;
-
-      container.appendChild(foodCard);
-    });
-
-    // Attach delete listeners safely
-    document.querySelectorAll(".delete-btn").forEach((btn) => {
-      btn.addEventListener("click", (e) => {
-        const foodId = e.target.getAttribute("data-id");
-        deleteFoodItem(foodId, token);
-      });
-    });
-  } catch (error) {
-    console.error("Error loading foods:", error);
-    container.innerHTML = "<p>Error loading food items.</p>";
-  }
-}
-
-// =====================================
-// Delete Food Item
-// =====================================
-async function deleteFoodItem(foodId, token) {
-  console.log("Deleting food ID:", foodId);
-
-  try {
-    const response = await fetch(`${API_BASE_URL}/foods/${foodId}`, {
-      method: "DELETE",
+    const response = await fetch(`${API_BASE_URL}/vendors/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
 
     if (!response.ok) {
-      if (response.status === 401) {
-        console.log("Session expired.");
-        localStorage.clear();
-        window.location.href = "./login.html";
-        return;
-      }
-      throw new Error("Failed to delete food");
+      throw new Error("Failed to load vendor");
     }
 
-    const element = document.getElementById(`food-${foodId}`);
-    if (element) element.remove();
+    const vendor = await response.json();
+    console.log("Vendor Data:", vendor);
 
-    console.log("Food item deleted successfully ✅");
+    // ✅ Prefill values
+    document.getElementById("number").value =
+      vendor.phone_number || "";
+
+    document.getElementById("openingTime").value =
+      vendor.opening_time || "";
+
+    document.getElementById("closingTime").value =
+      vendor.closing_time || "";
+
   } catch (error) {
-    console.error("Delete failed:", error.message);
+    console.error("Vendor Load Error:", error);
+
+    Toastify({
+      text: "Failed to load vendor data",
+      duration: 4000,
+      gravity: "top",
+      position: "right",
+      style: { background: "red" },
+    }).showToast();
   }
-}
+});
 
 // =====================================
-// Logout
+// Handle Update Submit
 // =====================================
-function logout() {
-  console.log("Logging out...");
-  localStorage.clear();
-  window.location.href = "./login.html";
+document
+  .getElementById("vendorRegistration")
+  .addEventListener("submit", handleSubmit);
+
+async function handleSubmit(event) {
+  event.preventDefault();
+
+  const token = localStorage.getItem("token");
+
+  const submitBtn = document.getElementById("submit");
+  submitBtn.innerText = "Updating...";
+  submitBtn.disabled = true;
+
+  try {
+    const formData = new FormData();
+
+    const phone = document.getElementById("number").value.trim();
+    const openTime = document.getElementById("openingTime").value;
+    const closeTime = document.getElementById("closingTime").value;
+    const imageFile = document.getElementById("image").files[0];
+
+    if (phone) formData.append("phone_number", phone);
+    if (openTime) formData.append("opening_time", openTime);
+    if (closeTime) formData.append("closing_time", closeTime);
+    if (imageFile) formData.append("image", imageFile);
+
+    const response = await fetch(`${API_BASE_URL}/vendors`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+    console.log("Update Response:", data);
+
+    if (!response.ok) {
+      Toastify({
+        text: data.detail || "Update failed",
+        duration: 4000,
+        gravity: "top",
+        position: "right",
+        style: { background: "red" },
+      }).showToast();
+      return;
+    }
+
+    Toastify({
+      text: "Vendor updated successfully ✅",
+      duration: 3000,
+      gravity: "top",
+      position: "right",
+      style: { background: "green" },
+    }).showToast();
+
+  } catch (error) {
+    console.error("Update Error:", error);
+
+    Toastify({
+      text: "Something went wrong ❌",
+      duration: 4000,
+      gravity: "top",
+      position: "right",
+      style: { background: "red" },
+    }).showToast();
+  } finally {
+    submitBtn.innerText = "Submit";
+    submitBtn.disabled = false;
+  }
 }

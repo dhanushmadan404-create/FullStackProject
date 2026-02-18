@@ -130,12 +130,18 @@ header .logo:hover {
   margin-bottom: 12px;
   object-fit: cover;
 }
+.likes {
+text-align: center;
+margin: 8px 0;
+font-weight: bold;
+color: #e63946;
+}
 
 /* Review Section */
 #review {
   width: 400px;
   height: 600px;
-  position: absolute;
+  position: fixed;
   background-color: #ffffff;
   border-radius: 5%;
   top: 25%;

@@ -48,44 +48,206 @@ document.addEventListener("DOMContentLoaded", async () => {
       );
 
       div.innerHTML = `
-        <div   class="card">
-          <div class="image_container">
-            <h2 class="food_name">${food.food_name}</h2>
-            <img
-              src="${imgUrl}"
-              class="card-image"
-              onerror="this.onerror=null; this.src='../assets/default_food.png';"
-            />
-          </div>
+       <div class="card">
+    <div class="image_container">
+      <h2 class="food_name">${food.food_name}</h2>
 
-          <div class="card-buttons">
-            <button onclick="openReview(${food.food_id}, '${food.food_name}')">
-              REVIEW
-            </button>
+      <img
+        src="${imgUrl}"
+        class="card-image"
+        onerror="this.onerror=null; this.src='../assets/default_food.png';"
+      />
+    </div>
 
-         <button onclick="window.location.href='./map.html?food_id=${food.food_id}'">
-         FIND
-            </button>
-          </div>
-        </div>
+  <div class="likes">
+  ❤️ <span id="like-count-${food.food_id}">
+    ${food.total_likes ?? 0}
+  </span> Likes
+</div>
+
+
+    <div class="card-buttons">
+
+      <button 
+        id="like-btn-${food.food_id}"
+        onclick="handleLike(${food.food_id})"
+        ${food.liked_by_user ? "disabled" : ""}>
+        LIKE
+      </button>
+
+      <button 
+        id="remove-btn-${food.food_id}"
+        onclick="handleRemove(${food.food_id})"
+        style="display:${food.liked_by_user ? "inline-block" : "none"}">
+        REMOVE
+      </button>
+
+      <button onclick="openReview(${food.food_id}, '${food.food_name}')">
+        REVIEW
+      </button>
+
+      <button onclick="window.location.href='./map.html?food_id=${food.food_id}'">
+        FIND
+      </button>
+
+    </div>
+  </div>
       `;
 
       cardContainer.appendChild(div);
     });
   } catch (err) {
-     Toastify({
+    Toastify({
       text: `Fetch Error: ${err.message}`,
       duration: 5000,
       gravity: "top",
       position: "right",
       style: { background: "red" },
       close: true,
-stopOnFocus: true
+      stopOnFocus: true,
     }).showToast();
-   
+
     cardContainer.innerHTML = `<p style='text-align:center;'>Failed to load records ❌</p>`;
   }
 });
+// like handle
+async function handleLike(foodId) {
+  const userId = localStorage.getItem("user_id");
+
+  if (!userId) {
+    Toastify({
+      text: "Please login first 🔐",
+      duration: 3000,
+      gravity: "top",
+      position: "right",
+      style: { background: "orange" }
+    }).showToast();
+    return;
+  }
+
+  try {
+    console.log("Sending Like:", { userId, foodId });
+
+    const res = await fetch(`${API_BASE_URL}/foods/like`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user_id: parseInt(userId),
+        food_id: foodId
+      })
+    });
+
+    const data = await res.json();
+    console.log("Response:", data);
+
+    // 🔴 If backend says already liked
+    if (data.status === false) {
+      console.log("Already liked:", data.message);
+
+      Toastify({
+        text: data.message,
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        style: { background: "red" }
+      }).showToast();
+      return;
+    }
+
+    // 🟢 Success
+    document.getElementById(`like-btn-${foodId}`).disabled = true;
+    document.getElementById(`remove-btn-${foodId}`).style.display = "inline-block";
+    document.getElementById(`like-count-${foodId}`).textContent = data.total_likes;
+
+    Toastify({
+      text: "Liked successfully ❤️",
+      duration: 3000,
+      gravity: "top",
+      position: "right",
+      style: { background: "green" }
+    }).showToast();
+
+  } catch (error) {
+    console.log("Like Error:", error);
+
+    Toastify({
+      text: "Something went wrong",
+      duration: 3000,
+      gravity: "top",
+      position: "right",
+      style: { background: "red" }
+    }).showToast();
+  }
+}
+// remove like handle
+async function handleRemove(foodId) {
+  const userId = localStorage.getItem("user_id");
+
+  if (!userId) {
+    Toastify({
+      text: "Please login first 🔐",
+      duration: 3000,
+      gravity: "top",
+      position: "right",
+      style: { background: "orange" }
+    }).showToast();
+    return;
+  }
+
+  try {
+    console.log("Sending Remove:", { userId, foodId });
+
+    const res = await fetch(`${API_BASE_URL}/foods/like`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user_id: parseInt(userId),
+        food_id: foodId
+      })
+    });
+
+    const data = await res.json();
+    console.log("Response:", data);
+
+    if (!res.ok) {
+      console.log("Remove Failed:", data.detail);
+
+      Toastify({
+        text: data.detail || "Remove failed",
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        style: { background: "red" }
+      }).showToast();
+      return;
+    }
+
+    // 🟢 Success
+    document.getElementById(`like-btn-${foodId}`).disabled = false;
+    document.getElementById(`remove-btn-${foodId}`).style.display = "none";
+    document.getElementById(`like-count-${foodId}`).textContent = data.total_likes;
+
+    Toastify({
+      text: "Like removed ❌",
+      duration: 3000,
+      gravity: "top",
+      position: "right",
+      style: { background: "blue" }
+    }).showToast();
+
+  } catch (error) {
+    console.log("Remove Error:", error);
+
+    Toastify({
+      text: "Something went wrong",
+      duration: 3000,
+      gravity: "top",
+      position: "right",
+      style: { background: "red" }
+    }).showToast();
+  }
+}
+
 
 // ---------------- REVIEW SYSTEM ----------------
 
@@ -123,16 +285,16 @@ window.openReview = async function (food_id, food_name) {
     const commentValue = document.getElementById("commentText").value.trim();
 
     if (!commentValue) {
-       Toastify({
-      text: `Comment cannot be empty`,
-      duration: 5000,
-      gravity: "top",
-      position: "right",
-      style: { background: "red" },
-      close: true,
-stopOnFocus: true
-    }).showToast();
-    console.log(commentValue)
+      Toastify({
+        text: `Comment cannot be empty`,
+        duration: 5000,
+        gravity: "top",
+        position: "right",
+        style: { background: "red" },
+        close: true,
+        stopOnFocus: true,
+      }).showToast();
+      console.log(commentValue);
       return;
     }
 
@@ -150,36 +312,36 @@ stopOnFocus: true
       });
 
       if (!response.ok) {
-             Toastify({
-      text: `Failed to post comment`,
-            gravity: "top",
-      position: "right",
-      style: { background: "red" },
-      close: true,
-stopOnFocus: true
-    }).showToast();
-       
+        Toastify({
+          text: `Failed to post comment`,
+          gravity: "top",
+          position: "right",
+          style: { background: "red" },
+          close: true,
+          stopOnFocus: true,
+        }).showToast();
+
         return;
       }
-  Toastify({
-      text: `Comment posted successfully`,
-            gravity: "top",
-      position: "right",
-      style: { background: "green" },
-    }).showToast();
+      Toastify({
+        text: `Comment posted successfully`,
+        gravity: "top",
+        position: "right",
+        style: { background: "green" },
+      }).showToast();
 
       document.getElementById("commentText").value = "";
       loadReviews(food_id);
     } catch (error) {
-           Toastify({
-      text: `Make sure are you login : ${error}`,
-      duration: 5000,
-      gravity: "top",
-      position: "right",
-      style: { background: "red" },
-      close: true,
-stopOnFocus: true
-    }).showToast();
+      Toastify({
+        text: `Make sure are you login : ${error}`,
+        duration: 5000,
+        gravity: "top",
+        position: "right",
+        style: { background: "red" },
+        close: true,
+        stopOnFocus: true,
+      }).showToast();
     }
   });
 
@@ -220,16 +382,15 @@ async function loadReviews(food_id) {
       reviewContainer.appendChild(div);
     });
   } catch (error) {
-     Toastify({
+    Toastify({
       text: `Load Review Error: ${error}`,
       duration: 5000,
       gravity: "top",
       position: "right",
       style: { background: "red" },
       close: true,
-stopOnFocus: true
+      stopOnFocus: true,
     }).showToast();
     reviewContainer.innerHTML = "<p>Failed to load comments ❌</p>";
   }
 }
-

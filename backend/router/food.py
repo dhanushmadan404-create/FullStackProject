@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Form, File, UploadFile
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from typing import List
 import os
 import uuid
@@ -9,6 +10,7 @@ from database import get_db
 from models.food import Food
 from models.vendor import Vendor
 from models.user import User
+from models.food_like import FoodLike
 from schemas.food import FoodResponse
 from core.security import get_current_user
 
@@ -50,8 +52,13 @@ def get_all_foods(db: Session = Depends(get_db)):
 # Get Foods By Category
 # -----------------------------------
 
+
 @router.get("/category/{category}", response_model=List[FoodResponse])
-def get_foods_by_category(category: str, db: Session = Depends(get_db)):
+def get_foods_by_category(
+    category: str,
+    db: Session = Depends(get_db),
+):
+    # fetch foods in category
     foods = db.query(Food).filter(
         Food.category == category.lower()
     ).all()
@@ -59,7 +66,29 @@ def get_foods_by_category(category: str, db: Session = Depends(get_db)):
     if not foods:
         raise HTTPException(status_code=404, detail="No foods found for this category")
 
-    return foods
+    response_list = []
+
+    for food in foods:
+        # count likes by food_id
+        total_likes = (
+            db.query(func.count())
+            .select_from(FoodLike)
+            .filter(FoodLike.food_id == food.food_id)
+            .scalar()
+        )
+
+        response_list.append({
+            "food_id": food.food_id,
+            "food_name": food.food_name,
+            "food_image_url": food.food_image_url,
+            "category": food.category,
+            "latitude": food.latitude,
+            "longitude": food.longitude,
+            "vendor_id": food.vendor_id,
+            "total_likes": total_likes
+        })
+
+    return response_list
 
 # -----------------------------------
 # Create Food
@@ -154,3 +183,39 @@ def delete_food(
     db.commit()
 
     return {"message": "Food deleted successfully"}
+
+
+# -----------------------------------
+# Get Top 4 Most Liked Foods
+# -----------------------------------
+
+@router.get("/top-liked")
+def get_top_liked_foods(db: Session = Depends(get_db)):
+
+    top_foods = (
+        db.query(
+            Food,
+            func.count(FoodLike.food_id).label("total_likes")
+        )
+        .outerjoin(FoodLike)
+        .group_by(Food.food_id)
+        .order_by(func.count(FoodLike.food_id).desc())
+        .limit(4)
+        .all()
+    )
+
+    result = []
+
+    for food, total_likes in top_foods:
+        result.append({
+            "food_id": food.food_id,
+            "food_name": food.food_name,
+            "food_image_url": food.food_image_url,
+            "category": food.category,
+            "latitude": food.latitude,
+            "longitude": food.longitude,
+            "vendor_id": food.vendor_id,
+            "total_likes": total_likes
+        })
+
+    return result

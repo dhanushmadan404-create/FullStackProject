@@ -26,4 +26,4 @@ class User(Base):
         cascade="all, delete-orphan"
     )
     reviews = relationship("Review", back_populates="user", cascade="all, delete")
-
+    food_likes = relationship("FoodLike", back_populates="user", cascade="all, delete")

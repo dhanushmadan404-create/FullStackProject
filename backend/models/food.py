@@ -11,6 +11,7 @@ class Food(Base):
     category = Column(String(100))
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
+   
 
     vendor_id = Column(
         Integer,
@@ -23,4 +24,4 @@ class Food(Base):
         back_populates="foods"
     )
     reviews = relationship("Review", back_populates="food", cascade="all, delete")
-
+    food_likes = relationship("FoodLike", back_populates="food", cascade="all, delete")
