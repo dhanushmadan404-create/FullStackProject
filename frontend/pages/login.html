@@ -16,9 +16,7 @@
     <!-- Toastify JS -->
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
-       <!-- ... AOS styles ... -->
-      <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+   
   </head>
 
   <body>
@@ -35,7 +33,7 @@
 
     <main >
       <!-- LOGIN FORM -->
-      <form  data-aos="fade-up" id="loginForm" class="form visible">
+      <form  id="loginForm" class="form visible">
         <h1>Login</h1>
 
         <label>Email</label>
@@ -61,7 +59,7 @@
       </form>
 
       <!-- REGISTER FORM -->
-      <form  data-aos="fade-up" id="registerForm" class="form">
+      <form id="registerForm" class="form">
         <h1>Register</h1>
 
         <label>Name</label>
@@ -81,7 +79,7 @@
           <option value="">Select role</option>
           <option value="user">User</option>
           <option value="vendor">Vendor</option>
-          <option value="admin">Admin</option>
+          <option value="admin" disabled>Admin</option>
         </select>
         <span class="error" id="roleError"></span>
         <label for="img">Profile Image</label>

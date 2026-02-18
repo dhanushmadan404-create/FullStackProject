@@ -199,10 +199,10 @@ if (form) {
     const foodType = document.getElementById("foodType")?.value;
     const shopImage = document.getElementById("image")?.files[0];
 
-    const ErrorFoodType=document.getElementById("foodTypeError")
+    const ErrorFoodType = document.getElementById("foodTypeError")
     if (!foodType) {
-     
-      ErrorFoodType.textContent="Please select food type";
+
+      ErrorFoodType.textContent = "Please select food type";
       return;
     }
 
@@ -224,7 +224,7 @@ if (form) {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.detail || "Vendor registration failed");
       }
 

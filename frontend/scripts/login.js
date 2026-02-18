@@ -6,7 +6,7 @@ if (!window.API_BASE_URL) {
     position: "right",
     style: { background: "red" },
     close: true,
-stopOnFocus: true
+    stopOnFocus: true
   }).showToast();
 }
 
@@ -72,16 +72,17 @@ async function handleLogin(event) {
   }
 
   try {
+    const normalizedEmail = email.toLowerCase();
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email: normalizedEmail, password }),
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
+      const errorData = await response.json().catch(() => ({}));
       Toastify({
-        text: "Login failed",
+        text: `Login failed: ${errorData.detail || "Invalid credentials"}`,
         duration: 5000,
         gravity: "top",
         position: "right",
@@ -98,7 +99,7 @@ async function handleLogin(event) {
       position: "right",
       style: { background: "green" },
       close: true,
-stopOnFocus: true
+      stopOnFocus: true
     }).showToast();
 
     localStorage.setItem("token", data.access_token);
@@ -108,15 +109,14 @@ stopOnFocus: true
     await redirectUser(data.role, data.user_id);
   } catch (error) {
     Toastify({
-      text: `Login Failed ❌:, ${error.message}`,
+      text: `Login Failed ❌: ${error.message}`,
       duration: 5000,
       gravity: "top",
       position: "right",
-      style: { background: "green" },
+      style: { background: "red" }, // Corrected color to red for failure
       close: true,
-stopOnFocus: true
+      stopOnFocus: true
     }).showToast();
-
   }
 }
 
@@ -162,9 +162,10 @@ async function handleRegister(event) {
   }
 
   try {
+    const normalizedEmail = email.toLowerCase();
     const formData = new FormData();
     formData.append("name", name);
-    formData.append("email", email);
+    formData.append("email", normalizedEmail);
     formData.append("password", password);
     formData.append("role", role);
 
@@ -180,9 +181,9 @@ async function handleRegister(event) {
 
     // 🔥 SAFE ERROR HANDLING
     if (!response.ok) {
-      const text = await response.text();
-      console.error("Server Response:", text);
-      throw new Error(`Registration failed (Status ${response.status})`);
+      const errorData = await response.json().catch(() => ({}));
+      console.error("Server Response:", errorData);
+      throw new Error(errorData.detail || `Registration failed (Status ${response.status})`);
     }
 
     const data = await response.json();
@@ -193,19 +194,19 @@ async function handleRegister(event) {
       position: "right",
       style: { background: "green" },
       close: true,
-stopOnFocus: true
+      stopOnFocus: true
     }).showToast();
 
     toggleForm("login");
   } catch (error) {
     Toastify({
-      text: `Registration Failed ❌:`,
+      text: `Registration Failed ❌: ${error.message}`,
       duration: 5000,
       gravity: "top",
       position: "right",
       style: { background: "red" },
       close: true,
-stopOnFocus: true
+      stopOnFocus: true
     }).showToast();
   }
 }
