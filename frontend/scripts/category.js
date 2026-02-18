@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       );
 
       div.innerHTML = `
-        <div class="card">
+        <div  data-aos="fade-up" class="card">
           <div class="image_container">
             <h2 class="food_name">${food.food_name}</h2>
             <img
@@ -64,6 +64,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             </button>
 
          <button onclick="window.location.href='./map.html?food_id=${food.food_id}'">
+         FIND
             </button>
           </div>
         </div>
@@ -95,7 +96,7 @@ window.openReview = async function (food_id, food_name) {
   Review.style.visibility = "visible";
 
   Review.innerHTML = `
-    <div class="review-box">
+    <div data-aos="fade-left" class="review-box">
       <h2>${food_name}</h2>
       <span id="closeReview" style="cursor:pointer;">❌</span>
 
@@ -206,7 +207,7 @@ async function loadReviews(food_id) {
     reviewData.forEach((data) => {
       const div = document.createElement("div");
       div.classList.add("review-item");
-
+      div.attributes.add(" data-aos='fade-up'")
       div.innerHTML = `
         <b>${data.username || "User"}</b>
         <small>
