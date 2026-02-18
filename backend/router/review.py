@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import desc
 from database import get_db
 from models.review import Review
@@ -37,7 +37,11 @@ def create_review(
     db.commit()
     db.refresh(review)
 
-    return review
+    # Return with username for immediate UI updates
+    return {
+        **review.__dict__,
+        "username": current_user.name
+    }
 
 # delete
 
@@ -83,9 +87,6 @@ def update_review(
 
     return review
 
-# get
-from sqlalchemy.orm import joinedload
-
 @router.get("/food/{food_id}", response_model=list[ReviewResponse])
 def get_reviews_by_food(food_id: int, db: Session = Depends(get_db)):
     reviews = (
@@ -101,6 +102,8 @@ def get_reviews_by_food(food_id: int, db: Session = Depends(get_db)):
             "review_id": review.review_id,
             "comment": review.comment,
             "food_id": review.food_id,
+            "user_id": review.user_id,
+            "vendor_id": review.vendor_id,
             "created_at": review.created_at,
             "username": review.user.name if review.user else "User"
         }

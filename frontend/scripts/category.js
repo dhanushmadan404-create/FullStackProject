@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       );
 
       div.innerHTML = `
-        <div  data-aos="fade-up" class="card">
+        <div   class="card">
           <div class="image_container">
             <h2 class="food_name">${food.food_name}</h2>
             <img
@@ -96,7 +96,7 @@ window.openReview = async function (food_id, food_name) {
   Review.style.visibility = "visible";
 
   Review.innerHTML = `
-    <div data-aos="fade-left" class="review-box">
+    <div  class="review-box">
       <h2>${food_name}</h2>
       <span id="closeReview" style="cursor:pointer;">❌</span>
 
@@ -132,6 +132,7 @@ window.openReview = async function (food_id, food_name) {
       close: true,
 stopOnFocus: true
     }).showToast();
+    console.log(commentValue)
       return;
     }
 
@@ -164,14 +165,14 @@ stopOnFocus: true
       text: `Comment posted successfully`,
             gravity: "top",
       position: "right",
-      style: { background: "red" },
+      style: { background: "green" },
     }).showToast();
 
       document.getElementById("commentText").value = "";
       loadReviews(food_id);
     } catch (error) {
            Toastify({
-      text: `Post Review Error: ${error}`,
+      text: `Make sure are you login : ${error}`,
       duration: 5000,
       gravity: "top",
       position: "right",
@@ -207,7 +208,6 @@ async function loadReviews(food_id) {
     reviewData.forEach((data) => {
       const div = document.createElement("div");
       div.classList.add("review-item");
-      div.attributes.add(" data-aos='fade-up'")
       div.innerHTML = `
         <b>${data.username || "User"}</b>
         <small>
