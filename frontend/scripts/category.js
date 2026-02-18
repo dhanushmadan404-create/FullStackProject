@@ -2,7 +2,7 @@
 if (typeof API_BASE_URL === "undefined") {
   window.API_BASE_URL =
     window.location.hostname === "localhost" ||
-      window.location.hostname === "127.0.0.1"
+    window.location.hostname === "127.0.0.1"
       ? "http://127.0.0.1:8000/api"
       : "/api";
 }
@@ -13,7 +13,6 @@ const category = params.get("category") || "breakfast";
 const cate = category === "drinking" ? "Juice" : category;
 
 document.addEventListener("DOMContentLoaded", async () => {
-
   const Cate = document.getElementById("Cate");
   const cardContainer = document.getElementById("cardContainer");
 
@@ -41,10 +40,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     cardContainer.innerHTML = "";
 
-    foods.forEach(food => {
-
+    foods.forEach((food) => {
       const div = document.createElement("div");
-      const imgUrl = getImageUrl(food.food_image_url, '../assets/default_food.png');
+      const imgUrl = getImageUrl(
+        food.food_image_url,
+        "../assets/default_food.png",
+      );
 
       div.innerHTML = `
         <div class="card">
@@ -62,8 +63,7 @@ document.addEventListener("DOMContentLoaded", async () => {
               REVIEW
             </button>
 
-            <button onclick="window.location.href='./map.html?foodId:${food.food_id}'">
-              FIND
+         <button onclick="window.location.href='./map.html?food_id=${food.food_id}'">
             </button>
           </div>
         </div>
@@ -71,15 +71,20 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       cardContainer.appendChild(div);
     });
-
   } catch (err) {
-    console.error("Fetch Error:", err);
-    cardContainer.innerHTML =
-      `<p style='text-align:center;'>Failed to load records ❌</p>`;
+     Toastify({
+      text: `Fetch Error: ${err.message}`,
+      duration: 5000,
+      gravity: "top",
+      position: "right",
+      style: { background: "red" },
+      close: true,
+stopOnFocus: true
+    }).showToast();
+   
+    cardContainer.innerHTML = `<p style='text-align:center;'>Failed to load records ❌</p>`;
   }
-
 });
-
 
 // ---------------- REVIEW SYSTEM ----------------
 
@@ -87,7 +92,6 @@ const Review = document.getElementById("review");
 
 // Open Review Popup
 window.openReview = async function (food_id, food_name) {
-
   Review.style.visibility = "visible";
 
   Review.innerHTML = `
@@ -115,41 +119,65 @@ window.openReview = async function (food_id, food_name) {
 
   // Share comment
   document.getElementById("shareBtn").addEventListener("click", async () => {
-
-    const commentValue =
-      document.getElementById("commentText").value.trim();
+    const commentValue = document.getElementById("commentText").value.trim();
 
     if (!commentValue) {
-      console.log("Comment cannot be empty");
+       Toastify({
+      text: `Comment cannot be empty`,
+      duration: 5000,
+      gravity: "top",
+      position: "right",
+      style: { background: "red" },
+      close: true,
+stopOnFocus: true
+    }).showToast();
       return;
     }
 
     try {
-
       const response = await fetch(`${API_BASE_URL}/reviews`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("token")}`
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({
           food_id: food_id,
-          comment: commentValue
-        })
+          comment: commentValue,
+        }),
       });
 
       if (!response.ok) {
-        console.log("Failed to post comment");
+             Toastify({
+      text: `Failed to post comment`,
+            gravity: "top",
+      position: "right",
+      style: { background: "red" },
+      close: true,
+stopOnFocus: true
+    }).showToast();
+       
         return;
       }
-
-      console.log("Comment posted successfully");
+  Toastify({
+      text: `Comment posted successfully`,
+            gravity: "top",
+      position: "right",
+      style: { background: "red" },
+    }).showToast();
 
       document.getElementById("commentText").value = "";
       loadReviews(food_id);
-
     } catch (error) {
-      console.error("Post Review Error:", error);
+           Toastify({
+      text: `Post Review Error: ${error}`,
+      duration: 5000,
+      gravity: "top",
+      position: "right",
+      style: { background: "red" },
+      close: true,
+stopOnFocus: true
+    }).showToast();
     }
   });
 
@@ -157,19 +185,14 @@ window.openReview = async function (food_id, food_name) {
   loadReviews(food_id);
 };
 
-
 // Load Reviews
 async function loadReviews(food_id) {
-
   const reviewContainer = document.getElementById("allReviews");
 
   try {
+    const response = await fetch(`${API_BASE_URL}/reviews/food/${food_id}`);
 
-    const response =
-      await fetch(`${API_BASE_URL}/reviews/food/${food_id}`);
-
-    if (!response.ok)
-      throw new Error("Failed to load reviews");
+    if (!response.ok) throw new Error("Failed to load reviews");
 
     const reviewData = await response.json();
 
@@ -180,8 +203,7 @@ async function loadReviews(food_id) {
       return;
     }
 
-    reviewData.forEach(data => {
-
+    reviewData.forEach((data) => {
       const div = document.createElement("div");
       div.classList.add("review-item");
 
@@ -196,24 +218,17 @@ async function loadReviews(food_id) {
 
       reviewContainer.appendChild(div);
     });
-
   } catch (error) {
-    console.error("Load Review Error:", error);
-    reviewContainer.innerHTML =
-      "<p>Failed to load comments ❌</p>";
+     Toastify({
+      text: `Load Review Error: ${error}`,
+      duration: 5000,
+      gravity: "top",
+      position: "right",
+      style: { background: "red" },
+      close: true,
+stopOnFocus: true
+    }).showToast();
+    reviewContainer.innerHTML = "<p>Failed to load comments ❌</p>";
   }
 }
 
-
-// ---------------- FOOD LOCATION ----------------
-
-window.foodloc = function (food_id) {
-
-  if (!food_id) {
-    console.log("Food ID missing");
-    return;
-  }
-
-  window.location.href =
-    "../map.html?food_id=" + food_id;
-};

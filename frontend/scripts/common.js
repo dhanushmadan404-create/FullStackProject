@@ -3,13 +3,12 @@
 // -----------------------------
 const API_BASE_URL =
   window.location.hostname === "localhost" ||
-    window.location.hostname === "127.0.0.1"
+  window.location.hostname === "127.0.0.1"
     ? "http://127.0.0.1:8000/api"
     : "/api";
 
 // Make it globally accessible
 window.API_BASE_URL = API_BASE_URL;
-
 
 // -----------------------------
 // Run on page load
@@ -17,7 +16,6 @@ window.API_BASE_URL = API_BASE_URL;
 document.addEventListener("DOMContentLoaded", () => {
   checkLoginStatus();
 });
-
 
 // -----------------------------
 // Check Login Status
@@ -42,7 +40,6 @@ function checkLoginStatus() {
   }
 }
 
-
 // -----------------------------
 // Logout Function
 // -----------------------------
@@ -53,7 +50,6 @@ function logout() {
 
   window.location.href = "/index.html";
 }
-
 
 // -----------------------------
 // Get Image URL

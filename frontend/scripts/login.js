@@ -1,8 +1,14 @@
-
 if (!window.API_BASE_URL) {
-  console.error("API_BASE_URL is not defined. Make sure common.js is loaded first.");
+  Toastify({
+    text: "API_BASE_URL is not defined. Make sure common.js is loaded first.",
+    duration: 5000,
+    gravity: "top",
+    position: "right",
+    style: { background: "red" },
+    close: true,
+stopOnFocus: true
+  }).showToast();
 }
-
 
 // -----------------------------
 // Toggle Login / Register Forms
@@ -31,14 +37,13 @@ function toggleForm(formType) {
 // Main Execution
 // -----------------------------
 document.addEventListener("DOMContentLoaded", () => {
-  console.log(API_BASE_URL)
+  console.log(API_BASE_URL);
   const loginBtn = document.getElementById("loginBtn");
   const registerBtn = document.getElementById("registerBtn");
 
   if (loginBtn) loginBtn.addEventListener("click", handleLogin);
   if (registerBtn) registerBtn.addEventListener("click", handleRegister);
 });
-
 
 // -----------------------------
 // Login Logic
@@ -49,13 +54,20 @@ async function handleLogin(event) {
   const email = document.getElementById("loginEmail").value.trim();
   const password = document.getElementById("loginPassword").value.trim();
 
-  if (!email) {
-    console.error("Login Error: Email is required");
+  const emailError = document.getElementById("loginEmailError");
+  const passwordError = document.getElementById("loginPasswordError");
+  emailError.textContent = "";
+  passwordError.textContent = "";
+
+  if (!email || !email.includes("@")) {
+    emailError.textContent = "Email is required";
+
     return;
   }
 
-  if (!password) {
-    console.error("Login Error: Password is required");
+  if (password.length < 6) {
+    passwordError.textContent = "Password must be at least 6 characters";
+
     return;
   }
 
@@ -63,30 +75,50 @@ async function handleLogin(event) {
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ email, password }),
     });
 
     if (!response.ok) {
       const errorData = await response.json();
+      Toastify({
+        text: "Login failed",
+        duration: 5000,
+        gravity: "top",
+        position: "right",
+        style: { background: "red" },
+      }).showToast();
       throw new Error(errorData.detail || "Login failed");
     }
 
     const data = await response.json();
-
-    console.log("Login Successful ✅", data);
+    Toastify({
+      text: `Login Successful ✅`,
+      duration: 5000,
+      gravity: "top",
+      position: "right",
+      style: { background: "green" },
+      close: true,
+stopOnFocus: true
+    }).showToast();
 
     localStorage.setItem("token", data.access_token);
     localStorage.setItem("role", data.role);
     localStorage.setItem("user_id", data.user_id);
 
-
     await redirectUser(data.role, data.user_id);
-
   } catch (error) {
-    console.error("Login Failed ❌:", error.message);
+    Toastify({
+      text: `Login Failed ❌:, ${error.message}`,
+      duration: 5000,
+      gravity: "top",
+      position: "right",
+      style: { background: "green" },
+      close: true,
+stopOnFocus: true
+    }).showToast();
+
   }
 }
-
 
 // -----------------------------
 // Register Logic
@@ -99,24 +131,33 @@ async function handleRegister(event) {
   const password = document.getElementById("regPassword").value.trim();
   const role = document.getElementById("role").value;
   const imageFile = document.getElementById("img").files[0];
+  // Error elements
+  const nameError = document.getElementById("nameError");
+  const emailError = document.getElementById("emailError");
+  const passwordError = document.getElementById("passwordError");
+  const roleError = document.getElementById("roleError");
+  nameError.textContent = "";
+  emailError.textContent = "";
+  passwordError.textContent = "";
+  roleError.textContent = "";
 
   if (name.length < 3) {
-    console.error("Register Error: Name must be at least 3 characters");
+    nameError.textContent = "Name must be at least 3 characters";
     return;
   }
 
-  if (!email.includes("@")) {
-    console.error("Register Error: Invalid email");
+  if (!email || !email.includes("@")) {
+    emailError.textContent = "Invalid email address";
     return;
   }
 
   if (password.length < 6) {
-    console.error("Register Error: Password must be at least 6 characters");
+    passwordError.textContent = "Password must be at least 6 characters";
     return;
   }
 
   if (!role) {
-    console.error("Register Error: Role not selected");
+    roleError.textContent = "Please select a role";
     return;
   }
 
@@ -133,8 +174,9 @@ async function handleRegister(event) {
 
     const response = await fetch(`${API_BASE_URL}/users`, {
       method: "POST",
-      body: formData
+      body: formData,
     });
+
 
     // 🔥 SAFE ERROR HANDLING
     if (!response.ok) {
@@ -144,22 +186,34 @@ async function handleRegister(event) {
     }
 
     const data = await response.json();
-
-    console.log("Registration Successful ✅", data);
+    Toastify({
+      text: `Registration Successful ✅`,
+      duration: 5000,
+      gravity: "top",
+      position: "right",
+      style: { background: "green" },
+      close: true,
+stopOnFocus: true
+    }).showToast();
 
     toggleForm("login");
-
   } catch (error) {
-    console.error("Registration Failed ❌:", error.message);
+    Toastify({
+      text: `Registration Failed ❌:`,
+      duration: 5000,
+      gravity: "top",
+      position: "right",
+      style: { background: "red" },
+      close: true,
+stopOnFocus: true
+    }).showToast();
   }
 }
-
 
 // -----------------------------
 // Redirect Based on Role
 // -----------------------------
 async function redirectUser(role, userId) {
-
   console.log("Redirecting user with role:", role);
 
   if (role === "admin") {
@@ -169,16 +223,13 @@ async function redirectUser(role, userId) {
 
   if (role === "vendor") {
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/vendors/user/${userId}`,
-        {
-          headers: {
-            "Authorization": `Bearer ${localStorage.getItem("token")}`
-          }
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/vendors/user/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
 
-      if (response.exists) {
+      if (response.ok) {
         const vendorData = await response.json();
         localStorage.setItem("vendor", JSON.stringify(vendorData));
         console.log("Vendor profile found. Redirecting...");
@@ -187,7 +238,6 @@ async function redirectUser(role, userId) {
         console.log("Vendor profile not found. Redirecting to registration...");
         window.location.href = "./registration.html";
       }
-
     } catch (err) {
       console.error("Vendor fetch error:", err.message);
       window.location.href = "./registration.html";

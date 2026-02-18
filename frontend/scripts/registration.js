@@ -5,7 +5,6 @@ let marker = null;
 let selectedLat = null;
 let selectedLng = null;
 
-
 // ---------------- MAP INITIALIZATION ----------------
 const mapElement = document.getElementById("map");
 
@@ -29,15 +28,13 @@ const foodIcon = L.icon({
 // Map Click Event
 if (map) {
   map.on("click", (e) => {
-
     if (marker) {
       map.removeLayer(marker);
     }
 
-    marker = L.marker(
-      [e.latlng.lat, e.latlng.lng],
-      { icon: foodIcon }
-    ).addTo(map);
+    marker = L.marker([e.latlng.lat, e.latlng.lng], { icon: foodIcon }).addTo(
+      map,
+    );
 
     selectedLat = e.latlng.lat;
     selectedLng = e.latlng.lng;
@@ -45,7 +42,6 @@ if (map) {
     console.log("Selected Location:", selectedLat, selectedLng);
   });
 }
-
 
 // ---------------- MAP UI CONTROLS ----------------
 const mapContainer = document.getElementById("mapContainer");
@@ -71,7 +67,6 @@ if (backBtn && mapContainer) {
 const saveBtn = document.getElementById("save");
 if (saveBtn && mapContainer) {
   saveBtn.addEventListener("click", () => {
-
     if (!selectedLat || !selectedLng) {
       console.log("Please select a location on the map first");
       return;
@@ -85,13 +80,11 @@ if (saveBtn && mapContainer) {
   });
 }
 
-
 // ---------------- CURRENT LOCATION BUTTON ----------------
 const currentLocBtn = document.getElementById("location");
 
 if (currentLocBtn && map) {
   currentLocBtn.addEventListener("click", () => {
-
     if (!navigator.geolocation) {
       console.log("Geolocation not supported");
       return;
@@ -99,7 +92,6 @@ if (currentLocBtn && map) {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
 
@@ -116,15 +108,13 @@ if (currentLocBtn && map) {
       },
       (error) => {
         console.log("Unable to retrieve location:", error.message);
-      }
+      },
     );
   });
 }
 
-
 // ---------------- MENU MANAGEMENT ----------------
 function addMenuItem() {
-
   const nameInput = document.getElementById("menuName");
   const imageInput = document.getElementById("menuImage");
 
@@ -154,16 +144,13 @@ function addMenuItem() {
   imageInput.value = "";
 }
 
-
 function renderMenu() {
-
   const list = document.getElementById("list_container");
   if (!list) return;
 
   list.innerHTML = "";
 
   menuItems.forEach((item, index) => {
-
     const li = document.createElement("li");
 
     li.innerHTML = `
@@ -179,20 +166,16 @@ function renderMenu() {
   });
 }
 
-
 function removeMenuItem(index) {
   menuItems.splice(index, 1);
   renderMenu();
 }
 
-
 // ---------------- FORM SUBMISSION ----------------
 const form = document.getElementById("vendorRegistration");
 
 if (form) {
-
   form.addEventListener("submit", async (e) => {
-
     e.preventDefault();
 
     if (!token) {
@@ -216,13 +199,14 @@ if (form) {
     const foodType = document.getElementById("foodType")?.value;
     const shopImage = document.getElementById("image")?.files[0];
 
+    const ErrorFoodType=document.getElementById("foodTypeError")
     if (!foodType) {
-      console.log("Please select food type");
+     
+      ErrorFoodType.textContent="Please select food type";
       return;
     }
 
     try {
-
       // ---------- REGISTER VENDOR ----------
       const vendorFormData = new FormData();
 
@@ -234,7 +218,7 @@ if (form) {
       const response = await fetch(`${API_BASE_URL}/vendors`, {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: vendorFormData,
       });
@@ -249,10 +233,8 @@ if (form) {
 
       console.log("Vendor created:", vendorId);
 
-
       // ---------- UPLOAD FOOD ITEMS ----------
       for (let item of menuItems) {
-
         const foodFormData = new FormData();
 
         foodFormData.append("food_name", item.name);
@@ -265,7 +247,7 @@ if (form) {
         const foodResponse = await fetch(`${API_BASE_URL}/foods`, {
           method: "POST",
           headers: {
-            "Authorization": `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
           },
           body: foodFormData,
         });
@@ -277,7 +259,6 @@ if (form) {
 
       console.log("Registration Successful");
       window.location.href = "./vendor-profile.html";
-
     } catch (error) {
       console.error("Registration Error:", error.message);
     }

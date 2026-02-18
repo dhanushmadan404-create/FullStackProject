@@ -1,82 +1,127 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Categories</title>
+    <link rel="stylesheet" href="../styles/category-style.css" />
+    <link rel="icon" href="../assets/icons8-a-64.png" />
+ <!-- Toastify CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
+    />
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Categories</title>
-  <link rel="stylesheet" href="../styles/category-style.css" />
-  <!-- ... styles ... -->
-</head>
+    <!-- Toastify JS -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <!-- ... styles ... -->
+  </head>
 
-<body>
-  <header>
-    <div class="header_container">
-      <!-- Logo -->
-      <img class="logo" src="../assets/annesana.png" alt="Annesana Logo"
-        onclick="window.location.href='../../index.html'" />
+  <body>
+    <header>
+      <div class="header_container">
+        <!-- Logo -->
+        <img
+          class="logo"
+          src="../assets/annesana.png"
+          alt="Annesana Logo"
+          onclick="window.location.href = '../../index.html'"
+        />
 
-      <!-- Location icon -->
-      <img class="logo location" src="../assets/location.png" alt="Location"
-        onclick="window.location.href='./map.html'" />
+        <!-- Location icon -->
+        <img
+          class="logo location"
+          src="../assets/location.png"
+          alt="Location"
+          onclick="window.location.href = './map.html'"
+        />
 
-      <div class="right-align right">
-        <button id="profile" onclick="window.location.href='./profile.html'">Profile</button>
-        <a href="./login.html" id="login">Log in</a>
+        <div class="right-align right">
+          <button
+            id="profile"
+            onclick="window.location.href = './profile.html'"
+          >
+            Profile
+          </button>
+          <a href="./login.html" id="login">Log in</a>
+        </div>
+      </div>
+    </header>
+    <!-- ... header ... -->
+    <main>
+      <div class="section-title">
+        TOP CATEGORIES
+
+        <div class="category-grid vertical">
+          <div
+            onclick="
+              window.location.href = './category.html?category=breakfast'
+            "
+            class="category-card"
+          >
+            <img
+              src="../assets/food_image/Categories/break_fast.jpg"
+              alt="Breakfast"
+            />
+            <span>Breakfast</span>
+          </div>
+
+          <div
+            onclick="window.location.href = './category.html?category=lunch'"
+            class="category-card"
+          >
+            <img src="../assets/food_image/Categories/lunch.avif" alt="Lunch" />
+            <span>Lunch</span>
+          </div>
+
+          <div
+            onclick="window.location.href = './category.html?category=dinner'"
+            class="category-card"
+          >
+            <img
+              src="../assets/food_image/Categories/dinner.webp"
+              alt="Dinner"
+            />
+            <span>Dinner</span>
+          </div>
+
+          <div
+            onclick="window.location.href = './category.html?category=snacks'"
+            class="category-card"
+          >
+            <img
+              src="../assets/food_image/Categories/snacks.jpg"
+              alt="Snacks"
+            />
+            <span>Snacks</span>
+          </div>
+
+          <div
+            onclick="window.location.href = './category.html?category=drinking'"
+            class="category-card"
+          >
+            <img
+              src="../assets/food_image/Categories/drinking.JPG"
+              alt="Drinks"
+            />
+            <span>Juice</span>
+          </div>
+        </div>
       </div>
 
-    </div>
-  </header>
-  <!-- ... header ... -->
-  <main>
-    <div class="section-title">
-      TOP CATEGORIES
-
-      <div class="category-grid vertical">
-
-        <div onclick="window.location.href='./category.html?category=breakfast'" class="category-card">
-          <img src="../assets/food_image/Categories/break_fast.jpg" alt="Breakfast">
-          <span>Breakfast</span>
-        </div>
-
-        <div onclick="window.location.href='./category.html?category=lunch'" class="category-card">
-          <img src="../assets/food_image/Categories/lunch.avif" alt="Lunch">
-          <span>Lunch</span>
-        </div>
-
-        <div onclick="window.location.href='./category.html?category=dinner'" class="category-card">
-          <img src="../assets/food_image/Categories/dinner.webp" alt="Dinner">
-          <span>Dinner</span>
-        </div>
-
-        <div onclick="window.location.href='./category.html?category=snacks'" class="category-card">
-          <img src="../assets/food_image/Categories/snacks.jpg" alt="Snacks">
-          <span>Snacks</span>
-        </div>
-
-        <div onclick="window.location.href='./category.html?category=drinking'" class="category-card">
-          <img src="../assets/food_image/Categories/drinking.JPG" alt="Drinks">
-          <span>Juice</span>
-        </div>
-
+      <div id="Cate"></div>
+      <div id="review">
+        <!-- comment -->
       </div>
-    </div>
-
-    <div id="Cate"></div>
-    <div id="review">
-      <!-- comment -->
-
-    </div>
-    <div class="section-title">RECOMMENDED</div>
-    <div class="for-you">
-      <div id="cardContainer" class="card-grid"></div>
-    </div>
-  </main>
-  <footer>
-    <small>© 2025 Annesana. All Rights Reserved.</small>
-  </footer>
-  <script src="../scripts/common.js"></script>
-  <script src="../scripts/category.js"></script>
-</body>
-
+      <div class="section-title">RECOMMENDED</div>
+      <div class="for-you">
+        <div id="cardContainer" class="card-grid"></div>
+      </div>
+    </main>
+    <footer>
+      <small>© 2025 Annesana. All Rights Reserved.</small>
+    </footer>
+    <script src="../scripts/common.js"></script>
+    <script src="../scripts/category.js"></script>
+  </body>
 </html>

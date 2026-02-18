@@ -24,7 +24,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-
 // =====================================
 // Load Vendor Profile
 // =====================================
@@ -52,7 +51,7 @@ async function loadVendorProfile(token) {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    }
+    },
   );
 
   let vendorData = null;
@@ -69,8 +68,7 @@ async function loadVendorProfile(token) {
     localStorage.setItem("vendor", JSON.stringify(vendorData));
 
     if (timeStatus) {
-      timeStatus.textContent =
-        `Open: ${vendorData.opening_time} - ${vendorData.closing_time}`;
+      timeStatus.textContent = `Open: ${vendorData.opening_time} - ${vendorData.closing_time}`;
     }
 
     await loadFoodItems(vendorData.vendor_id, token);
@@ -80,7 +78,6 @@ async function loadVendorProfile(token) {
     }
   }
 }
-
 
 // =====================================
 // Render User Header
@@ -106,7 +103,6 @@ function renderUserHeader(user) {
   }
 }
 
-
 // =====================================
 // Load Food Items
 // =====================================
@@ -117,14 +113,11 @@ async function loadFoodItems(vendorId, token) {
   container.innerHTML = "<p>Loading foods...</p>";
 
   try {
-    const response = await fetch(
-      `${API_BASE_URL}/foods/vendor/${vendorId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await fetch(`${API_BASE_URL}/foods/vendor/${vendorId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     if (!response.ok) throw new Error("Failed to load foods");
 
@@ -166,13 +159,11 @@ async function loadFoodItems(vendorId, token) {
         deleteFoodItem(foodId, token);
       });
     });
-
   } catch (error) {
     console.error("Error loading foods:", error);
     container.innerHTML = "<p>Error loading food items.</p>";
   }
 }
-
 
 // =====================================
 // Delete Food Item
@@ -202,12 +193,10 @@ async function deleteFoodItem(foodId, token) {
     if (element) element.remove();
 
     console.log("Food item deleted successfully ✅");
-
   } catch (error) {
     console.error("Delete failed:", error.message);
   }
 }
-
 
 // =====================================
 // Logout

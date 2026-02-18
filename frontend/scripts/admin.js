@@ -2,7 +2,6 @@
 // Admin Panel Script
 // ========================================
 
-
 // ---------------- LOGOUT ----------------
 function logout() {
   console.log("Admin logging out...");
@@ -10,12 +9,11 @@ function logout() {
   window.location.href = "./login.html";
 }
 
-
 // ---------------- SHOW SECTION ----------------
 function showSection(sectionId) {
-  document.querySelectorAll(".section").forEach(sec =>
-    sec.classList.remove("active")
-  );
+  document
+    .querySelectorAll(".section")
+    .forEach((sec) => sec.classList.remove("active"));
 
   const target = document.getElementById(sectionId);
   if (target) target.classList.add("active");
@@ -24,7 +22,6 @@ function showSection(sectionId) {
     loadVendors();
   }
 }
-
 
 // ---------------- LOAD VENDORS ----------------
 async function loadVendors() {
@@ -89,14 +86,11 @@ async function loadVendors() {
         deleteVendor(vendorId, e.target);
       });
     });
-
   } catch (err) {
     console.error("Load vendors error:", err);
-    tableBody.innerHTML =
-      `<tr><td colspan='7' style='text-align:center; color:red;'>Error loading vendors</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan='7' style='text-align:center; color:red;'>Error loading vendors</td></tr>`;
   }
 }
-
 
 // ---------------- DELETE VENDOR ----------------
 async function deleteVendor(vendorId, btnElement) {
@@ -125,12 +119,10 @@ async function deleteVendor(vendorId, btnElement) {
     if (row) row.remove();
 
     console.log("Vendor deleted successfully ✅");
-
   } catch (err) {
     console.error("Delete vendor error:", err.message);
   }
 }
-
 
 // ---------------- HANDLE UNAUTHORIZED ----------------
 function handleUnauthorized() {
@@ -138,7 +130,6 @@ function handleUnauthorized() {
   localStorage.clear();
   window.location.href = "./login.html";
 }
-
 
 // ---------------- DOM CONTENT LOADED ----------------
 document.addEventListener("DOMContentLoaded", () => {

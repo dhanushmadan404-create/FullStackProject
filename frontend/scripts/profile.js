@@ -1,12 +1,20 @@
 // ---------------- GLOBAL TOKEN ----------------
 const token = localStorage.getItem("token");
 
-const DefaultProfile="../assets/default_user.png"
+const DefaultProfile = "../assets/default_user.png";
 // ---------------- MAIN EXECUTION ----------------
 document.addEventListener("DOMContentLoaded", () => {
-
   if (!token) {
-    console.log("User not logged in");
+      Toastify({
+      text: `User not logged in`,
+      duration: 5000,
+      gravity: "top",
+      position: "right",
+      style: { background: "red" },
+      close: true,
+stopOnFocus: true
+    }).showToast();
+  
     window.location.href = "./login.html";
     return;
   }
@@ -16,16 +24,13 @@ document.addEventListener("DOMContentLoaded", () => {
   setupLogout();
 });
 
-
 // ---------------- LOAD PROFILE ----------------
 async function loadProfile() {
-
   try {
-
     const response = await fetch(`${API_BASE_URL}/users/me`, {
       headers: {
-        "Authorization": `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     if (!response.ok) {
@@ -52,30 +57,41 @@ async function loadProfile() {
       <p>${user.email}</p>
       <p><strong>Role:</strong> ${user.role}</p>
     `;
-
   } catch (error) {
-
-    console.error("Error loading profile:", error);
+       Toastify({
+      text: `Error loading profile:${ error}`,
+      duration: 5000,
+      gravity: "top",
+      position: "right",
+      style: { background: "red" },
+      close: true,
+stopOnFocus: true
+    }).showToast();
 
     if (error.message === "401") {
-      console.log("Session expired. Redirecting...");
+            Toastify({
+      text: `Session expired. Redirecting...`,
+      duration: 5000,
+      gravity: "top",
+      position: "right",
+      style: { background: "red" },
+      close: true,
+stopOnFocus: true
+    }).showToast();
       localStorage.clear();
       window.location.href = "./login.html";
     }
   }
 }
 
-
 // ---------------- EDIT PROFILE SETUP ----------------
 function setupEditForm() {
-
   const editBtn = document.getElementById("editBtn");
   const editContainer = document.getElementById("edit");
 
   if (!editBtn) return;
 
   editBtn.addEventListener("click", () => {
-
     const user = JSON.parse(localStorage.getItem("user_details") || "{}");
     const previewImg = getImageUrl(user.image_url);
 
@@ -84,7 +100,7 @@ function setupEditForm() {
         <div>
           <label>Name</label>
           <input type="text" id="name" 
-                 value="${user.name || ''}" 
+                 value="${user.name || ""}" 
                  minlength="3" required />
         </div>
 
@@ -127,10 +143,8 @@ function setupEditForm() {
   });
 }
 
-
 // ---------------- HANDLE EDIT SUBMIT ----------------
 async function handleEditSubmit(event) {
-
   event.preventDefault();
 
   const name = document.getElementById("name").value.trim();
@@ -138,26 +152,30 @@ async function handleEditSubmit(event) {
   const user = JSON.parse(localStorage.getItem("user_details") || "{}");
 
   if (!user.email) {
-    console.log("User email missing");
+        Toastify({
+      text: `User email missing`,
+      duration: 5000,
+      gravity: "top",
+      position: "right",
+      style: { background: "red" },
+      close: true,
+stopOnFocus: true
+    }).showToast();
     return;
   }
 
   try {
-
     const formData = new FormData();
     if (name) formData.append("name", name);
     if (imageFile) formData.append("image", imageFile);
 
-    const response = await fetch(
-      `${API_BASE_URL}/users/email/${user.email}`,
-      {
-        method: "PUT",
-        headers: {
-          "Authorization": `Bearer ${token}`
-        },
-        body: formData
-      }
-    );
+    const response = await fetch(`${API_BASE_URL}/users/email/${user.email}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -172,26 +190,37 @@ async function handleEditSubmit(event) {
 
     loadProfile(); // refresh UI
     document.getElementById("edit").innerHTML = "";
-
   } catch (error) {
-    console.error("Update failed:", error.message);
+          Toastify({
+      text: `Update failed:${error.message}`,
+      duration: 5000,
+      gravity: "top",
+      position: "right",
+      style: { background: "red" },
+      close: true,
+stopOnFocus: true
+    }).showToast();
   }
 }
 
-
 // ---------------- LOGOUT ----------------
 function setupLogout() {
-
   const logoutBtn = document.getElementById("logOut");
   if (!logoutBtn) return;
 
   logoutBtn.addEventListener("click", (e) => {
-
     e.preventDefault();
 
     localStorage.clear();
-
-    console.log("User logged out");
+    Toastify({
+      text: `User logged out`,
+      duration: 5000,
+      gravity: "top",
+      position: "right",
+      style: { background: "red" },
+      close: true,
+stopOnFocus: true
+    }).showToast();
 
     window.location.href = "./login.html";
   });

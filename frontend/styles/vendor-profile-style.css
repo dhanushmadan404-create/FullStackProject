@@ -8,7 +8,7 @@ body {
   flex-direction: column;
   min-height: 100vh;
   margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f4f4f6;
   color: #333;
 }
@@ -18,7 +18,6 @@ header .logo {
   transition: transform 0.3s ease;
   background: transparent;
 }
-
 
 /* Base Container */
 #vendorProfile {
@@ -52,7 +51,7 @@ header .logo {
   height: 150px;
   object-fit: cover;
   border-radius: 50%;
-  border: 4px solid #007BFF; /* Primary color */
+  border: 4px solid #007bff; /* Primary color */
   background-color: #e9ecef;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
@@ -69,7 +68,7 @@ header .logo {
 
 .profile-info h2 {
   font-size: 28px;
-  color: #007BFF;
+  color: #007bff;
   margin-bottom: 8px;
   text-transform: uppercase;
 }
@@ -148,7 +147,7 @@ header .logo {
 }
 
 .edit-btn {
-  background-color: #007BFF;
+  background-color: #007bff;
   color: white;
   border: none;
 }
@@ -212,8 +211,8 @@ header .logo {
   width: 100%;
   margin-top: 12px;
   background-color: transparent;
-  color: #007BFF;
-  border: 1px solid #007BFF;
+  color: #007bff;
+  border: 1px solid #007bff;
   padding: 8px;
   border-radius: 8px;
   cursor: pointer;
@@ -223,7 +222,7 @@ header .logo {
 }
 
 .com-btn:hover {
-  background-color: #007BFF;
+  background-color: #007bff;
   color: white;
 }
 

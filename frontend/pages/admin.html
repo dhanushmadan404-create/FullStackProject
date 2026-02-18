@@ -1,78 +1,75 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin Dashboard</title>
 
-<head>
-  <meta charset="UTF-8" />
-  <title>Admin Dashboard</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="../styles/admin.css" />
+    <link rel="icon" href="../assets/icons8-a-64.png" />
+  </head>
 
-  <!-- CSS -->
-  <link rel="icon" href="../styles/admin.css" />
-  <link rel="stylesheet" href="../styles/admin.css" />
-</head>
+  <body>
+    <!-- ================= HEADER ================= -->
+    <header class="admin-header">
+      <div style="display: flex; align-items: center; gap: 10px">
+        <img
+          src="../assets/annesana.png"
+          alt="Logo"
+          style="height: 40px; cursor: pointer"
+          onclick="window.location.href = '../../index.html'"
+        />
+        <h2>Admin Panel</h2>
+      </div>
 
-<body>
+      <div class="admin-right">
+        <img id="adminImage" src="../assets/location.png" alt="Admin" />
+        <span id="adminName">Admin</span>
+        <button onclick="logout()">Logout</button>
+      </div>
+    </header>
 
-  <!-- ================= HEADER ================= -->
-  <header class="admin-header">
-    <div style="display:flex; align-items:center; gap:10px;">
-      <img src="../assets/annesana.png" alt="Logo" style="height:40px; cursor:pointer;"
-        onclick="window.location.href='../../index.html'" />
-      <h2>Admin Panel</h2>
+    <!-- ================= MAIN ================= -->
+    <div class="admin-container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <ul>
+          <li onclick="showSection('dashboard')">Dashboard</li>
+          <li onclick="showSection('vendors')">Vendors</li>
+          <li onclick="showSection('foods')">Foods</li>
+          <li onclick="showSection('users')">Users</li>
+        </ul>
+      </aside>
+
+      <!-- Content -->
+      <main class="content">
+        <!-- Vendors Section -->
+        <section id="vendors" class="section">
+          <h3>Vendor List</h3>
+
+          <div id="vendorList">
+            <table border="1" id="vendorTable">
+              <thead>
+                <tr>
+                  <th>Vendor ID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Opening Time</th>
+                  <th>Closing Time</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
     </div>
 
-    <div class="admin-right">
-      <img id="adminImage" src="../assets/location.png" alt="Admin" />
-      <span id="adminName">Admin</span>
-      <button onclick="logout()">Logout</button>
-    </div>
-  </header>
+    <!-- ================= JS ================= -->
 
-  <!-- ================= MAIN ================= -->
-  <div class="admin-container">
-
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <ul>
-        <li onclick="showSection('dashboard')">Dashboard</li>
-        <li onclick="showSection('vendors')">Vendors</li>
-        <li onclick="showSection('foods')">Foods</li>
-        <li onclick="showSection('users')">Users</li>
-      </ul>
-    </aside>
-
-    <!-- Content -->
-    <main class="content">
-
-      <!-- Vendors Section -->
-      <section id="vendors" class="section">
-        <h3>Vendor List</h3>
-
-        <div id="vendorList">
-          <table border="1" id="vendorTable">
-            <thead>
-              <tr>
-                <th>Vendor ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Opening Time</th>
-                <th>Closing Time</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </section>
-
-    </main>
-  </div>
-
-  <!-- ================= JS ================= -->
-
-  <script src="../scripts/common.js"></script>
-  <script src="../scripts/admin.js"></script>
-
-</body>
-
+    <script src="../scripts/common.js"></script>
+    <script src="../scripts/admin.js"></script>
+  </body>
 </html>

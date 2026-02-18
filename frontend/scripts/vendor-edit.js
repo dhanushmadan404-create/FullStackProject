@@ -5,7 +5,7 @@
 // ---------------- API BASE URL ----------------
 const API_BASE_URL =
   window.location.hostname === "localhost" ||
-    window.location.hostname === "127.0.0.1"
+  window.location.hostname === "127.0.0.1"
     ? "http://127.0.0.1:8000/api"
     : "/api";
 
@@ -74,7 +74,7 @@ async function loadInitialData(token) {
   try {
     // 1. Get User Info
     const userRes = await fetch(`${API_BASE_URL}/users/me`, {
-      headers: { Authorization: `Bearer ${token}` }
+      headers: { Authorization: `Bearer ${token}` },
     });
     if (!userRes.ok) throw new Error("Failed to load user");
     const user = await userRes.json();
@@ -82,13 +82,18 @@ async function loadInitialData(token) {
 
     document.getElementById("userName").value = user.name || "";
     if (user.image_url) {
-      document.getElementById("userImagePreview").src = getImageUrl(user.image_url);
+      document.getElementById("userImagePreview").src = getImageUrl(
+        user.image_url,
+      );
     }
 
     // 2. Get Vendor Info
-    const vendorRes = await fetch(`${API_BASE_URL}/vendors/user/${user.user_id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const vendorRes = await fetch(
+      `${API_BASE_URL}/vendors/user/${user.user_id}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
 
     if (vendorRes.ok) {
       const vendor = await vendorRes.json();
@@ -96,17 +101,24 @@ async function loadInitialData(token) {
         localStorage.setItem("vendor", JSON.stringify(vendor));
 
         document.getElementById("number").value = vendor.phone_number || "";
-        if (vendor.opening_time) document.getElementById("openingTime").value = vendor.opening_time.slice(0, 5);
-        if (vendor.closing_time) document.getElementById("closingTime").value = vendor.closing_time.slice(0, 5);
+        if (vendor.opening_time)
+          document.getElementById("openingTime").value =
+            vendor.opening_time.slice(0, 5);
+        if (vendor.closing_time)
+          document.getElementById("closingTime").value =
+            vendor.closing_time.slice(0, 5);
 
         // 3. Get Food Category & Location from Food Table
-        const foodRes = await fetch(`${API_BASE_URL}/foods/vendor/${vendor.vendor_id}`);
+        const foodRes = await fetch(
+          `${API_BASE_URL}/foods/vendor/${vendor.vendor_id}`,
+        );
         if (foodRes.ok) {
           const foods = await foodRes.json();
           if (foods.length > 0) {
             const sampleFood = foods[0];
             // Prefill Category
-            document.getElementById("foodType").value = sampleFood.category.toLowerCase();
+            document.getElementById("foodType").value =
+              sampleFood.category.toLowerCase();
 
             // Prefill Location
             selectedLat = sampleFood.latitude;
@@ -119,7 +131,6 @@ async function loadInitialData(token) {
         }
       }
     }
-
   } catch (error) {
     console.error("Initial load failed:", error);
   }
@@ -143,13 +154,18 @@ function setupFormListeners() {
   }
 
   const backBtn = document.getElementById("back");
-  if (backBtn) backBtn.addEventListener("click", () => mapContainer.style.display = "none");
+  if (backBtn)
+    backBtn.addEventListener(
+      "click",
+      () => (mapContainer.style.display = "none"),
+    );
 
   const saveBtn = document.getElementById("save");
-  if (saveBtn) saveBtn.addEventListener("click", () => {
-    if (selectedLat && selectedLng) mapContainer.style.display = "none";
-    else alert("Please select a location on the map.");
-  });
+  if (saveBtn)
+    saveBtn.addEventListener("click", () => {
+      if (selectedLat && selectedLng) mapContainer.style.display = "none";
+      else alert("Please select a location on the map.");
+    });
 
   // Current Location
   const currentLocBtn = document.getElementById("location");
@@ -171,7 +187,9 @@ function setupFormListeners() {
       const file = e.target.files[0];
       if (file) {
         const reader = new FileReader();
-        reader.onload = (event) => document.getElementById("userImagePreview").src = event.target.result;
+        reader.onload = (event) =>
+          (document.getElementById("userImagePreview").src =
+            event.target.result);
         reader.readAsDataURL(file);
       }
     });
@@ -227,25 +245,41 @@ async function handleSubmit(event) {
   try {
     // 1. Update User
     const userFormData = new FormData();
-    userFormData.append("name", document.getElementById("userName").value.trim());
+    userFormData.append(
+      "name",
+      document.getElementById("userName").value.trim(),
+    );
     const userImg = document.getElementById("userImage").files[0];
     if (userImg) userFormData.append("image", userImg);
 
     const userRes = await fetch(`${API_BASE_URL}/users/email/${user.email}`, {
-      method: "PUT", headers: { Authorization: `Bearer ${token}` }, body: userFormData
+      method: "PUT",
+      headers: { Authorization: `Bearer ${token}` },
+      body: userFormData,
     });
     if (!userRes.ok) throw new Error("User update failed");
 
     // 2. Update Vendor
     const vendorFormData = new FormData();
-    vendorFormData.append("phone_number", document.getElementById("number").value.trim());
-    vendorFormData.append("opening_time", document.getElementById("openingTime").value);
-    vendorFormData.append("closing_time", document.getElementById("closingTime").value);
+    vendorFormData.append(
+      "phone_number",
+      document.getElementById("number").value.trim(),
+    );
+    vendorFormData.append(
+      "opening_time",
+      document.getElementById("openingTime").value,
+    );
+    vendorFormData.append(
+      "closing_time",
+      document.getElementById("closingTime").value,
+    );
     const shopImg = document.getElementById("image").files[0];
     if (shopImg) vendorFormData.append("image", shopImg);
 
     const vendorRes = await fetch(`${API_BASE_URL}/vendors`, {
-      method: "PUT", headers: { Authorization: `Bearer ${token}` }, body: vendorFormData
+      method: "PUT",
+      headers: { Authorization: `Bearer ${token}` },
+      body: vendorFormData,
     });
     if (!vendorRes.ok) throw new Error("Vendor update failed");
 
@@ -261,13 +295,14 @@ async function handleSubmit(event) {
       foodFormData.append("image", item.file);
 
       await fetch(`${API_BASE_URL}/foods`, {
-        method: "POST", headers: { Authorization: `Bearer ${token}` }, body: foodFormData
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: foodFormData,
       });
     }
 
     alert("Updates successful!");
     window.location.href = "./vendor-profile.html";
-
   } catch (error) {
     console.error("Submit failed:", error);
     alert(error.message);
