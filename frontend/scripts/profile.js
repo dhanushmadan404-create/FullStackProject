@@ -1,10 +1,10 @@
 // ---------------- GLOBAL TOKEN ----------------
 const token = localStorage.getItem("token");
 
-const DefaultProfile = "../assets/default_user.png";
 // ---------------- MAIN EXECUTION ----------------
 document.addEventListener("DOMContentLoaded", () => {
   if (!token) {
+    window.location.href = "./login.html";
       Toastify({
       text: `User not logged in`,
       duration: 5000,
@@ -15,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
 stopOnFocus: true
     }).showToast();
   
-    window.location.href = "./login.html";
     return;
   }
 
@@ -50,8 +49,7 @@ async function loadProfile() {
         src="${imgUrl}" 
         alt="${user.name}" 
         class="profile-image"
-        onerror="(e)=>{e.target.src=${DefaultProfile}
-          }"
+        onerror="this.onerror=null; this.src='../assets/default_user.png';"
       />
       <h2>${user.name}</h2>
       <p>${user.email}</p>
@@ -70,7 +68,7 @@ stopOnFocus: true
 
     if (error.message === "401") {
             Toastify({
-      text: `Session expired. Redirecting...`,
+      text: `Redirecting...`,
       duration: 5000,
       gravity: "top",
       position: "right",
