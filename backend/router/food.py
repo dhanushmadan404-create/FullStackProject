@@ -46,7 +46,21 @@ def save_image(image: UploadFile) -> str:
 
 @router.get("/all", response_model=List[FoodResponse])
 def get_all_foods(db: Session = Depends(get_db)):
-    return db.query(Food).all()
+    foods = db.query(Food).all()
+    result = []
+    for food in foods:
+        total_likes = db.query(func.count()).select_from(FoodLike).filter(FoodLike.food_id == food.food_id).scalar()
+        result.append({
+            "food_id": food.food_id,
+            "food_name": food.food_name,
+            "food_image_url": food.food_image_url,
+            "category": food.category,
+            "latitude": food.latitude,
+            "longitude": food.longitude,
+            "vendor_id": food.vendor_id,
+            "total_likes": total_likes or 0
+        })
+    return result
 
 # -----------------------------------
 # Get Foods By Category
@@ -141,7 +155,18 @@ def get_food(food_id: int, db: Session = Depends(get_db)):
     if not food:
         raise HTTPException(status_code=404, detail="Food not found")
 
-    return food
+    total_likes = db.query(func.count()).select_from(FoodLike).filter(FoodLike.food_id == food.food_id).scalar()
+    
+    return {
+        "food_id": food.food_id,
+        "food_name": food.food_name,
+        "food_image_url": food.food_image_url,
+        "category": food.category,
+        "latitude": food.latitude,
+        "longitude": food.longitude,
+        "vendor_id": food.vendor_id,
+        "total_likes": total_likes or 0
+    }
 
 
 # -----------------------------------
@@ -150,7 +175,21 @@ def get_food(food_id: int, db: Session = Depends(get_db)):
 
 @router.get("/vendor/{vendor_id}", response_model=List[FoodResponse])
 def get_foods_by_vendor(vendor_id: int, db: Session = Depends(get_db)):
-    return db.query(Food).filter(Food.vendor_id == vendor_id).all()
+    foods = db.query(Food).filter(Food.vendor_id == vendor_id).all()
+    result = []
+    for food in foods:
+        total_likes = db.query(func.count()).select_from(FoodLike).filter(FoodLike.food_id == food.food_id).scalar()
+        result.append({
+            "food_id": food.food_id,
+            "food_name": food.food_name,
+            "food_image_url": food.food_image_url,
+            "category": food.category,
+            "latitude": food.latitude,
+            "longitude": food.longitude,
+            "vendor_id": food.vendor_id,
+            "total_likes": total_likes or 0
+        })
+    return result
 
 
 # -----------------------------------

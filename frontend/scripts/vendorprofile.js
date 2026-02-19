@@ -20,21 +20,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     const res = await fetch(`${API_URL}/users/${userId}`);
     if (!res.ok) throw new Error("Failed to fetch user data");
 
-    const vendor = await res.json();
-    console.log("User Data:", vendor);
+    const user = await res.json();
+    console.log("User Data:", user);
 
     // Render profile image + name/email
-    profile_image.innerHTML = `<img src="${getImageUrl(vendor.image)}" class="card-image"/>`;
+    profile_image.innerHTML = `<img src="${getImageUrl(user.image_url)}" class="card-image" onerror="this.onerror=null; this.src='../assets/default_vendor.png';"/>`;
     vendorName.innerHTML = `
-      <h2>${vendor.name}</h2>
-      <p>${vendor.email}</p>
+      <h2>${user.name}</h2>
+      <p>${user.email}</p>
     `;
 
     // Fetch vendor info from backend
-    const vendorDocRes = await fetch(`${API_URL}/vendors/user/${vendor.user_id}`);
+    const vendorDocRes = await fetch(`${API_URL}/vendors/user/${userId}`);
     if (!vendorDocRes.ok) throw new Error("Failed to fetch vendor data");
 
     const vendorDoc = await vendorDocRes.json();
+    console.log("Vendor Data:", vendorDoc);
     localStorage.setItem("vendorId", vendorDoc.vendor_id);
 
     TimeStatus.innerHTML = `${vendorDoc.opening_time || "N/A"} - ${vendorDoc.closing_time || "N/A"}`;
@@ -46,22 +47,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     const foods = await foodRes.json();
     console.log("Foods:", foods);
 
-    foods.forEach(food => {
-      const div = document.createElement("div");
-      div.id = `food-${food.food_id}`;
-      div.classList.add("review-card");
-      div.innerHTML = `
-        <img src="${getImageUrl(food.food_image_url)}" class="card-image"/>
-        <div class="card-info">
-          <p><strong>${food.food_name}</strong></p>
-          <p>${food.category}</p>
-          <button onclick="deleteFood(${food.food_id})" style="background:red;color:white;border:none;padding:5px;cursor:pointer;">
-            Remove
-          </button>
-        </div>
-      `;
-      food_container.appendChild(div);
-    });
+    if (Array.isArray(foods)) {
+      foods.forEach(food => {
+        const div = document.createElement("div");
+        div.id = `food-${food.food_id}`;
+        div.classList.add("review-card");
+        div.innerHTML = `
+          <img src="${getImageUrl(food.food_image_url)}" class="card-image"
+               onerror="this.onerror=null; this.src='../assets/default_food.png';"
+          />
+          <div class="card-info">
+            <p><strong>${food.food_name}</strong></p>
+            <p>${food.category}</p>
+            <button onclick="deleteFood(${food.food_id})" style="background:red;color:white;border:none;padding:5px;cursor:pointer;">
+              Remove
+            </button>
+          </div>
+        `;
+        food_container.appendChild(div);
+      });
+    }
 
   } catch (e) {
     console.error(e);
