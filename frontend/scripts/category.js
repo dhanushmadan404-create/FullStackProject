@@ -12,6 +12,9 @@ const params = new URLSearchParams(window.location.search);
 const category = params.get("category") || "breakfast";
 const cate = category === "drinking" ? "Juice" : category;
 
+const userId = localStorage.getItem("user_id");
+const token = localStorage.getItem("token");
+
 document.addEventListener("DOMContentLoaded", async () => {
   const Cate = document.getElementById("Cate");
   const cardContainer = document.getElementById("cardContainer");
@@ -25,6 +28,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // ---------- Load Foods ----------
   try {
+    // 1️⃣ Fetch liked foods if logged in
+    let likedFoodIds = [];
+    if (token) {
+      const likedRes = await fetch(`${API_BASE_URL}/foods/liked`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (likedRes.ok) {
+        likedFoodIds = await likedRes.json();
+      }
+    }
+
+    // 2️⃣ Fetch foods in category
     const response = await fetch(`${API_BASE_URL}/foods/category/${category}`);
     if (!response.ok) throw new Error("Failed to load foods");
 
@@ -41,6 +56,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     cardContainer.innerHTML = "";
 
     foods.forEach((food) => {
+      const isLiked = likedFoodIds.includes(food.food_id);
       const div = document.createElement("div");
       const imgUrl = getImageUrl(
         food.food_image_url,
@@ -71,14 +87,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       <button 
         id="like-btn-${food.food_id}"
         onclick="handleLike(${food.food_id})"
-        ${food.liked_by_user ? "disabled" : ""}>
+        style="display:${isLiked ? "none" : "inline-block"}">
         LIKE
       </button>
 
       <button 
         id="remove-btn-${food.food_id}"
         onclick="handleRemove(${food.food_id})"
-        style="display:${food.liked_by_user ? "inline-block" : "none"}">
+        style="display:${isLiked ? "inline-block" : "none"}">
         REMOVE
       </button>
 
@@ -158,7 +174,7 @@ async function handleLike(foodId) {
     }
 
     // 🟢 Success
-    document.getElementById(`like-btn-${foodId}`).disabled = true;
+    document.getElementById(`like-btn-${foodId}`).style.display = "none";
     document.getElementById(`remove-btn-${foodId}`).style.display = "inline-block";
     document.getElementById(`like-count-${foodId}`).textContent = data.total_likes;
 
@@ -229,7 +245,7 @@ async function handleRemove(foodId) {
     }
 
     // 🟢 Success
-    document.getElementById(`like-btn-${foodId}`).disabled = false;
+    document.getElementById(`like-btn-${foodId}`).style.display = "inline-block";
     document.getElementById(`remove-btn-${foodId}`).style.display = "none";
     document.getElementById(`like-count-${foodId}`).textContent = data.total_likes;
 

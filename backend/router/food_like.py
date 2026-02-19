@@ -91,3 +91,15 @@ def unlike_food(
         "message": "Like removed successfully",
         "total_likes": total_likes
     }
+@router.get("/liked")
+def get_liked_foods(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    liked_foods = (
+        db.query(FoodLike.food_id)
+        .filter(FoodLike.user_id == current_user.user_id)
+        .all()
+    )
+    # Return a flat list of IDs
+    return [f[0] for f in liked_foods]
