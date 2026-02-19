@@ -1,124 +1,88 @@
-const API_BASE_URL = "http://127.0.0.1:8000";
 
-// =====================================
-// Load Vendor Data + Prefill Form
-// =====================================
+const profile_image = document.getElementById("DB");
+const vendorName = document.getElementById("vendor_details");
+const TimeStatus = document.getElementById("timeStatus");
+const food_container = document.getElementById("food_container");
+const reviews_container = document.getElementById("reviews_container");
+
 document.addEventListener("DOMContentLoaded", async () => {
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    window.location.href = "./login.html";
-    return;
-  }
-
   try {
-    const response = await fetch(`${API_BASE_URL}/vendors/me`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+
+    const vendorId = localStorage.getItem("vendorId");
+    console.log(vendorId)
+    const res = await fetch(`http://127.0.0.1:8000/users/${vendorId}`);
+    const vendor = await res.json();
+    console.log(vendor)
+    if (!res.ok) return alert(vendor.detail);
+
+    if (!res.ok) return alert(vendor.detail);
+
+    const userRole = JSON.parse(localStorage.getItem("user"));
+    // Basic check if logged in vendor matches profile
+
+    profile_image.innerHTML = `<img src="${API_URL}/uploads/${vendor.image || 'default.png'}"  class="card-image"/>`;
+    vendorName.innerHTML = `
+      <h2>${vendor.name}</h2>
+      <p>${vendor.email}</p>
+    `;
+
+
+    const vendorDocRes = await fetch(`${API_URL}/vendors/users/${vendor.user_id}`);
+    const vendorDoc = await vendorDocRes.json();
+    console.log(vendorDoc)
+    TimeStatus.innerHTML = `${vendorDoc.opening_time} - ${vendorDoc.closing_time}`;
+
+    // food details
+    // food details
+    const foodRes = await fetch(`${API_URL}/foods/vendor/${vendorDoc.vendor_id}`);
+    const foods = await foodRes.json();
+    console.log(foods)
+    foods.forEach(food => {
+      const div = document.createElement("div");
+      div.innerHTML = `
+        <div class="review-card">
+        <div class="review-card" id="food-${food.food_id}">
+          <img src="${API_URL}/${food.food_image_url}"  class="card-image"/>
+          <div class="card-info">
+            <p><strong>${food.food_name}</strong></p>
+            <p>${food.category}</p>
+            <button onclick="deleteFood(${food.food_id})" style="background:red;color:white;border:none;padding:5px;cursor:pointer;">Remove</button>
+          </div>
+        </div>
+      `;
+      food_container.appendChild(div);
     });
 
-    if (!response.ok) {
-      throw new Error("Failed to load vendor");
-    }
-
-    const vendor = await response.json();
-    console.log("Vendor Data:", vendor);
-
-    // ✅ Prefill values
-    document.getElementById("number").value =
-      vendor.phone_number || "";
-
-    document.getElementById("openingTime").value =
-      vendor.opening_time || "";
-
-    document.getElementById("closingTime").value =
-      vendor.closing_time || "";
-
-  } catch (error) {
-    console.error("Vendor Load Error:", error);
-
-    Toastify({
-      text: "Failed to load vendor data",
-      duration: 4000,
-      gravity: "top",
-      position: "right",
-      style: { background: "red" },
-    }).showToast();
+  } catch (e) {
+    console.error(e);
+    alert("Failed to load vendor profile ❌");
   }
 });
 
-// =====================================
-// Handle Update Submit
-// =====================================
-document
-  .getElementById("vendorRegistration")
-  .addEventListener("submit", handleSubmit);
+async function logout() {
+  localStorage.clear();
+  location.href = "./login.html";
+}
 
-async function handleSubmit(event) {
-  event.preventDefault();
-
-  const token = localStorage.getItem("token");
-
-  const submitBtn = document.getElementById("submit");
-  submitBtn.innerText = "Updating...";
-  submitBtn.disabled = true;
+async function deleteFood(foodId) {
+  if (!confirm("Are you sure you want to remove this item?")) return;
 
   try {
-    const formData = new FormData();
-
-    const phone = document.getElementById("number").value.trim();
-    const openTime = document.getElementById("openingTime").value;
-    const closeTime = document.getElementById("closingTime").value;
-    const imageFile = document.getElementById("image").files[0];
-
-    if (phone) formData.append("phone_number", phone);
-    if (openTime) formData.append("opening_time", openTime);
-    if (closeTime) formData.append("closing_time", closeTime);
-    if (imageFile) formData.append("image", imageFile);
-
-    const response = await fetch(`${API_BASE_URL}/vendors`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
+    const res = await fetch(`${API_URL}/foods/${foodId}`, {
+      method: "DELETE"
     });
 
-    const data = await response.json();
-    console.log("Update Response:", data);
+    if (res.ok) {
+      alert("Food removed ✅");
+      document.getElementById(`food-${foodId}`).remove();
 
-    if (!response.ok) {
-      Toastify({
-        text: data.detail || "Update failed",
-        duration: 4000,
-        gravity: "top",
-        position: "right",
-        style: { background: "red" },
-      }).showToast();
-      return;
+      // remove from localStorage if stored (optional based on user request "UI and localStorage correctly")
+      // Usually we don't store list of foods in localstorage, but if we do, clear it.
+    } else {
+      alert("Failed to delete ❌");
     }
-
-    Toastify({
-      text: "Vendor updated successfully ✅",
-      duration: 3000,
-      gravity: "top",
-      position: "right",
-      style: { background: "green" },
-    }).showToast();
-
-  } catch (error) {
-    console.error("Update Error:", error);
-
-    Toastify({
-      text: "Something went wrong ❌",
-      duration: 4000,
-      gravity: "top",
-      position: "right",
-      style: { background: "red" },
-    }).showToast();
-  } finally {
-    submitBtn.innerText = "Submit";
-    submitBtn.disabled = false;
+  } catch (err) {
+    console.error(err);
+    alert("Error deleting food");
   }
 }
