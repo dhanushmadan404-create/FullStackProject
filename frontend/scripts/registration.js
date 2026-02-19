@@ -230,6 +230,7 @@ if (form) {
 
       const vendorResponse = await response.json();
       const vendorId = vendorResponse.vendor_id;
+      localStorage.setItem("vendorId", vendorId);
 
       console.log("Vendor created:", vendorId);
 

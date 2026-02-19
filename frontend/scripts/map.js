@@ -66,14 +66,14 @@ async function loadAllFoodLocations() {
       }
     });
   } catch (error) {
-     Toastify({
+    Toastify({
       text: `Error loading all foods`,
       duration: 5000,
       gravity: "top",
       position: "right",
       style: { background: "red" },
       close: true,
-stopOnFocus: true
+      stopOnFocus: true
     }).showToast();
   }
 }
@@ -100,18 +100,22 @@ function getUserLocation() {
         .addTo(map)
         .bindPopup("You are here")
         .openPopup();
+
+      if (foodLat && foodLng) {
+        drawRoute();
+      }
     },
 
     (error) => {
-         Toastify({
-      text: `Location access denied:`,
-      duration: 5000,
-      gravity: "top",
-      position: "right",
-      style: { background: "red" },
-      close: true,
-stopOnFocus: true
-    }).showToast();
+      Toastify({
+        text: `Location access denied:`,
+        duration: 5000,
+        gravity: "top",
+        position: "right",
+        style: { background: "red" },
+        close: true,
+        stopOnFocus: true
+      }).showToast();
     },
   );
 }
@@ -121,15 +125,15 @@ async function loadFoodLocation(foodId) {
   try {
     const res = await fetch(`${API_BASE_URL}/foods/${foodId}`);
     if (!res.ok) {
-             Toastify({
-      text: `Failed to fetch food details`,
-      duration: 5000,
-      gravity: "top",
-      position: "right",
-      style: { background: "red" },
-      close: true,
-stopOnFocus: true
-    }).showToast();
+      Toastify({
+        text: `Failed to fetch food details`,
+        duration: 5000,
+        gravity: "top",
+        position: "right",
+        style: { background: "red" },
+        close: true,
+        stopOnFocus: true
+      }).showToast();
       return;
     }
 
@@ -156,30 +160,21 @@ stopOnFocus: true
       drawRoute();
     }
   } catch (error) {
-             Toastify({
+    Toastify({
       text: `Error loading food location:`,
       duration: 5000,
       gravity: "top",
       position: "right",
       style: { background: "red" },
       close: true,
-stopOnFocus: true
+      stopOnFocus: true
     }).showToast();
   }
 }
 
 // ---------------- DRAW ROUTE ----------------
 function drawRoute() {
-if (!map || userLat == null || foodLat == null) {
-            Toastify({
-      text: `Missing coordinates for routing`,
-      duration: 5000,
-      gravity: "top",
-      position: "right",
-      style: { background: "red" },
-      close: true,
-stopOnFocus: true
-    }).showToast();
+  if (!map || userLat == null || foodLat == null) {
     return;
   }
 

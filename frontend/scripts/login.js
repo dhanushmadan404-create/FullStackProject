@@ -232,7 +232,7 @@ async function redirectUser(role, userId) {
 
       if (response.ok) {
         const vendorData = await response.json();
-        localStorage.setItem("vendor", JSON.stringify(vendorData));
+        localStorage.setItem("vendorId", vendorData.vendor_id);
         console.log("Vendor profile found. Redirecting...");
         window.location.href = "./vendor-profile.html";
       } else {

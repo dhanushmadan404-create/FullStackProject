@@ -62,7 +62,7 @@ def get_all_vendors(db: Session = Depends(get_db)):
 def get_vendor_by_user(user_id: int, db: Session = Depends(get_db)):
     vendor = db.query(Vendor).filter(Vendor.user_id == user_id).first()
     if not vendor:
-        return {"exists": False}
+        raise HTTPException(status_code=404, detail="Vendor not found")
     
     return {
         "exists": True,

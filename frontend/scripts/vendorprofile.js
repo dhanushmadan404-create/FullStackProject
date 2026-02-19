@@ -9,15 +9,15 @@ const API_URL = window.API_BASE_URL;
 
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    const vendorId = localStorage.getItem("vendorId");
-    if (!vendorId) {
-      alert("Vendor ID not found. Please login again.");
+    const userId = localStorage.getItem("user_id");
+    if (!userId) {
+      alert("User ID not found. Please login again.");
       logout();
       return;
     }
 
     // Fetch user info first
-    const res = await fetch(`${API_URL}/users/${vendorId}`);
+    const res = await fetch(`${API_URL}/users/${userId}`);
     if (!res.ok) throw new Error("Failed to fetch user data");
 
     const vendor = await res.json();
@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!vendorDocRes.ok) throw new Error("Failed to fetch vendor data");
 
     const vendorDoc = await vendorDocRes.json();
-    console.log("Vendor Data:", vendorDoc);
+    localStorage.setItem("vendorId", vendorDoc.vendor_id);
 
     TimeStatus.innerHTML = `${vendorDoc.opening_time || "N/A"} - ${vendorDoc.closing_time || "N/A"}`;
 
