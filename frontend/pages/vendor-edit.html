@@ -3,29 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vendor Registration</title>
-    <link rel="stylesheet" href="../styles/registration-style.css" />
+    <title>Vendor Profile</title>
+    <link rel="stylesheet" href="../styles/vendor-profile-style.css" />
     <link rel="icon" href="../assets/icons8-a-64.png" />
-
-    <!-- Map integration and cloth for map-->
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-      crossorigin=""
-    />
-    <!-- give function to map in js -->
-    <script
-      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-      crossorigin=""
-    ></script>
     <!-- Toastify CSS -->
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
     />
-
     <!-- Toastify JS -->
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   </head>
@@ -39,78 +24,45 @@
           alt="Annesana"
           style="cursor: pointer"
         />
-
-        <div class="right-align right"></div>
       </div>
     </header>
 
     <main>
-      <!-- map -->
-      <div id="mapContainer">
-        <h1>
-          Select your Shop location <b id="location">CurrentLocation</b>
-          <b id="save">SAVE</b>👈<b id="back">Back</b>
-        </h1>
-
-        <div id="map"></div>
-      </div>
-      <!-- map -->
-      <div class="registration-container">
-        <div class="header">
-          <h1>vendor Registration</h1>
+      <!-- Profile Section -->
+      <div id="vendorProfile">
+        <div class="profile-section">
+          <div id="DB"></div>
+          <div id="vendor_details" class="profile-info"></div>
         </div>
 
-        <form id="vendorRegistration">
-         
+        <!-- Operating Hours -->
+        <div class="operating-hours">
+          <h3 id="timeStatus"></h3>
+          <button
+            class="edit-btn"
+            onclick="window.location.href = 'vendor-edit.html'"
+          >
+            Edit
+          </button>
+        </div>
 
-          <div class="form-group">
-            <label>Phone Number:</label>
-            <input
-              id="number"
-              type="tel"
-              placeholder="Enter Your Number"
-              required
-              minlength="10"
-            />
-            <span class="error-message" id="numberError"></span>
-          </div>
+        <!-- Logout Button -->
+        <button class="logout-btn" onclick="logout()">LOG OUT</button>
 
-          <div class="form-group">
-            <label>Shop Location:</label>
-            <div class="location-group">
-              <div class="location-icon">Loca📍ion</div>
-            </div>
-            <span class="error-message" id="locationError"></span>
-          </div>
+        <!-- Food Cards -->
+        <h3>My Foods</h3>
+        <div id="food_container" class="review-cards"></div>
 
-          <div class="form-group">
-            <label>Image</label>
-          <input id="image" type="file" class="image-upload" accept="image/*" />
-
-            <span class="error-message" id="imageError"></span>
-          </div>
- 
-          <div class="operating-hours">
-            <h3>Operating Hours:</h3>
-            <div class="time-inputs">
-              <div class="time-group">
-                <label>Opening Time</label>
-                <input id="openingTime" type="time" required />
-              </div>
-              <div class="time-group">
-                <label>Closing Time</label>
-                <input id="closingTime" type="time" required />
-                <span class="error-message" id="closingTimeError"></span>
-              </div>
-            </div>
-          </div>
-
-          <button id="submit" type="submit" class="submit-btn">Submit</button>
-        </form>
+        <!-- Reviews (optional, added container) -->
+        <div id="reviews_container"></div>
       </div>
     </main>
-    <footer></footer>
+
+    <footer>
+      <small>© 2025 Annesana. All Rights Reserved.</small>
+    </footer>
+
     <script src="../scripts/common.js"></script>
-    <script src="../scripts/vendor-edit.js"></script>
+    <script src="../scripts/vendorprofile.js"></script>
   </body>
 </html>

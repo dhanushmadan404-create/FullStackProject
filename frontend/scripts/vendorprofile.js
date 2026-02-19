@@ -1,53 +1,63 @@
-
 const profile_image = document.getElementById("DB");
 const vendorName = document.getElementById("vendor_details");
 const TimeStatus = document.getElementById("timeStatus");
 const food_container = document.getElementById("food_container");
 const reviews_container = document.getElementById("reviews_container");
 
+// Make API_URL consistent with common.js
+const API_URL = window.API_BASE_URL;
+
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-
     const vendorId = localStorage.getItem("vendorId");
-    console.log(vendorId)
-    const res = await fetch(`http://127.0.0.1:8000/users/${vendorId}`);
+    if (!vendorId) {
+      alert("Vendor ID not found. Please login again.");
+      logout();
+      return;
+    }
+
+    // Fetch user info first
+    const res = await fetch(`${API_URL}/users/${vendorId}`);
+    if (!res.ok) throw new Error("Failed to fetch user data");
+
     const vendor = await res.json();
-    console.log(vendor)
-    if (!res.ok) return alert(vendor.detail);
+    console.log("User Data:", vendor);
 
-    if (!res.ok) return alert(vendor.detail);
-
-    const userRole = JSON.parse(localStorage.getItem("user"));
-    // Basic check if logged in vendor matches profile
-
-    profile_image.innerHTML = `<img src="${API_URL}/uploads/${vendor.image || 'default.png'}"  class="card-image"/>`;
+    // Render profile image + name/email
+    profile_image.innerHTML = `<img src="${getImageUrl(vendor.image)}" class="card-image"/>`;
     vendorName.innerHTML = `
       <h2>${vendor.name}</h2>
       <p>${vendor.email}</p>
     `;
 
+    // Fetch vendor info from backend
+    const vendorDocRes = await fetch(`${API_URL}/vendors/user/${vendor.user_id}`);
+    if (!vendorDocRes.ok) throw new Error("Failed to fetch vendor data");
 
-    const vendorDocRes = await fetch(`${API_URL}/vendors/users/${vendor.user_id}`);
     const vendorDoc = await vendorDocRes.json();
-    console.log(vendorDoc)
-    TimeStatus.innerHTML = `${vendorDoc.opening_time} - ${vendorDoc.closing_time}`;
+    console.log("Vendor Data:", vendorDoc);
 
-    // food details
-    // food details
+    TimeStatus.innerHTML = `${vendorDoc.opening_time || "N/A"} - ${vendorDoc.closing_time || "N/A"}`;
+
+    // Fetch foods
     const foodRes = await fetch(`${API_URL}/foods/vendor/${vendorDoc.vendor_id}`);
+    if (!foodRes.ok) throw new Error("Failed to fetch foods");
+
     const foods = await foodRes.json();
-    console.log(foods)
+    console.log("Foods:", foods);
+
     foods.forEach(food => {
       const div = document.createElement("div");
+      div.id = `food-${food.food_id}`;
+      div.classList.add("review-card");
       div.innerHTML = `
-        <div class="review-card">
-        <div class="review-card" id="food-${food.food_id}">
-          <img src="${API_URL}/${food.food_image_url}"  class="card-image"/>
-          <div class="card-info">
-            <p><strong>${food.food_name}</strong></p>
-            <p>${food.category}</p>
-            <button onclick="deleteFood(${food.food_id})" style="background:red;color:white;border:none;padding:5px;cursor:pointer;">Remove</button>
-          </div>
+        <img src="${getImageUrl(food.food_image_url)}" class="card-image"/>
+        <div class="card-info">
+          <p><strong>${food.food_name}</strong></p>
+          <p>${food.category}</p>
+          <button onclick="deleteFood(${food.food_id})" style="background:red;color:white;border:none;padding:5px;cursor:pointer;">
+            Remove
+          </button>
         </div>
       `;
       food_container.appendChild(div);
@@ -55,34 +65,65 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   } catch (e) {
     console.error(e);
-    alert("Failed to load vendor profile ❌");
+    Toastify({
+      text: "Failed to load vendor profile ❌",
+      duration: 4000,
+      gravity: "top",
+      position: "right",
+      style: { background: "red" },
+    }).showToast();
   }
 });
 
-async function logout() {
+// -----------------------------
+// Logout
+// -----------------------------
+function logout() {
   localStorage.clear();
   location.href = "./login.html";
 }
 
+// -----------------------------
+// Delete Food
+// -----------------------------
 async function deleteFood(foodId) {
   if (!confirm("Are you sure you want to remove this item?")) return;
 
   try {
+    const token = localStorage.getItem("token");
     const res = await fetch(`${API_URL}/foods/${foodId}`, {
-      method: "DELETE"
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
     });
 
     if (res.ok) {
-      alert("Food removed ✅");
-      document.getElementById(`food-${foodId}`).remove();
+      Toastify({
+        text: "Food removed ✅",
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        style: { background: "green" },
+      }).showToast();
 
-      // remove from localStorage if stored (optional based on user request "UI and localStorage correctly")
-      // Usually we don't store list of foods in localstorage, but if we do, clear it.
+      const el = document.getElementById(`food-${foodId}`);
+      if (el) el.remove();
     } else {
-      alert("Failed to delete ❌");
+      Toastify({
+        text: "Failed to delete food ❌",
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        style: { background: "red" },
+      }).showToast();
     }
   } catch (err) {
     console.error(err);
-    alert("Error deleting food");
+    Toastify({
+      text: "Error deleting food ❌",
+      duration: 3000,
+      gravity: "top",
+      position: "right",
+      style: { background: "red" },
+    }).showToast();
   }
 }
