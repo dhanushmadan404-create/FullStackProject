@@ -2,7 +2,7 @@
 if (typeof API_BASE_URL === "undefined") {
   window.API_BASE_URL =
     window.location.hostname === "localhost" ||
-    window.location.hostname === "127.0.0.1"
+      window.location.hostname === "127.0.0.1"
       ? "http://127.0.0.1:8000/api"
       : "/api";
 }
@@ -130,7 +130,10 @@ async function handleLike(foodId) {
 
     const res = await fetch(`${API_BASE_URL}/foods/like`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("token")}`
+      },
       body: JSON.stringify({
         user_id: parseInt(userId),
         food_id: foodId
@@ -199,7 +202,10 @@ async function handleRemove(foodId) {
 
     const res = await fetch(`${API_BASE_URL}/foods/like`, {
       method: "DELETE",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("token")}`
+      },
       body: JSON.stringify({
         user_id: parseInt(userId),
         food_id: foodId

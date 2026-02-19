@@ -5,6 +5,8 @@ from database import get_db
 from models.food import Food
 from models.food_like import FoodLike
 from schemas.food_like import FoodLikeRequest
+from core.security import get_current_user
+from models.user import User
 
 router = APIRouter(prefix="/foods", tags=["Foods"])
 
@@ -12,6 +14,7 @@ router = APIRouter(prefix="/foods", tags=["Foods"])
 def like_food(
     data: FoodLikeRequest,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     # 1️⃣ Check if food exists
     food = db.query(Food).filter(Food.food_id == data.food_id).first()
@@ -54,6 +57,7 @@ def like_food(
 def unlike_food(
     data: FoodLikeRequest,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     # check food exists
     food = db.query(Food).filter(Food.food_id == data.food_id).first()
