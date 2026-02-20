@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Form, File, UploadFile
+anfrom fastapi import APIRouter, Depends, HTTPException, Form, File, UploadFile
 from sqlalchemy.orm import Session
 from datetime import time
 import os, uuid, shutil
@@ -57,6 +57,26 @@ def create_vendor(
 def get_all_vendors(db: Session = Depends(get_db)):
     return db.query(Vendor).all()
 
+# --- Get Current Vendor ---
+@router.get("/me")
+def get_current_vendor_info(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    vendor = db.query(Vendor).filter(Vendor.user_id == current_user.user_id).first()
+    if not vendor:
+        raise HTTPException(status_code=404, detail="Vendor not found")
+    
+    return {
+        "exists": True,
+        "vendor_id": vendor.vendor_id,
+        "phone_number": vendor.phone_number,
+        "cart_image_url": vendor.cart_image_url,
+        "opening_time": vendor.opening_time.strftime("%H:%M:%S") if vendor.opening_time else None,
+        "closing_time": vendor.closing_time.strftime("%H:%M:%S") if vendor.closing_time else None,
+        "user_id": vendor.user_id
+    }
+
 # --- Get Vendor By User ---
 @router.get("/user/{user_id}")
 def get_vendor_by_user(user_id: int, db: Session = Depends(get_db)):
@@ -81,7 +101,6 @@ def update_vendor(
     opening_time: time = Form(None),
     closing_time: time = Form(None),
     image: UploadFile = File(None),
-    food_type: str = Form(None), # Added as it was in frontend
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -93,7 +112,6 @@ def update_vendor(
     if opening_time: vendor.opening_time = opening_time
     if closing_time: vendor.closing_time = closing_time
     if image: vendor.cart_image_url = save_image(image)
-    if food_type: pass # Not in model yet, but front sends it
 
     db.commit()
     db.refresh(vendor)

@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", loadProfile);
 
 // ---------------- LOAD PROFILE ----------------
 async function loadProfile() {
+  profile_image.innerHTML = "<p>Loading profile...</p>"
   try {
     const userId = localStorage.getItem("user_id");
     if (!userId) {
@@ -53,6 +54,7 @@ async function loadProfile() {
     }
 
     // Fetch vendor info from backend
+    food_container.innerHTML = "<p>Loading foods Loading...</p>"
     const vendorDocRes = await fetch(`${API_URL}/vendors/user/${userId}`);
     if (!vendorDocRes.ok) throw new Error("Failed to fetch vendor data");
 
@@ -282,46 +284,97 @@ async function handleEditSubmit(event) {
     }).showToast();
   }
 }
-
-
-// add food logic
+let menu = [];
+let selectedLat = null;
+let selectedLng = null;
+let map = null;
+let marker = null;
 
 const postFoodBtn = document.getElementById("postFood");
 const addFoodContainer = document.getElementById("addFood");
 
+
+// -----------------------------
+// OPEN FORM
+// -----------------------------
 postFoodBtn.addEventListener("click", () => {
+
+  addFoodContainer.style.visibility = "visible";
+
   addFoodContainer.innerHTML = `
     <div class="food-form">
+
+      <button type="button" id="closeFoodForm" class="close-btn">Close</button>
+
       <h3>Add Food Items</h3>
 
-      <input type="text" id="foodCategory" placeholder="Enter category (veg/non-veg)" />
+      <!-- Food Type -->
+      <div class="form-group">
+        <label>Food Type:</label>
+        <select id="foodType">
+          <option value="">Select food type</option>
+          <option value="breakfast">Breakfast</option>
+          <option value="drinking">Drinking</option>
+          <option value="dinner">Dinner</option>
+          <option value="lunch">Lunch</option>
+          <option value="snacks">Snacks</option>
+        </select>
+        <span class="error-message" id="foodTypeError"></span>
+      </div>
 
+      <!-- Menu Add -->
       <div class="menu">
         <input type="text" id="menuName" placeholder="Enter menu item" />
         <input type="file" id="menuImage" accept="image/*" />
-        <button type="button" onclick="addMenuItem()">Add</button>
+        <button type="button" id="addMenuBtn">Add</button>
       </div>
 
       <ul id="list_container"></ul>
+
+      <!-- Map Section -->
+      <div class="form-group">
+        <label>Shop Location:</label>
+        <button type="button" id="currentLocationBtn">Use Current Location</button>
+        <div id="map" style="height:300px; margin-top:10px; border-radius:10px;"></div>
+        <span class="error-message" id="locationError"></span>
+      </div>
 
       <button id="submitFood">Submit Food</button>
     </div>
   `;
 
-  document
-    .getElementById("submitFood")
-    .addEventListener("click", uploadFoodItems);
+  initializeMap();
+
+  // Event Listeners
+  document.getElementById("closeFoodForm").addEventListener("click", closeForm);
+  document.getElementById("addMenuBtn").addEventListener("click", addMenuItem);
+  document.getElementById("submitFood").addEventListener("click", uploadFoodItems);
+  document.getElementById("currentLocationBtn").addEventListener("click", getCurrentLocation);
 });
 
 
 // -----------------------------
-// Menu Management (Local)
+// CLOSE FORM
 // -----------------------------
-window.addMenuItem = function () {
+function closeForm() {
+  addFoodContainer.style.visibility = "hidden";
+  addFoodContainer.innerHTML = "";
+  menu = [];
+  selectedLat = null;
+  selectedLng = null;
+  if (map) {
+    map.remove();
+    map = null;
+  }
+}
+
+
+// -----------------------------
+// MENU MANAGEMENT
+// -----------------------------
+function addMenuItem() {
   const nameInput = document.getElementById("menuName");
   const imageInput = document.getElementById("menuImage");
-
-  if (!nameInput || !imageInput) return;
 
   const name = nameInput.value.trim();
   const imageFile = imageInput.files[0];
@@ -331,10 +384,7 @@ window.addMenuItem = function () {
     return;
   }
 
-  menuItems.push({
-    name: name,
-    image: imageFile,
-  });
+  menu.push({ name, image: imageFile });
 
   renderLocalMenu();
 
@@ -344,71 +394,131 @@ window.addMenuItem = function () {
 
 function renderLocalMenu() {
   const list = document.getElementById("list_container");
-  if (!list) return;
-
   list.innerHTML = "";
 
-  menuItems.forEach((item, index) => {
+  menu.forEach((item, index) => {
     const li = document.createElement("li");
     li.innerHTML = `
       ${item.name}
-      <button type="button" onclick="removeMenuItem(${index})" style="margin-left:10px; cursor:pointer;">❌</button>
+      <button type="button" data-index="${index}" class="remove-btn">❌</button>
     `;
     list.appendChild(li);
   });
+
+  document.querySelectorAll(".remove-btn").forEach(btn => {
+    btn.addEventListener("click", function () {
+      const index = this.getAttribute("data-index");
+      removeMenuItem(index);
+    });
+  });
 }
 
-window.removeMenuItem = function (index) {
-  menuItems.splice(index, 1);
+function removeMenuItem(index) {
+  menu.splice(index, 1);
   renderLocalMenu();
 }
 
 
-async function uploadFoodItems() {
-  const vendorId = localStorage.getItem("vendorId");
-  const token = localStorage.getItem("token");
-  const category = document.getElementById("foodCategory").value;
+// -----------------------------
+// MAP FUNCTION
+// -----------------------------
+function initializeMap() {
 
-  if (!vendorId) {
-    alert("Vendor not logged in");
-    return;
+  if (map) {
+    map.remove();
   }
 
-  if (menuItems.length === 0) {
-    alert("Add at least one food item");
-    return;
-  }
+  map = L.map("map").setView([20.5937, 78.9629], 5);
 
-  try {
-    for (let item of menuItems) {
-      const formData = new FormData();
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "© OpenStreetMap contributors",
+  }).addTo(map);
 
-      formData.append("food_name", item.name);
-      formData.append("category", category.toLowerCase());
-      formData.append("vendor_id", vendorId);
-      formData.append("image", item.image);
+  map.on("click", function (e) {
+    selectedLat = e.latlng.lat;
+    selectedLng = e.latlng.lng;
 
-      const response = await fetch(`${API_BASE_URL}/foods`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-
-      if (!response.ok) {
-        console.log("Failed:", item.name);
-      }
+    if (marker) {
+      map.removeLayer(marker);
     }
 
-    alert("Food added successfully");
-    menuItems = [];
-    renderLocalMenu();
-    document.getElementById("addFood").innerHTML = "";
+    marker = L.marker([selectedLat, selectedLng]).addTo(map);
 
-  } catch (error) {
-    console.log("Upload error:", error);
+    document.getElementById("locationError").textContent = "";
+  });
+}
+
+function getCurrentLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition((position) => {
+
+      selectedLat = position.coords.latitude;
+      selectedLng = position.coords.longitude;
+
+      map.setView([selectedLat, selectedLng], 15);
+
+      if (marker) {
+        map.removeLayer(marker);
+      }
+
+      marker = L.marker([selectedLat, selectedLng]).addTo(map);
+
+    });
+  } else {
+    alert("Geolocation not supported");
   }
 }
 
 
+// -----------------------------
+// UPLOAD FUNCTION
+// -----------------------------
+async function uploadFoodItems() {
+
+  const foodType = document.getElementById("foodType").value;
+
+  if (!foodType) {
+    document.getElementById("foodTypeError").textContent =
+      "Please select food type";
+    return;
+  } else {
+    document.getElementById("foodTypeError").textContent = "";
+  }
+
+  if (!selectedLat || !selectedLng) {
+    document.getElementById("locationError").textContent =
+      "Please select shop location on map";
+    return;
+  }
+
+  if (menu.length === 0) {
+    alert("Please add at least one menu item");
+    return;
+  }
+
+  try {
+
+    for (let item of menu) {
+
+      const formData = new FormData();
+      formData.append("food_name", item.name);
+      formData.append("food_image", item.image);
+      formData.append("category", foodType);
+      formData.append("latitude", selectedLat);
+      formData.append("longitude", selectedLng);
+
+      await fetch(`${API_URL}/foods`, {
+        method: "POST",
+        body: formData,
+      });
+    }
+
+    alert("Food items uploaded successfully!");
+
+    closeForm();  // Proper reset
+
+  } catch (error) {
+    console.error("Upload failed:", error);
+    alert("Something went wrong while uploading.");
+  }
+}

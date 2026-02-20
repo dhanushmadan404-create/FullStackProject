@@ -216,6 +216,7 @@ transform: translateY(0);
   box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
 }
 
+
 /* Responsive */
 @media (max-width: 500px) {
   #editForm {
@@ -407,13 +408,23 @@ transform: translateY(0);
 .com-btn:hover {
   background-color: #007bff;
   color: white;
+
 }
+
 
 /* add food 
 /* Main Add Food Container */
 #addFood {
   max-width: 600px;
   margin: 40px auto;
+    visibility: hidden;
+}
+.food-form .Close{
+  width: 100px;
+  height: 50px;
+  background-color: orange;
+  border: 4px solid black;
+  color: white;
 }
 
 /* Card Style */

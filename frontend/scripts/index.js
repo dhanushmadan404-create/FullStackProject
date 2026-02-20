@@ -32,7 +32,7 @@ async function loadTrendingFoods() {
     }
 
     // 2️⃣ Fetch trending foods
-    const response = await fetch(`${API_BASE_URL}/top-liked`);
+    const response = await fetch(`${API_BASE_URL}/foods/top-liked`);
 
     if (!response.ok) {
       throw new Error("Failed to fetch trending foods");
@@ -53,7 +53,7 @@ async function loadTrendingFoods() {
 
       const imgUrl = getImageUrl(
         food.food_image_url,
-        "../assets/default_food.png"
+        "./frontend/assets/default_food.png"
       );
 
       div.innerHTML = `
@@ -64,7 +64,7 @@ async function loadTrendingFoods() {
             <img
               src="${imgUrl}"
               class="card-image"
-              onerror="this.onerror=null; this.src='../assets/default_food.png';"
+              onerror="this.onerror=null; this.src='./frontend/assets/default_food.png';"
             />
           </div>
 
@@ -88,7 +88,7 @@ async function loadTrendingFoods() {
             </button>
 
             <button 
-              onclick="window.location.href='./map.html?food_id=${food.food_id}'">
+              onclick="window.location.href='./frontend/pages/map.html?food_id=${food.food_id}'">
               FIND
             </button>
           </div>
@@ -147,6 +147,8 @@ async function handleLike(foodId) {
         duration: 2000,
         style: { background: "green" }
       }).showToast();
+    } else {
+      throw new Error(data.detail || "Failed to like food");
     }
   } catch (error) {
     console.error("Like Error:", error);
@@ -182,6 +184,8 @@ async function handleRemove(foodId) {
         duration: 2000,
         style: { background: "blue" }
       }).showToast();
+    } else {
+      throw new Error(data.detail || "Failed to remove like");
     }
   } catch (error) {
     console.error("Remove Error:", error);

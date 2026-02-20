@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const Cate = document.getElementById("Cate");
   const cardContainer = document.getElementById("cardContainer");
 
-  if (!cardContainer) return;
+  cardContainer.innerHTML = "<p>Loading foods...</p>"
 
   // ---------- Category Title ----------
   Cate.innerHTML = `

@@ -34,6 +34,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // ---------------- LOAD PROFILE ----------------
 async function loadProfile() {
+  const profileContainer = document.getElementById("profile_details");
+  profileContainer.innerHTML = "<p>Loading profile...</p>"
   try {
     const response = await fetch(`${API_BASE_URL}/users/me`, {
       headers: {
@@ -50,7 +52,6 @@ async function loadProfile() {
 
     localStorage.setItem("user_details", JSON.stringify(user));
 
-    const profileContainer = document.getElementById("profile_details");
     const imgUrl = getImageUrl(user.image_url);
 
     profileContainer.innerHTML = `
