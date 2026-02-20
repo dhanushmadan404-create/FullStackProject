@@ -3,3 +3,77 @@
 // dinner=./frontend/pages/categories/categories_dinner.html
 // snack=./frontend/pages/categories/categories_snacks.html
 // drinks./frontend/pages/categories/categories_drinking.html
+// -----------------------------
+// Load Trending Foods
+// -----------------------------
+async function loadTrendingFoods() {
+  const container = document.getElementById("trending_container");
+
+  if (!container) return;
+
+  container.innerHTML = "<p>Loading trending foods...</p>";
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/top-liked`);
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch trending foods");
+    }
+
+    const foods = await response.json();
+
+    container.innerHTML = "";
+
+    if (!Array.isArray(foods) || foods.length === 0) {
+      container.innerHTML = "<p>No trending foods found.</p>";
+      return;
+    }
+
+    foods.forEach((food) => {
+      const div = document.createElement("div");
+
+      const imgUrl = getImageUrl(
+        food.food_image_url,
+        "../assets/default_food.png"
+      );
+
+      div.innerHTML = `
+        <div class="card">
+          <div class="image_container">
+            <h2 class="food_name">${food.food_name}</h2>
+
+            <img
+              src="${imgUrl}"
+              class="card-image"
+              onerror="this.onerror=null; this.src='../assets/default_food.png';"
+            />
+          </div>
+
+          <div class="likes">
+            ❤️ ${food.total_likes ?? 0} Likes
+          </div>
+
+          <div class="card-buttons">
+            <button 
+              onclick="window.location.href='./map.html?food_id=${food.food_id}'">
+              FIND
+            </button>
+          </div>
+        </div>
+      `;
+
+      container.appendChild(div);
+    });
+
+  } catch (error) {
+    console.error("Error loading trending foods:", error);
+    container.innerHTML = "<p>Something went wrong. Please try again.</p>";
+  }
+}
+
+// -----------------------------
+// Run Trending After Page Load
+// -----------------------------
+document.addEventListener("DOMContentLoaded", () => {
+  loadTrendingFoods();
+});

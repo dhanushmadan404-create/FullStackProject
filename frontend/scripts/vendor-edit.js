@@ -1,15 +1,19 @@
+// =====================================
+// Vendor Registration / Update Script
+// =====================================
+
+const token = localStorage.getItem("token");
+
+if (!token) {
+  window.location.href = "./login.html";
+}
 
 // =====================================
-// Load Vendor Data + Prefill Form
+// Load Vendor Data
 // =====================================
-document.addEventListener("DOMContentLoaded", async () => {
-  const token = localStorage.getItem("token");
+document.addEventListener("DOMContentLoaded", loadVendorData);
 
-  if (!token) {
-    window.location.href = "./login.html";
-    return;
-  }
-
+async function loadVendorData() {
   try {
     const response = await fetch(`${API_BASE_URL}/vendors/me`, {
       headers: {
@@ -24,7 +28,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const vendor = await response.json();
     console.log("Vendor Data:", vendor);
 
-    // ✅ Prefill values
+    // Prefill values
     document.getElementById("number").value =
       vendor.phone_number || "";
 
@@ -37,18 +41,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   } catch (error) {
     console.error("Vendor Load Error:", error);
 
-    Toastify({
-      text: "Failed to load vendor data",
-      duration: 4000,
-      gravity: "top",
-      position: "right",
-      style: { background: "red" },
-    }).showToast();
+    showToast("Failed to load vendor data ❌", "red");
   }
-});
+}
 
 // =====================================
-// Handle Update Submit
+// Submit Update
 // =====================================
 document
   .getElementById("vendorRegistration")
@@ -56,8 +54,6 @@ document
 
 async function handleSubmit(event) {
   event.preventDefault();
-
-  const token = localStorage.getItem("token");
 
   const submitBtn = document.getElementById("submit");
   submitBtn.innerText = "Updating...";
@@ -71,7 +67,19 @@ async function handleSubmit(event) {
     const closeTime = document.getElementById("closingTime").value;
     const imageFile = document.getElementById("image").files[0];
 
-    if (phone) formData.append("phone_number", phone);
+    // Validation
+    if (!phone || phone.length < 10) {
+      showToast("Enter valid phone number", "red");
+      return;
+    }
+
+    if (openTime && closeTime && openTime >= closeTime) {
+      showToast("Closing time must be after opening time", "red");
+      return;
+    }
+
+    // Append only if exists
+    formData.append("phone_number", phone);
     if (openTime) formData.append("opening_time", openTime);
     if (closeTime) formData.append("closing_time", closeTime);
     if (imageFile) formData.append("image", imageFile);
@@ -85,39 +93,31 @@ async function handleSubmit(event) {
     });
 
     const data = await response.json();
-    console.log("Update Response:", data);
 
     if (!response.ok) {
-      Toastify({
-        text: data.detail || "Update failed",
-        duration: 4000,
-        gravity: "top",
-        position: "right",
-        style: { background: "red" },
-      }).showToast();
-      return;
+      throw new Error(data.detail || "Update failed");
     }
 
-    Toastify({
-      text: "Vendor updated successfully ✅",
-      duration: 3000,
-      gravity: "top",
-      position: "right",
-      style: { background: "green" },
-    }).showToast();
+    showToast("Vendor updated successfully ✅", "green");
 
   } catch (error) {
     console.error("Update Error:", error);
-
-    Toastify({
-      text: "Something went wrong ❌",
-      duration: 4000,
-      gravity: "top",
-      position: "right",
-      style: { background: "red" },
-    }).showToast();
+    showToast(error.message || "Something went wrong ❌", "red");
   } finally {
     submitBtn.innerText = "Submit";
     submitBtn.disabled = false;
   }
+}
+
+// =====================================
+// Toast Helper
+// =====================================
+function showToast(message, color) {
+  Toastify({
+    text: message,
+    duration: 4000,
+    gravity: "top",
+    position: "right",
+    style: { background: color },
+  }).showToast();
 }

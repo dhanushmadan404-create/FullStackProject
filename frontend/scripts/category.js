@@ -6,7 +6,7 @@ if (typeof API_BASE_URL === "undefined") {
       ? "http://127.0.0.1:8000/api"
       : "/api";
 }
-
+let removeLike=null
 // ---------------- GET category FROM URL ----------------
 const params = new URLSearchParams(window.location.search);
 const category = params.get("category") || "breakfast";
@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       <button 
         id="remove-btn-${food.food_id}"
         onclick="handleRemove(${food.food_id})"
-        style="display:${isLiked ? "inline-block" : "none"}">
+        style="display:${isLiked || removeLike ? "inline-block" : "none"}">
         REMOVE
       </button>
 
@@ -127,8 +127,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 // like handle
+// button
+
 async function handleLike(foodId) {
-  const userId = localStorage.getItem("user_id");
+  let likeButton=document.getElementById(`like-btn-${foodId}`)
+  let removeButton= document.getElementById(`remove-btn-${foodId}`)
+  let userId = localStorage.getItem("user_id");
 
   if (!userId) {
     Toastify({
@@ -139,6 +143,7 @@ async function handleLike(foodId) {
       style: { background: "orange" }
     }).showToast();
     return;
+
   }
 
   try {
@@ -161,8 +166,10 @@ async function handleLike(foodId) {
 
     // 🔴 If backend says already liked
     if (data.status === false) {
+      removeLike=data.status
       console.log("Already liked:", data.message);
-
+      likeButton.style.display = "none";
+      removeButton.style.display = "inline-block";
       Toastify({
         text: data.message,
         duration: 3000,
@@ -174,8 +181,8 @@ async function handleLike(foodId) {
     }
 
     // 🟢 Success
-    document.getElementById(`like-btn-${foodId}`).style.display = "none";
-    document.getElementById(`remove-btn-${foodId}`).style.display = "inline-block";
+    likeButton.style.display = "none";
+    removeButton.style.display = "inline-block";
     document.getElementById(`like-count-${foodId}`).textContent = data.total_likes;
 
     Toastify({
@@ -200,8 +207,8 @@ async function handleLike(foodId) {
 }
 // remove like handle
 async function handleRemove(foodId) {
-  const userId = localStorage.getItem("user_id");
-
+  let userId = localStorage.getItem("user_id");
+  console.log(userId);
   if (!userId) {
     Toastify({
       text: "Please login first 🔐",
@@ -230,10 +237,11 @@ async function handleRemove(foodId) {
 
     const data = await res.json();
     console.log("Response:", data);
-
+    
     if (!res.ok) {
       console.log("Remove Failed:", data.detail);
-
+       document.getElementById(`like-btn-${foodId}`).style.display = "inline-block";
+    document.getElementById(`remove-btn-${foodId}`).style.display = "none";
       Toastify({
         text: data.detail || "Remove failed",
         duration: 3000,

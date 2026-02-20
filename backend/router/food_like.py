@@ -51,36 +51,31 @@ def like_food(
         "message": "You liked this food",
         "total_likes":total_likes
     }
-
-
 @router.delete("/like")
 def unlike_food(
     data: FoodLikeRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    # check food exists
     food = db.query(Food).filter(Food.food_id == data.food_id).first()
     if not food:
         raise HTTPException(status_code=404, detail="Food not found")
 
-    # find existing like
     like = (
         db.query(FoodLike)
         .filter(
-            FoodLike.user_id == data.user_id,
+            FoodLike.user_id == current_user.user_id,  
             FoodLike.food_id == data.food_id
         )
         .first()
     )
+
     if not like:
         raise HTTPException(status_code=400, detail="Like not found")
 
-    # delete like
     db.delete(like)
     db.commit()
 
-    # count new total likes
     total_likes = (
         db.query(FoodLike)
         .filter(FoodLike.food_id == data.food_id)
@@ -91,6 +86,7 @@ def unlike_food(
         "message": "Like removed successfully",
         "total_likes": total_likes
     }
+
 @router.get("/liked")
 def get_liked_foods(
     db: Session = Depends(get_db),

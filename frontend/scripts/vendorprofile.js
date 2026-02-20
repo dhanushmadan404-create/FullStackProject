@@ -132,3 +132,206 @@ async function deleteFood(foodId) {
     }).showToast();
   }
 }
+
+// ---------------- EDIT PROFILE SETUP ----------------
+editBtn.addEventListener("click", async () => {
+
+  const userId = localStorage.getItem("vendorId");
+  if (!userId) return;
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch user");
+    }
+
+    const user = await response.json();
+    const previewImg = getImageUrl(user.image_url);
+
+    editContainer.innerHTML = `
+      <form id="editForm">
+        <div>
+          <label>Name</label>
+          <input type="text" id="name" 
+                 value="${user.name || ""}" 
+                 minlength="3" required />
+        </div>
+
+        <div>
+          <label>Profile Image</label>
+          <input id="image" type="file" accept="image/*" />
+          <img 
+            src="${previewImg}" 
+            id="preview"
+            onerror="this.onerror=null; this.src='../assets/default_user.png';"
+          />
+        </div>
+
+        <button type="submit">Update Profile</button>
+      </form>
+    `;
+
+    document.getElementById("image").addEventListener("change", function () {
+      const file = this.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        document.getElementById("preview").src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document
+      .getElementById("editForm")
+      .addEventListener("submit", handleEditSubmit);
+
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+// ---------------- HANDLE EDIT SUBMIT ----------------
+async function handleEditSubmit(event) {
+  event.preventDefault();
+
+  const name = document.getElementById("name").value.trim();
+  const imageFile = document.getElementById("image").files[0];
+  const user = JSON.parse(localStorage.getItem("user_details") || "{}");
+
+  if (!user.email) {
+        Toastify({
+      text: `User email missing`,
+      duration: 5000,
+      gravity: "top",
+      position: "right",
+      style: { background: "red" },
+      close: true,
+stopOnFocus: true
+    }).showToast();
+    return;
+  }
+
+  try {
+    const formData = new FormData();
+    if (name) formData.append("name", name);
+    if (imageFile) formData.append("image", imageFile);
+
+    const response = await fetch(`${API_BASE_URL}/users/email/${user.email}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || "Update failed");
+    }
+
+    const updatedUser = await response.json();
+
+    localStorage.setItem("user_details", JSON.stringify(updatedUser));
+
+    console.log("Profile updated successfully");
+
+    loadProfile(); // refresh UI
+    document.getElementById("edit").innerHTML = "";
+  } catch (error) {
+          Toastify({
+      text: `Update failed:${error.message}`,
+      duration: 5000,
+      gravity: "top",
+      position: "right",
+      style: { background: "red" },
+      close: true,
+stopOnFocus: true
+    }).showToast();
+  }
+}
+
+
+// add food logic
+
+const postFoodBtn = document.getElementById("postFood");
+const addFoodContainer = document.getElementById("addFood");
+
+postFoodBtn.addEventListener("click", () => {
+  addFoodContainer.innerHTML = `
+    <div class="food-form">
+      <h3>Add Food Items</h3>
+
+      <input type="text" id="foodCategory" placeholder="Enter category (veg/non-veg)" />
+
+      <div class="menu">
+        <input type="text" id="menuName" placeholder="Enter menu item" />
+        <input type="file" id="menuImage" accept="image/*" />
+        <button type="button" onclick="addMenuItem()">Add</button>
+      </div>
+
+      <ul id="list_container"></ul>
+
+      <button id="submitFood">Submit Food</button>
+    </div>
+  `;
+
+  document
+    .getElementById("submitFood")
+    .addEventListener("click", uploadFoodItems);
+});
+
+
+async function uploadFoodItems() {
+  const vendorId = localStorage.getItem("vendorId");
+  const token = localStorage.getItem("token");
+  const category = document.getElementById("foodCategory").value;
+
+  if (!vendorId) {
+    alert("Vendor not logged in");
+    return;
+  }
+
+  if (menuItems.length === 0) {
+    alert("Add at least one food item");
+    return;
+  }
+
+  try {
+    for (let item of menuItems) {
+      const formData = new FormData();
+
+      formData.append("food_name", item.name);
+      formData.append("category", category.toLowerCase());
+      formData.append("vendor_id", vendorId);
+      formData.append("image", item.image);
+
+      const response = await fetch(`${API_BASE_URL}/foods`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        console.log("Failed:", item.name);
+      }
+    }
+
+    alert("Food added successfully");
+    menuItems = [];
+    renderMenu();
+    document.getElementById("addFood").innerHTML = "";
+
+  } catch (error) {
+    console.log("Upload error:", error);
+  }
+}
+
+

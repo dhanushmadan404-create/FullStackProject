@@ -114,38 +114,99 @@ h2 {
   margin-bottom: 30px;
   color: var(--secondary);
 }
+/* -----------------------------
+   Trending Section
+------------------------------ */
 
-/* Trending */
-.trending_prod {
+#trending_section {
+  padding: 60px 80px;
+  background-color: #f5f5f5;
+}
+
+#trending_section h1 {
+  font-size: 40px;
+  font-weight: 700;
+  margin-bottom: 40px;
+  color: #222;
+}
+
+/* Container holding cards */
+#trending_container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 25px;
-  color: #111827;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
 }
 
-.prod_container {
-  background: var(--white);
-  border-radius: 15px;
+/* -----------------------------
+   Card Design
+------------------------------ */
+
+.card {
+  background: #ffffff;
+  border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
 }
 
-.prod_container:hover {
-  transform: translateY(-10px);
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.15);
 }
 
-.prod_container img {
+/* Image container */
+.image_container {
   width: 100%;
-  height: 200px;
-  object-fit: cover;
+  height: 250px;
+  overflow: hidden;
 }
 
-.prod_container b {
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   display: block;
-  padding: 15px;
+}
+
+/* Food name */
+.food_name {
   text-align: center;
-  font-size: 1.1rem;
+  padding: 20px 10px;
+  font-size: 22px;
+  font-weight: 600;
+  color: #5e2ca5;   /* Purple color like screenshot */
+}
+
+/* Likes text */
+.likes {
+  text-align: center;
+  font-size: 15px;
+  color: #777;
+  padding-bottom: 10px;
+}
+
+/* Button container */
+.card-buttons {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 20px;
+}
+
+/* Find button */
+.card-buttons button {
+  background-color: #5e2ca5;
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s ease;
+}
+
+.card-buttons button:hover {
+  background-color: #4a1f87;
 }
 
 /* Categories */
@@ -185,4 +246,19 @@ footer {
   text-align: center;
   padding: 40px;
   color: #888;
+}
+@media (max-width: 1024px) {
+  #trending_container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  #trending_container {
+    grid-template-columns: 1fr;
+  }
+
+  #trending_section {
+    padding: 40px 20px;
+  }
 }

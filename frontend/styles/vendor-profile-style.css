@@ -134,6 +134,94 @@ transform: translateY(0);
   flex-wrap: wrap;
   justify-content: center;
 }
+/* edit profile */
+/* Container */
+#edit {
+  max-width: 450px;
+  margin: 40px auto;
+  list-style: none;
+}
+
+/* Form Card */
+#editForm {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: 0.3s ease;
+}
+
+#editForm:hover {
+  transform: translateY(-4px);
+}
+
+/* Labels */
+#editForm label {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #333;
+  display: block;
+}
+
+/* Inputs */
+#editForm input[type="text"],
+#editForm input[type="file"] {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  background-color: #fafafa;
+  transition: 0.3s ease;
+}
+
+/* Input Focus */
+#editForm input:focus {
+  outline: none;
+  border-color: #4f46e5;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+/* Preview Image */
+#preview {
+  display: block;
+  margin-top: 12px;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #4f46e5;
+}
+
+/* Submit Button */
+#editForm button {
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+#editForm button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+  #editForm {
+    padding: 20px;
+  }
+}
 
 @media (min-width: 768px) {
   .profile-section {
@@ -321,7 +409,171 @@ transform: translateY(0);
   color: white;
 }
 
-/* Animations */
+/* add food 
+/* Main Add Food Container */
+#addFood {
+  max-width: 600px;
+  margin: 40px auto;
+}
+
+/* Card Style */
+.food-form {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: 0.3s ease;
+}
+
+.food-form:hover {
+  transform: translateY(-4px);
+}
+
+/* Heading */
+.food-form h3 {
+  text-align: center;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+/* Inputs */
+.food-form input[type="text"],
+.food-form input[type="file"] {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  background: #fafafa;
+  transition: 0.3s ease;
+}
+
+.food-form input:focus {
+  outline: none;
+  border-color: #4f46e5;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+/* Menu Add Section */
+.menu {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.menu input[type="text"] {
+  flex: 2;
+}
+
+.menu input[type="file"] {
+  flex: 2;
+}
+
+/* Add Button */
+.menu button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background: #10b981;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.menu button:hover {
+  background: #059669;
+  transform: translateY(-2px);
+}
+
+/* Menu List */
+#list_container {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#list_container li {
+  background: #f9fafb;
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+}
+
+/* Remove Button */
+#list_container button {
+  background: #ef4444;
+  border: none;
+  padding: 5px 8px;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-size: 12px;
+  transition: 0.2s ease;
+}
+
+#list_container button:hover {
+  background: #dc2626;
+}
+
+/* Submit Button */
+#submitFood {
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  color: white;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+#submitFood:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+}
+
+/* ADD FOOD main button */
+#postFood {
+  margin-top: 20px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: none;
+  background: #4f46e5;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+#postFood:hover {
+  background: #4338ca;
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .menu {
+    flex-direction: column;
+  }
+
+  .menu button {
+    width: 100%;
+  }
+}
+ */
+
+/* Animations
 .signal {
   animation: pulse 0.5s ease;
 }
@@ -336,7 +588,7 @@ transform: translateY(0);
   100% {
     transform: scale(1);
   }
-}
+} */
 
 /* Footer */
 footer {

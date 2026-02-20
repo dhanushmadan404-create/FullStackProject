@@ -33,15 +33,17 @@
     </header>
     <main>
       
-      <div id="edit"></div>
-      <a id="editBtn">
-        <li class="option_list">Edit Profile</li>
-      </a>
+
       <!-- Profile Section -->
       <div id="vendorProfile">
         <div class="profile-section">
           <div id="DB"></div>
           <div id="vendor_details" class="profile-info"></div>
+
+          <div id="edit"></div>
+      <button id="editBtn" onclick="setEditForm()">
+      Profile Edit
+      </button>
         </div>
 
         <!-- Operating Hours -->
@@ -50,7 +52,7 @@
 
           <button
             class="edit-btn"
-            onclick="window.location.href = 'vendor-edit.html'"
+            onclick="window.location.href = './vendor-edit.html'"
           >
             Edit
           </button>
@@ -60,6 +62,10 @@
         <button class="logout-btn" onclick="logout()">LOG OUT</button>
 
         <!-- Food Cards -->
+         <div>
+          <div id="addFood"></div>
+          <button id="postFood">ADD FOOD</button>
+         </div>
         <div id="food_container" class="review-cards"></div>
       </div>
     </main>

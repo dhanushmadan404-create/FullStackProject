@@ -181,9 +181,9 @@ h1 {
 .menu-list {
   border-radius: 5px;
   border: 5px solid gold;
-  height: 60px;
-  background-color: rgb(10, 117, 223);
-  color: white;
+  height: 150px;
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
   overflow-y: scroll;
 }
 .store {
@@ -193,10 +193,12 @@ h1 {
 .menu {
   display: flex;
   align-items: center;
+  flex-direction: column;
 }
 .menu input {
+  width: 100%;
   padding: 8px 10px;
-  width: 250px;
+ 
   height: 40px;
   border: 2px solid #e85d04;
   border-radius: 4px 0 0 4px;
@@ -206,7 +208,7 @@ h1 {
 }
 .menu b {
   height: 36px;
-  width: 50px;
+ width: 100%;
   background: #e85d04;
   color: #fff;
   border: none;
@@ -214,6 +216,7 @@ h1 {
   cursor: pointer;
   font-weight: bold;
   transition: 0.3s;
+  text-align: center;
 }
 .menu_food {
   display: flex;
