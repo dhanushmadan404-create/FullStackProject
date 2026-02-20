@@ -34,14 +34,15 @@ def register_user(
     image: UploadFile | None = File(None),
     db: Session = Depends(get_db)
 ):
-    if db.query(User).filter(User.email == email).first():
+    email_lower = email.lower()
+    if db.query(User).filter(User.email == email_lower).first():
         raise HTTPException(status_code=400, detail="Email already registered")
 
     image_path = save_image(image) if image else None
 
     new_user = User(
         name=name,
-        email=email,
+        email=email_lower,
         password_hash=hash_password(password),
         role=role.lower(),
         image_url=image_path

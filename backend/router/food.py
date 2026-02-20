@@ -225,6 +225,53 @@ def delete_food(
 
 
 # -----------------------------------
+# Update Food
+# -----------------------------------
+
+@router.put("/{food_id}", response_model=FoodResponse)
+def update_food(
+    food_id: int,
+    food_name: str = Form(None),
+    category: str = Form(None),
+    latitude: float = Form(None),
+    longitude: float = Form(None),
+    image: UploadFile = File(None),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    # Verify food belongs to a vendor owned by the current user
+    food = db.query(Food).join(Vendor).filter(
+        Food.food_id == food_id,
+        Vendor.user_id == current_user.user_id
+    ).first()
+
+    if not food:
+        raise HTTPException(status_code=404, detail="Food not found or unauthorized")
+
+    if food_name: food.food_name = food_name
+    if category: food.category = category.lower()
+    if latitude: food.latitude = latitude
+    if longitude: food.longitude = longitude
+    if image: food.food_image_url = save_image(image)
+
+    db.commit()
+    db.refresh(food)
+    
+    total_likes = db.query(func.count()).select_from(FoodLike).filter(FoodLike.food_id == food.food_id).scalar()
+    
+    return {
+        "food_id": food.food_id,
+        "food_name": food.food_name,
+        "food_image_url": food.food_image_url,
+        "category": food.category,
+        "latitude": food.latitude,
+        "longitude": food.longitude,
+        "vendor_id": food.vendor_id,
+        "total_likes": total_likes or 0
+    }
+
+
+# -----------------------------------
 # Get Top 4 Most Liked Foods
 # -----------------------------------
 

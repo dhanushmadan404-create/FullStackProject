@@ -54,7 +54,7 @@ async function loadProfile() {
     }
 
     // Fetch vendor info from backend
-    food_container.innerHTML = "<p>Loading foods Loading...</p>"
+    food_container.innerHTML = "<p>Loading foods...</p>"
     const vendorDocRes = await fetch(`${API_URL}/vendors/user/${userId}`);
     if (!vendorDocRes.ok) throw new Error("Failed to fetch vendor data");
 
