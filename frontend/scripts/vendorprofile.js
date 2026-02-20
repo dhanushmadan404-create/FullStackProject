@@ -1,13 +1,28 @@
+// ---------------- API BASE URL ----------------
+if (typeof API_BASE_URL === "undefined") {
+  window.API_BASE_URL =
+    window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1"
+      ? "http://127.0.0.1:8000/api"
+      : "/api";
+}
+const API_URL = window.API_BASE_URL;
+
+const token = localStorage.getItem("token");
+const editBtn = document.getElementById("editBtn");
+const editContainer = document.getElementById("edit");
 const profile_image = document.getElementById("DB");
 const vendorName = document.getElementById("vendor_details");
 const TimeStatus = document.getElementById("timeStatus");
 const food_container = document.getElementById("food_container");
 const reviews_container = document.getElementById("reviews_container");
 
-// Make API_URL consistent with common.js
-const API_URL = window.API_BASE_URL;
+let menuItems = [];
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", loadProfile);
+
+// ---------------- LOAD PROFILE ----------------
+async function loadProfile() {
   try {
     const userId = localStorage.getItem("user_id");
     if (!userId) {
@@ -23,12 +38,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     const user = await res.json();
     console.log("User Data:", user);
 
+    // Save to localStorage for edit form prefill
+    localStorage.setItem("user_details", JSON.stringify(user));
+
     // Render profile image + name/email
-    profile_image.innerHTML = `<img src="${getImageUrl(user.image_url)}" class="card-image" onerror="this.onerror=null; this.src='../assets/default_vendor.png';"/>`;
-    vendorName.innerHTML = `
-      <h2>${user.name}</h2>
-      <p>${user.email}</p>
-    `;
+    if (profile_image) {
+      profile_image.innerHTML = `<img src="${getImageUrl(user.image_url)}" class="card-image" onerror="this.onerror=null; this.src='../assets/default_vendor.png';"/>`;
+    }
+    if (vendorName) {
+      vendorName.innerHTML = `
+        <h2>${user.name}</h2>
+        <p>${user.email}</p>
+      `;
+    }
 
     // Fetch vendor info from backend
     const vendorDocRes = await fetch(`${API_URL}/vendors/user/${userId}`);
@@ -38,7 +60,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.log("Vendor Data:", vendorDoc);
     localStorage.setItem("vendorId", vendorDoc.vendor_id);
 
-    TimeStatus.innerHTML = `${vendorDoc.opening_time || "N/A"} - ${vendorDoc.closing_time || "N/A"}`;
+    if (TimeStatus) {
+      TimeStatus.innerHTML = `${vendorDoc.opening_time || "N/A"} - ${vendorDoc.closing_time || "N/A"}`;
+    }
 
     // Fetch foods
     const foodRes = await fetch(`${API_URL}/foods/vendor/${vendorDoc.vendor_id}`);
@@ -47,25 +71,28 @@ document.addEventListener("DOMContentLoaded", async () => {
     const foods = await foodRes.json();
     console.log("Foods:", foods);
 
-    if (Array.isArray(foods)) {
-      foods.forEach(food => {
-        const div = document.createElement("div");
-        div.id = `food-${food.food_id}`;
-        div.classList.add("review-card");
-        div.innerHTML = `
-          <img src="${getImageUrl(food.food_image_url)}" class="card-image"
-               onerror="this.onerror=null; this.src='../assets/default_food.png';"
-          />
-          <div class="card-info">
-            <p><strong>${food.food_name}</strong></p>
-            <p>${food.category}</p>
-            <button onclick="deleteFood(${food.food_id})" style="background:red;color:white;border:none;padding:5px;cursor:pointer;">
-              Remove
-            </button>
-          </div>
-        `;
-        food_container.appendChild(div);
-      });
+    if (food_container) {
+      food_container.innerHTML = ""; // Clear existing
+      if (Array.isArray(foods)) {
+        foods.forEach(food => {
+          const div = document.createElement("div");
+          div.id = `food-${food.food_id}`;
+          div.classList.add("review-card");
+          div.innerHTML = `
+            <img src="${getImageUrl(food.food_image_url)}" class="card-image"
+                 onerror="this.onerror=null; this.src='../assets/default_food.png';"
+            />
+            <div class="card-info">
+              <p><strong>${food.food_name}</strong></p>
+              <p>${food.category}</p>
+              <button onclick="deleteFood(${food.food_id})" style="background:red;color:white;border:none;padding:5px;cursor:pointer;">
+                Remove
+              </button>
+            </div>
+          `;
+          food_container.appendChild(div);
+        });
+      }
     }
 
   } catch (e) {
@@ -78,7 +105,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       style: { background: "red" },
     }).showToast();
   }
-});
+}
 
 // -----------------------------
 // Logout
@@ -136,8 +163,8 @@ async function deleteFood(foodId) {
 // ---------------- EDIT PROFILE SETUP ----------------
 editBtn.addEventListener("click", async () => {
 
-  const userId = localStorage.getItem("vendorId");
-  if (!userId) return;
+  if (!editBtn) return;
+  const userId = localStorage.getItem("user_id");
 
   try {
     const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
@@ -205,14 +232,14 @@ async function handleEditSubmit(event) {
   const user = JSON.parse(localStorage.getItem("user_details") || "{}");
 
   if (!user.email) {
-        Toastify({
+    Toastify({
       text: `User email missing`,
       duration: 5000,
       gravity: "top",
       position: "right",
       style: { background: "red" },
       close: true,
-stopOnFocus: true
+      stopOnFocus: true
     }).showToast();
     return;
   }
@@ -244,14 +271,14 @@ stopOnFocus: true
     loadProfile(); // refresh UI
     document.getElementById("edit").innerHTML = "";
   } catch (error) {
-          Toastify({
+    Toastify({
       text: `Update failed:${error.message}`,
       duration: 5000,
       gravity: "top",
       position: "right",
       style: { background: "red" },
       close: true,
-stopOnFocus: true
+      stopOnFocus: true
     }).showToast();
   }
 }
@@ -285,6 +312,56 @@ postFoodBtn.addEventListener("click", () => {
     .getElementById("submitFood")
     .addEventListener("click", uploadFoodItems);
 });
+
+
+// -----------------------------
+// Menu Management (Local)
+// -----------------------------
+window.addMenuItem = function () {
+  const nameInput = document.getElementById("menuName");
+  const imageInput = document.getElementById("menuImage");
+
+  if (!nameInput || !imageInput) return;
+
+  const name = nameInput.value.trim();
+  const imageFile = imageInput.files[0];
+
+  if (!name || !imageFile) {
+    alert("Please enter food name and select image");
+    return;
+  }
+
+  menuItems.push({
+    name: name,
+    image: imageFile,
+  });
+
+  renderLocalMenu();
+
+  nameInput.value = "";
+  imageInput.value = "";
+}
+
+function renderLocalMenu() {
+  const list = document.getElementById("list_container");
+  if (!list) return;
+
+  list.innerHTML = "";
+
+  menuItems.forEach((item, index) => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      ${item.name}
+      <button type="button" onclick="removeMenuItem(${index})" style="margin-left:10px; cursor:pointer;">❌</button>
+    `;
+    list.appendChild(li);
+  });
+}
+
+window.removeMenuItem = function (index) {
+  menuItems.splice(index, 1);
+  renderLocalMenu();
+}
 
 
 async function uploadFoodItems() {
@@ -326,7 +403,7 @@ async function uploadFoodItems() {
 
     alert("Food added successfully");
     menuItems = [];
-    renderMenu();
+    renderLocalMenu();
     document.getElementById("addFood").innerHTML = "";
 
   } catch (error) {

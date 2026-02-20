@@ -1,3 +1,12 @@
+// ---------------- API BASE URL ----------------
+if (typeof API_BASE_URL === "undefined") {
+  window.API_BASE_URL =
+    window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1"
+      ? "http://127.0.0.1:8000/api"
+      : "/api";
+}
+
 // ---------------- GLOBAL TOKEN ----------------
 const token = localStorage.getItem("token");
 
@@ -5,16 +14,16 @@ const token = localStorage.getItem("token");
 document.addEventListener("DOMContentLoaded", () => {
   if (!token) {
     window.location.href = "./login.html";
-      Toastify({
+    Toastify({
       text: `User not logged in`,
       duration: 5000,
       gravity: "top",
       position: "right",
       style: { background: "red" },
       close: true,
-stopOnFocus: true
+      stopOnFocus: true
     }).showToast();
-  
+
     return;
   }
 
@@ -56,26 +65,26 @@ async function loadProfile() {
       <p><strong>Role:</strong> ${user.role}</p>
     `;
   } catch (error) {
-       Toastify({
-      text: `Error loading profile:${ error}`,
+    Toastify({
+      text: `Error loading profile:${error}`,
       duration: 5000,
       gravity: "top",
       position: "right",
       style: { background: "red" },
       close: true,
-stopOnFocus: true
+      stopOnFocus: true
     }).showToast();
 
     if (error.message === "401") {
-            Toastify({
-      text: `Redirecting...`,
-      duration: 5000,
-      gravity: "top",
-      position: "right",
-      style: { background: "red" },
-      close: true,
-stopOnFocus: true
-    }).showToast();
+      Toastify({
+        text: `Redirecting...`,
+        duration: 5000,
+        gravity: "top",
+        position: "right",
+        style: { background: "red" },
+        close: true,
+        stopOnFocus: true
+      }).showToast();
       localStorage.clear();
       window.location.href = "./login.html";
     }
@@ -150,14 +159,14 @@ async function handleEditSubmit(event) {
   const user = JSON.parse(localStorage.getItem("user_details") || "{}");
 
   if (!user.email) {
-        Toastify({
+    Toastify({
       text: `User email missing`,
       duration: 5000,
       gravity: "top",
       position: "right",
       style: { background: "red" },
       close: true,
-stopOnFocus: true
+      stopOnFocus: true
     }).showToast();
     return;
   }
@@ -189,14 +198,14 @@ stopOnFocus: true
     loadProfile(); // refresh UI
     document.getElementById("edit").innerHTML = "";
   } catch (error) {
-          Toastify({
+    Toastify({
       text: `Update failed:${error.message}`,
       duration: 5000,
       gravity: "top",
       position: "right",
       style: { background: "red" },
       close: true,
-stopOnFocus: true
+      stopOnFocus: true
     }).showToast();
   }
 }
@@ -217,7 +226,7 @@ function setupLogout() {
       position: "right",
       style: { background: "red" },
       close: true,
-stopOnFocus: true
+      stopOnFocus: true
     }).showToast();
 
     window.location.href = "./login.html";
