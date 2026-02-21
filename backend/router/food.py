@@ -274,7 +274,6 @@ def update_food(
 # -----------------------------------
 # Get Top 4 Most Liked Foods
 # -----------------------------------
-
 @router.get("/top-liked")
 def get_top_liked_foods(db: Session = Depends(get_db)):
 
@@ -283,7 +282,10 @@ def get_top_liked_foods(db: Session = Depends(get_db)):
             Food,
             func.count(FoodLike.food_id).label("total_likes")
         )
-        .outerjoin(FoodLike)
+        .outerjoin(
+            FoodLike,
+            Food.food_id == FoodLike.food_id
+        )
         .group_by(Food.food_id)
         .order_by(func.count(FoodLike.food_id).desc())
         .limit(4)
@@ -301,7 +303,7 @@ def get_top_liked_foods(db: Session = Depends(get_db)):
             "latitude": food.latitude,
             "longitude": food.longitude,
             "vendor_id": food.vendor_id,
-            "total_likes": total_likes
+            "total_likes": total_likes or 0
         })
 
     return result

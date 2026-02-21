@@ -571,6 +571,11 @@ transform: translateY(0);
   background: #4338ca;
   transform: translateY(-2px);
 }
+#map {
+  height: 300px;
+  width: 100%;
+  border-radius: 10px;
+}
 
 /* Responsive */
 @media (max-width: 600px) {

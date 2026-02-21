@@ -65,14 +65,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       div.innerHTML = `
        <div class="card">
     <div class="image_container">
-      <h2 class="food_name">${food.food_name}</h2>
-
       <img
         src="${imgUrl}"
         class="card-image"
         onerror="this.onerror=null; this.src='../assets/default_food.png';"
       />
     </div>
+
+    <h2 class="food_name">${food.food_name}</h2>
 
   <div class="likes">
   ❤️ <span id="like-count-${food.food_id}">
@@ -127,10 +127,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 // like handle
 // button
-
 async function handleLike(foodId) {
-  let likeButton = document.getElementById(`like-btn-${foodId}`)
-  let removeButton = document.getElementById(`remove-btn-${foodId}`)
+  let likeButton = document.getElementById(`like-btn-${foodId}`);
+  let removeButton = document.getElementById(`remove-btn-${foodId}`);
   let userId = localStorage.getItem("user_id");
 
   if (!userId) {
@@ -142,12 +141,9 @@ async function handleLike(foodId) {
       style: { background: "orange" }
     }).showToast();
     return;
-
   }
 
   try {
-    console.log("Sending Like:", { userId, foodId });
-
     const res = await fetch(`${API_BASE_URL}/foods/like`, {
       method: "POST",
       headers: {
@@ -155,33 +151,33 @@ async function handleLike(foodId) {
         "Authorization": `Bearer ${localStorage.getItem("token")}`
       },
       body: JSON.stringify({
-        user_id: parseInt(userId),
-        food_id: foodId
+        user_id: Number(userId),
+        food_id: Number(foodId)
       })
     });
 
     const data = await res.json();
-    console.log("Response:", data);
 
-    // 🔴 If backend says already liked
-    if (data.status === false) {
-      console.log("Already liked:", data.message);
-      likeButton.style.display = "none";
-      removeButton.style.display = "inline-block";
+    if (!res.ok || data.status === false) {
       Toastify({
-        text: data.message,
+        text: data.message || "Already liked",
         duration: 3000,
         gravity: "top",
         position: "right",
         style: { background: "red" }
       }).showToast();
+
+      likeButton.style.display = "none";
+      removeButton.style.display = "inline-block";
       return;
     }
 
-    // 🟢 Success
+    // ✅ Success
     likeButton.style.display = "none";
     removeButton.style.display = "inline-block";
-    document.getElementById(`like-count-${foodId}`).textContent = data.total_likes;
+
+    document.getElementById(`like-count-${foodId}`).textContent =
+      data.total_likes;
 
     Toastify({
       text: "Liked successfully ❤️",
@@ -192,8 +188,6 @@ async function handleLike(foodId) {
     }).showToast();
 
   } catch (error) {
-    console.log("Like Error:", error);
-
     Toastify({
       text: "Something went wrong",
       duration: 3000,
@@ -205,9 +199,11 @@ async function handleLike(foodId) {
 }
 // remove like handle
 async function handleRemove(foodId) {
-  let userId = localStorage.getItem("user_id");
-  console.log(userId);
-  if (!userId) {
+  const likeButton = document.getElementById(`like-btn-${foodId}`);
+  const removeButton = document.getElementById(`remove-btn-${foodId}`);
+  const token = localStorage.getItem("token");
+
+  if (!token) {
     Toastify({
       text: "Please login first 🔐",
       duration: 3000,
@@ -219,29 +215,32 @@ async function handleRemove(foodId) {
   }
 
   try {
-    console.log("Sending Remove:", { userId, foodId });
-
     const res = await fetch(`${API_BASE_URL}/foods/like`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${localStorage.getItem("token")}`
+        "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify({
-        user_id: parseInt(userId),
-        food_id: foodId
+        food_id: Number(foodId),
+        user_id: Number(localStorage.getItem("user_id"))   // required by FoodLikeRequest
       })
     });
 
-    const data = await res.json();
-    console.log("Response:", data);
+    // ✅ Safe JSON parsing
+    const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {
-      console.log("Remove Failed:", data.detail);
-      document.getElementById(`like-btn-${foodId}`).style.display = "inline-block";
-      document.getElementById(`remove-btn-${foodId}`).style.display = "none";
+      let errorMessage = "Remove failed";
+
+      if (typeof data.detail === "string") {
+        errorMessage = data.detail;
+      } else if (Array.isArray(data.detail)) {
+        errorMessage = data.detail[0]?.msg || errorMessage;
+      }
+
       Toastify({
-        text: data.detail || "Remove failed",
+        text: errorMessage,
         duration: 3000,
         gravity: "top",
         position: "right",
@@ -250,13 +249,15 @@ async function handleRemove(foodId) {
       return;
     }
 
-    // 🟢 Success
-    document.getElementById(`like-btn-${foodId}`).style.display = "inline-block";
-    document.getElementById(`remove-btn-${foodId}`).style.display = "none";
-    document.getElementById(`like-count-${foodId}`).textContent = data.total_likes;
+    // ✅ Success UI update
+    likeButton.style.display = "inline-block";
+    removeButton.style.display = "none";
+
+    document.getElementById(`like-count-${foodId}`).textContent =
+      data.total_likes ?? 0;
 
     Toastify({
-      text: "Like removed ❌",
+      text: data.message || "Like removed successfully",
       duration: 3000,
       gravity: "top",
       position: "right",
@@ -264,10 +265,8 @@ async function handleRemove(foodId) {
     }).showToast();
 
   } catch (error) {
-    console.log("Remove Error:", error);
-
     Toastify({
-      text: "Something went wrong",
+      text: "Network error. Please try again.",
       duration: 3000,
       gravity: "top",
       position: "right",
@@ -275,7 +274,6 @@ async function handleRemove(foodId) {
     }).showToast();
   }
 }
-
 
 // ---------------- REVIEW SYSTEM ----------------
 

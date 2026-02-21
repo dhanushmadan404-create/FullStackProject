@@ -130,11 +130,12 @@ header .logo:hover {
   margin-bottom: 12px;
   object-fit: cover;
 }
+
 .likes {
-text-align: center;
-margin: 8px 0;
-font-weight: bold;
-color: #e63946;
+  text-align: center;
+  margin: 8px 0;
+  font-weight: bold;
+  color: #e63946;
 }
 
 /* Review Section */
@@ -212,6 +213,7 @@ color: #e63946;
   padding: 0 16px;
   margin-bottom: 56px;
 }
+
 #Cate h1 {
   font-size: 30px;
   font-weight: 700;
@@ -220,6 +222,7 @@ color: #e63946;
   border-left: 4px solid #ff6f00;
   line-height: 1.2;
 }
+
 /* ================= CARD GRID ================= */
 
 .card-grid {
@@ -269,15 +272,43 @@ color: #e63946;
   gap: 10px;
   margin-top: auto;
 }
+
 .card-buttons button {
-  background-color: #ff6f00;
-  color: #f9fafb;
+  color: #ffffff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .card-buttons button:hover {
-  background-color: #000000;
-  color: #f9fafb;
+  opacity: 0.85;
+  transform: scale(1.04);
 }
+
+/* LIKE button — green */
+[id^="like-btn-"] {
+  background-color: #22c55e;
+}
+
+/* REMOVE button — red */
+[id^="remove-btn-"] {
+  background-color: #e53935;
+}
+
+/* REVIEW button — blue-ish */
+.card-buttons button:nth-child(3) {
+  background-color: #3b82f6;
+}
+
+/* FIND button — orange */
+.card-buttons button:nth-child(4) {
+  background-color: #ff6f00;
+}
+
 .details-btn {
   flex: 1;
   background: #ff6f00;

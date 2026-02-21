@@ -496,21 +496,40 @@ async function uploadFoodItems() {
     return;
   }
 
+  const vendorId = localStorage.getItem("vendorId");
+  if (!vendorId) {
+    alert("Vendor ID not found. Please reload the page.");
+    return;
+  }
+
+  const authToken = localStorage.getItem("token");
+  if (!authToken) {
+    alert("You must be logged in to add food.");
+    return;
+  }
+
   try {
 
     for (let item of menu) {
 
       const formData = new FormData();
       formData.append("food_name", item.name);
-      formData.append("food_image", item.image);
+      formData.append("image", item.image);      // backend expects field name "image"
       formData.append("category", foodType);
       formData.append("latitude", selectedLat);
       formData.append("longitude", selectedLng);
+      formData.append("vendor_id", vendorId);    // required by backend
 
-      await fetch(`${API_URL}/foods`, {
+      const res = await fetch(`${API_URL}/foods`, {
         method: "POST",
+        headers: { Authorization: `Bearer ${authToken}` },
         body: formData,
       });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.detail || "Upload failed");
+      }
     }
 
     alert("Food items uploaded successfully!");

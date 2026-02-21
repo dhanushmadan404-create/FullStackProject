@@ -31,6 +31,7 @@ header {
   background: #ffffff;
   border-bottom: 1px solid #e5e7eb;
 }
+
 /* Logo */
 header .logo {
   height: 90px;
@@ -67,6 +68,7 @@ header .logo:hover {
   height: 70px;
   filter: none;
 }
+
 /* Header Buttons */
 #profile,
 #login {
@@ -98,6 +100,7 @@ header .logo:hover {
   background-color: #e65100;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
+
 /* ================= MAIN ================= */
 main {
   max-width: 1200px;
@@ -114,6 +117,7 @@ h2 {
   margin-bottom: 30px;
   color: var(--secondary);
 }
+
 /* -----------------------------
    Trending Section
 ------------------------------ */
@@ -175,7 +179,8 @@ h2 {
   padding: 20px 10px;
   font-size: 22px;
   font-weight: 600;
-  color: #5e2ca5;   /* Purple color like screenshot */
+  color: #5e2ca5;
+  /* Purple color like screenshot */
 }
 
 /* Likes text */
@@ -190,23 +195,34 @@ h2 {
 .card-buttons {
   display: flex;
   justify-content: center;
+  gap: 10px;
   padding-bottom: 20px;
 }
 
-/* Find button */
+/* FIND + Like buttons */
 .card-buttons button {
-  background-color: #5e2ca5;
   color: #fff;
   border: none;
   padding: 8px 18px;
   border-radius: 20px;
   cursor: pointer;
   font-size: 14px;
-  transition: background 0.3s ease;
+  font-weight: 600;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-.card-buttons button:hover {
+.card-buttons button:first-child {
+  background-color: #5e2ca5;
+}
+
+.card-buttons button:first-child:hover {
   background-color: #4a1f87;
+}
+
+/* Like / Remove button — color set inline dynamically */
+.card-buttons button:last-child:hover {
+  opacity: 0.85;
+  transform: scale(1.05);
 }
 
 /* Categories */
@@ -247,6 +263,7 @@ footer {
   padding: 40px;
   color: #888;
 }
+
 @media (max-width: 1024px) {
   #trending_container {
     grid-template-columns: repeat(2, 1fr);

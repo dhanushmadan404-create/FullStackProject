@@ -64,7 +64,7 @@ def unlike_food(
     like = (
         db.query(FoodLike)
         .filter(
-            FoodLike.user_id == current_user.user_id,  
+            FoodLike.user_id == current_user.user_id,  # ✅ from token
             FoodLike.food_id == data.food_id
         )
         .first()

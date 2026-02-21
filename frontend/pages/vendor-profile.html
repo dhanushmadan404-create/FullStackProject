@@ -6,6 +6,16 @@
     <title>Vendor Profile</title>
     <link rel="stylesheet" href="../styles/vendor-profile-style.css" />
     <link rel="icon" href="../assets/icons8-a-64.png" />
+    <!-- Leaflet CSS -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<!-- Leaflet JS -->
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
     <!-- Toastify CSS -->
     <link
       rel="stylesheet"
@@ -54,7 +64,7 @@
             class="edit-btn"
             onclick="window.location.href = './vendor-edit.html'"
           >
-            Edit
+           vendor Edit
           </button>
         </div>
         <!-- Logout Button -->
@@ -63,7 +73,8 @@
 
         <!-- Food Cards -->
          <div>
-          <div id="addFood"></div>
+          <div id="addFood">
+          </div>
           <button id="postFood">ADD FOOD</button>
          </div>
         <div id="food_container" class="review-cards"></div>
