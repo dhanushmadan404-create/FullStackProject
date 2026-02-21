@@ -145,7 +145,72 @@ def create_food(
 
 
 # -----------------------------------
+# Get Top 4 Most Liked Foods
+# IMPORTANT: must be BEFORE /{food_id} so FastAPI doesn't
+# try to parse "top-liked" as an integer food_id (→ 422)
+# -----------------------------------
+@router.get("/top-liked")
+def get_top_liked_foods(db: Session = Depends(get_db)):
+
+    top_foods = (
+        db.query(
+            Food,
+            func.count(FoodLike.food_id).label("total_likes")
+        )
+        .outerjoin(
+            FoodLike,
+            Food.food_id == FoodLike.food_id
+        )
+        .group_by(Food.food_id)
+        .order_by(func.count(FoodLike.food_id).desc())
+        .limit(4)
+        .all()
+    )
+
+    result = []
+
+    for food, total_likes in top_foods:
+        result.append({
+            "food_id": food.food_id,
+            "food_name": food.food_name,
+            "food_image_url": food.food_image_url,
+            "category": food.category,
+            "latitude": food.latitude,
+            "longitude": food.longitude,
+            "vendor_id": food.vendor_id,
+            "total_likes": total_likes or 0
+        })
+
+    return result
+
+
+# -----------------------------------
+# Get Foods By Vendor
+# IMPORTANT: must be BEFORE /{food_id}
+# -----------------------------------
+
+@router.get("/vendor/{vendor_id}", response_model=List[FoodResponse])
+def get_foods_by_vendor(vendor_id: int, db: Session = Depends(get_db)):
+    foods = db.query(Food).filter(Food.vendor_id == vendor_id).all()
+    result = []
+    for food in foods:
+        total_likes = db.query(func.count()).select_from(FoodLike).filter(FoodLike.food_id == food.food_id).scalar()
+        result.append({
+            "food_id": food.food_id,
+            "food_name": food.food_name,
+            "food_image_url": food.food_image_url,
+            "category": food.category,
+            "latitude": food.latitude,
+            "longitude": food.longitude,
+            "vendor_id": food.vendor_id,
+            "total_likes": total_likes or 0
+        })
+    return result
+
+
+# -----------------------------------
 # Get Food By ID
+# IMPORTANT: wildcard — keep this AFTER all specific GET routes
 # -----------------------------------
 
 @router.get("/{food_id}", response_model=FoodResponse)
@@ -167,29 +232,6 @@ def get_food(food_id: int, db: Session = Depends(get_db)):
         "vendor_id": food.vendor_id,
         "total_likes": total_likes or 0
     }
-
-
-# -----------------------------------
-# Get Foods By Vendor
-# -----------------------------------
-
-@router.get("/vendor/{vendor_id}", response_model=List[FoodResponse])
-def get_foods_by_vendor(vendor_id: int, db: Session = Depends(get_db)):
-    foods = db.query(Food).filter(Food.vendor_id == vendor_id).all()
-    result = []
-    for food in foods:
-        total_likes = db.query(func.count()).select_from(FoodLike).filter(FoodLike.food_id == food.food_id).scalar()
-        result.append({
-            "food_id": food.food_id,
-            "food_name": food.food_name,
-            "food_image_url": food.food_image_url,
-            "category": food.category,
-            "latitude": food.latitude,
-            "longitude": food.longitude,
-            "vendor_id": food.vendor_id,
-            "total_likes": total_likes or 0
-        })
-    return result
 
 
 # -----------------------------------
@@ -271,39 +313,3 @@ def update_food(
     }
 
 
-# -----------------------------------
-# Get Top 4 Most Liked Foods
-# -----------------------------------
-@router.get("/top-liked")
-def get_top_liked_foods(db: Session = Depends(get_db)):
-
-    top_foods = (
-        db.query(
-            Food,
-            func.count(FoodLike.food_id).label("total_likes")
-        )
-        .outerjoin(
-            FoodLike,
-            Food.food_id == FoodLike.food_id
-        )
-        .group_by(Food.food_id)
-        .order_by(func.count(FoodLike.food_id).desc())
-        .limit(4)
-        .all()
-    )
-
-    result = []
-
-    for food, total_likes in top_foods:
-        result.append({
-            "food_id": food.food_id,
-            "food_name": food.food_name,
-            "food_image_url": food.food_image_url,
-            "category": food.category,
-            "latitude": food.latitude,
-            "longitude": food.longitude,
-            "vendor_id": food.vendor_id,
-            "total_likes": total_likes or 0
-        })
-
-    return result
