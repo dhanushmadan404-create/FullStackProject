@@ -26,9 +26,9 @@ router = APIRouter(prefix="/foods", tags=["Foods"])
 if os.getenv("VERCEL"):
     UPLOAD_DIR = "/tmp/uploads/foods"
 else:
-    # Use absolute path relative to project root
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    PROJECT_ROOT = os.path.dirname(BASE_DIR)
+    # Match main.py logic: root/uploads/foods
+    BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    PROJECT_ROOT = os.path.dirname(BACKEND_DIR)
     UPLOAD_DIR = os.path.join(PROJECT_ROOT, "uploads", "foods")
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
@@ -147,7 +147,16 @@ def create_food(
     db.commit()
     db.refresh(new_food)
 
-    return new_food
+    return {
+        "food_id": new_food.food_id,
+        "food_name": new_food.food_name,
+        "food_image_url": new_food.food_image_url,
+        "category": new_food.category,
+        "latitude": new_food.latitude,
+        "longitude": new_food.longitude,
+        "vendor_id": new_food.vendor_id,
+        "total_likes": 0
+    }
 
 
 # -----------------------------------

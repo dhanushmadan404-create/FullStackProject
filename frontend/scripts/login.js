@@ -207,7 +207,7 @@ async function redirectUser(role, userId) {
   console.log("Redirecting user with role:", role);
 
   if (role === "admin") {
-    window.location.href = "admin.html";
+    window.location.href = "/frontend/pages/admin.html";
     return;
   }
 
@@ -223,19 +223,19 @@ async function redirectUser(role, userId) {
         const vendorData = await response.json();
         localStorage.setItem("vendorId", vendorData.vendor_id);
         console.log("Vendor profile found. Redirecting...");
-        window.location.href = "./vendor-profile.html";
+        window.location.href = "/frontend/pages/vendor-profile.html";
       } else {
         console.log("Vendor profile not found. Redirecting to registration...");
-        window.location.href = "./registration.html";
+        window.location.href = "/frontend/pages/registration.html";
       }
     } catch (err) {
       console.error("Vendor fetch error:", err.message);
-      window.location.href = "./registration.html";
+      window.location.href = "/frontend/pages/registration.html";
     }
 
     return;
   }
 
   console.log("Redirecting normal user...");
-  window.location.href = "../../index.html";
+  window.location.href = "/index.html";
 }
