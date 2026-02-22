@@ -12,8 +12,10 @@ router = APIRouter(prefix="/users", tags=["Users"])
 if os.environ.get("VERCEL"):
     UPLOAD_DIR = "/tmp/uploads/users"
 else:
+    # Use absolute path relative to project root
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    UPLOAD_DIR = os.path.join(BASE_DIR, "uploads", "users")
+    PROJECT_ROOT = os.path.dirname(BASE_DIR)
+    UPLOAD_DIR = os.path.join(PROJECT_ROOT, "uploads", "users")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 def save_image(image: UploadFile) -> str:

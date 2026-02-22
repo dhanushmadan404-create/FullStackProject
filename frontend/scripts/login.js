@@ -1,14 +1,3 @@
-if (!window.API_BASE_URL) {
-  Toastify({
-    text: "API_BASE_URL is not defined. Make sure common.js is loaded first.",
-    duration: 5000,
-    gravity: "top",
-    position: "right",
-    style: { background: "red" },
-    close: true,
-    stopOnFocus: true
-  }).showToast();
-}
 
 // -----------------------------
 // Toggle Login / Register Forms

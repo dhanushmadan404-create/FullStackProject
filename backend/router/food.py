@@ -22,8 +22,14 @@ router = APIRouter(prefix="/foods", tags=["Foods"])
 # Image Upload Configuration
 # -----------------------------------
 
-# If running on Vercel → use /tmp (only writable location)
-UPLOAD_DIR = "/tmp/uploads/foods" if os.getenv("VERCEL") else "uploads/foods"
+# If running on Vercel → use /tmp/uploads/foods
+if os.getenv("VERCEL"):
+    UPLOAD_DIR = "/tmp/uploads/foods"
+else:
+    # Use absolute path relative to project root
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    PROJECT_ROOT = os.path.dirname(BASE_DIR)
+    UPLOAD_DIR = os.path.join(PROJECT_ROOT, "uploads", "foods")
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 

@@ -2,12 +2,6 @@
 // Admin Panel Script
 // ========================================
 
-// ---------------- LOGOUT ----------------
-function logout() {
-  console.log("Admin logging out...");
-  localStorage.clear();
-  window.location.href = "./login.html";
-}
 
 // ---------------- SHOW SECTION ----------------
 function showSection(sectionId) {
