@@ -1,37 +1,29 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Profile Page</title>
 
   <!-- Toastify CSS -->
-  <link rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
 
   <!-- Toastify JS -->
   <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
-  <link rel="stylesheet" href="../styles/profile-style.css" />
-  <link rel="icon" href="../assets/icons8-a-64.png" />
+  <link rel="stylesheet" href="/frontend/styles/profile-style.css" />
+  <link rel="icon" href="/frontend/assets/icons8-a-64.png" />
 </head>
 
 <body>
   <header>
     <div class="header_container">
-      <img
-        class="logo"
-        src="../assets/annesana.png"
-        alt="Annesana"
-        onclick="window.location.href='../../index.html'"
-      />
+      <img class="logo" src="/frontend/assets/annesana.png" alt="Annesana"
+        onclick="window.location.href='/index.html'" />
 
-      <img
-        class="logo location"
-        src="../assets/location.png"
-        alt="Location"
-        onclick="window.location.href='./map.html'"
-      />
+      <img class="logo location" src="/frontend/assets/location.png" alt="Location"
+        onclick="window.location.href='/frontend/pages/map.html'" />
     </div>
   </header>
 
@@ -39,12 +31,8 @@
     <div id="profile_details" class="photo-details"></div>
 
     <div>
-      <a href="map.html">
-        <img
-          src="../assets/NicePng_food-cart-png_7682382.png"
-          alt="Banner"
-          class="banner"
-        />
+      <a href="/frontend/pages/map.html">
+        <img src="/frontend/assets/NicePng_food-cart-png_7682382.png" alt="Banner" class="banner" />
       </a>
     </div>
 
@@ -71,4 +59,5 @@
   <script src="../scripts/common.js"></script>
   <script src="../scripts/profile.js"></script>
 </body>
+
 </html>

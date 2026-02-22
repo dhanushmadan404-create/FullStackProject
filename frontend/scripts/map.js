@@ -13,19 +13,19 @@ let foodLat = null;
 let foodLng = null;
 // ---------------- ICONS ----------------
 const userIcon = L.icon({
-  iconUrl: "../assets/3448609.png",
+  iconUrl: "/frontend/assets/3448609.png",
   iconSize: [40, 40],
   iconAnchor: [20, 40],
 });
 
 const foodIcon = L.icon({
-  iconUrl: "../assets/food.png",
+  iconUrl: "/frontend/assets/food.png",
   iconSize: [40, 40],
   iconAnchor: [20, 40],
 });
 
 const shopIcon = L.icon({
-  iconUrl: "../assets/shop.png",
+  iconUrl: "/frontend/assets/shop.png",
   iconSize: [40, 40],
   iconAnchor: [20, 40],
 });

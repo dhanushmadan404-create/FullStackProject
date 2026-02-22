@@ -21,7 +21,7 @@ if (mapElement) {
 
 // Custom Icon
 const foodIcon = L.icon({
-  iconUrl: "../assets/3448609.png",
+  iconUrl: "/frontend/assets/3448609.png",
   iconSize: [40, 40],
   iconAnchor: [20, 40],
 });

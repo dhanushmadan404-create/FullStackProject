@@ -51,7 +51,7 @@ async function loadProfile() {
         src="${imgUrl}" 
         alt="${user.name}" 
         class="profile-image"
-        onerror="this.onerror=null; this.src='../assets/default_user.png';"
+        onerror="this.onerror=null; this.src='/frontend/assets/default_user.png';"
       />
       <h2>${user.name}</h2>
       <p>${user.email}</p>
@@ -92,6 +92,7 @@ function setupEditForm() {
   if (!editBtn) return;
 
   editBtn.addEventListener("click", () => {
+    editContainer.style.display = "block";
     const user = JSON.parse(localStorage.getItem("user_details") || "{}");
     const previewImg = getImageUrl(user.image_url);
 
@@ -115,7 +116,7 @@ function setupEditForm() {
                    width:80px;
                    height:80px;
                    object-fit:cover;"
-                    onerror="this.onerror=null; this.src='../assets/default_user.png';"
+                    onerror="this.onerror=null; this.src='/frontend/assets/default_user.png';"
           />
         </div>
 

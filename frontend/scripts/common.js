@@ -13,7 +13,7 @@ window.API_BASE_URL = API_BASE_URL;
 // -----------------------------
 // Get Image URL helper
 // -----------------------------
-function getImageUrl(path, fallback = "../assets/default_user.png") {
+function getImageUrl(path, fallback = "/frontend/assets/default_user.png") {
   if (!path) return fallback;
 
   // If it's already a full URL or base64, return it

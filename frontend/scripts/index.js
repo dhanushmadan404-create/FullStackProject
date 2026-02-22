@@ -28,7 +28,7 @@ async function loadTrendingFoods() {
 
       const imgUrl = getImageUrl(
         food.food_image_url,
-        "./frontend/assets/default_food.png"
+        "/frontend/assets/default_food.png"
       );
 
       div.innerHTML = `
@@ -37,7 +37,7 @@ async function loadTrendingFoods() {
             <img
               src="${imgUrl}"
               class="card-image"
-              onerror="this.onerror=null; this.src='./frontend/assets/default_food.png';"
+              onerror="this.onerror=null; this.src='/frontend/assets/default_food.png';"
             />
           </div>
 
@@ -49,7 +49,7 @@ async function loadTrendingFoods() {
 
           <div class="card-buttons">
             <button
-              onclick="window.location.href='./frontend/pages/map.html?food_id=${food.food_id}'"
+              onclick="window.location.href='/frontend/pages/map.html?food_id=${food.food_id}'"
             >
               FIND
             </button>

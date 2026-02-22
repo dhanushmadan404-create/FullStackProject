@@ -1,146 +1,107 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Annesana</title>
 
-    <!-- favicon -->
-    <link rel="icon" href="./frontend/assets/icons8-a-64.png" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Annesana</title>
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="./index-style.css" />
+  <!-- favicon -->
+  <link rel="icon" href="/frontend/assets/icons8-a-64.png" />
 
-  
-  </head>
+  <!-- CSS -->
+  <link rel="stylesheet" href="/index-style.css" />
 
-  <body>
-    <!-- ================= HEADER ================= -->
-    <header>
-      <div class="header_container">
-        <!-- Logo -->
-        <img
-          class="logo"
-          src="./frontend/assets/annesana.png"
-          alt="Annesana Logo"
-          onclick="window.location.href = './index.html'"
-        />
 
-        <!-- Location icon -->
-        <img
-          class="logo location"
-          src="./frontend/assets/location.png"
-          alt="Location"
-          onclick="window.location.href = './frontend/pages/map.html'"
-        />
+</head>
 
-        <div class="right-align right">
-          <button
-            id="profile"
-            onclick="window.location.href = './frontend/pages/profile.html'"
-          >
-            Profile
-          </button>
-          <a href="./frontend/pages/login.html" id="login">Log in</a>
-        </div>
+<body>
+  <!-- ================= HEADER ================= -->
+  <header>
+    <div class="header_container">
+      <!-- Logo -->
+      <img class="logo" src="./frontend/assets/annesana.png" alt="Annesana Logo"
+        onclick="window.location.href = './index.html'" />
+
+      <!-- Location icon -->
+      <img class="logo location" src="./frontend/assets/location.png" alt="Location"
+        onclick="window.location.href = './frontend/pages/map.html'" />
+
+      <div class="right-align right">
+        <button id="profile" onclick="window.location.href = './frontend/pages/profile.html'">
+          Profile
+        </button>
+        <a href="./frontend/pages/login.html" id="login">Log in</a>
       </div>
-    </header>
+    </div>
+  </header>
 
-    <!-- ================= MAIN ================= -->
-    <main>
- 
-<section id="trending_section">
-  <h1>Trending</h1>
-  <div id="trending_container"></div>
-</section>
+  <!-- ================= MAIN ================= -->
+  <main>
+
+    <section id="trending_section">
+      <h1>Trending</h1>
+      <div id="trending_container"></div>
+    </section>
 
 
-      <!-- ===== Categories ===== -->
-      <section class="categories">
-        <h2 class="category-title">Categories</h2>
+    <!-- ===== Categories ===== -->
+    <section class="categories">
+      <h2 class="category-title">Categories</h2>
 
-        <div class="category-grid vertical">
-          <div
-            onclick="
+      <div class="category-grid vertical">
+        <div onclick="
               window.location.href =
                 './frontend/pages/category.html?category=breakfast'
-            "
-            class="category-card"
-          >
-            <img
-              src="./frontend/assets/food_image/Categories/break_fast.jpg"
-              alt="Breakfast"
-            />
-            <span>Breakfast</span>
-          </div>
+            " class="category-card">
+          <img src="./frontend/assets/food_image/Categories/break_fast.jpg" alt="Breakfast" />
+          <span>Breakfast</span>
+        </div>
 
-          <div
-            onclick="
+        <div onclick="
               window.location.href =
                 './frontend/pages/category.html?category=lunch'
-            "
-            class="category-card"
-          >
-            <img
-              src="./frontend/assets/food_image/Categories/lunch.avif"
-              alt="Lunch"
-            />
-            <span>Lunch</span>
-          </div>
+            " class="category-card">
+          <img src="./frontend/assets/food_image/Categories/lunch.avif" alt="Lunch" />
+          <span>Lunch</span>
+        </div>
 
-          <div
-            onclick="
+        <div onclick="
               window.location.href =
                 './frontend/pages/category.html?category=dinner'
-            "
-            class="category-card"
-          >
-            <img
-              src="./frontend/assets/food_image/Categories/dinner.webp"
-              alt="Dinner"
-            />
-            <span>Dinner</span>
-          </div>
+            " class="category-card">
+          <img src="./frontend/assets/food_image/Categories/dinner.webp" alt="Dinner" />
+          <span>Dinner</span>
+        </div>
 
-          <div
-            onclick="
+        <div onclick="
               window.location.href =
                 './frontend/pages/category.html?category=snacks'
-            "
-            class="category-card"
-          >
-            <img
-              src="./frontend/assets/food_image/Categories/snacks.jpg"
-              alt="Snacks"
-            />
-            <span>Snacks</span>
-          </div>
+            " class="category-card">
+          <img src="./frontend/assets/food_image/Categories/snacks.jpg" alt="Snacks" />
+          <span>Snacks</span>
+        </div>
 
-          <div
-            onclick="
+        <div onclick="
               window.location.href =
                 './frontend/pages/category.html?category=drinking'
-            "
-            class="category-card"
-          >
-            <img
-              src="./frontend/assets/food_image/Categories/drinking.JPG"
-              alt="Drinks"
-            />
-            <span>Juice</span>
-          </div>
+            " class="category-card">
+          <img src="./frontend/assets/food_image/Categories/drinking.JPG" alt="Drinks" />
+          <span>Juice</span>
         </div>
-      </section>
-    </main>
+      </div>
+    </section>
+  </main>
 
-    <!-- ================= FOOTER ================= -->
-    <footer>
-      <small>© 2025 Annesana. All Rights Reserved.</small>
-    </footer>
+  <!-- ================= FOOTER ================= -->
+  <footer>
+    <small>© 2025 Annesana. All Rights Reserved.</small>
+  </footer>
 
-    <!-- ================= JS ================= -->
-    <script src="./frontend/scripts/common.js"></script>
+  <!-- ================= JS ================= -->
+  <script src="./frontend/scripts/common.js"></script>
 
-    <script src="./frontend/scripts/index.js"></script>
-  </body>
+  <script src="./frontend/scripts/index.js"></script>
+</body>
+
 </html>

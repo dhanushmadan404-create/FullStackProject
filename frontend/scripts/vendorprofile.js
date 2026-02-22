@@ -36,7 +36,7 @@ async function loadProfile() {
 
     // Render profile image + name/email
     if (profile_image) {
-      profile_image.innerHTML = `<img src="${getImageUrl(user.image_url)}" class="card-image" onerror="this.onerror=null; this.src='../assets/default_vendor.png';"/>`;
+      profile_image.innerHTML = `<img src="${getImageUrl(user.image_url)}" class="card-image" onerror="this.onerror=null; this.src='/frontend/assets/default_vendor.png';"/>`;
     }
     if (vendorName) {
       vendorName.innerHTML = `
@@ -74,7 +74,7 @@ async function loadProfile() {
           div.classList.add("review-card");
           div.innerHTML = `
             <img src="${getImageUrl(food.food_image_url)}" class="card-image"
-                 onerror="this.onerror=null; this.src='../assets/default_food.png';"
+                 onerror="this.onerror=null; this.src='/frontend/assets/default_food.png';"
             />
             <div class="card-info">
               <p><strong>${food.food_name}</strong></p>
@@ -182,7 +182,7 @@ editBtn.addEventListener("click", async () => {
           <img 
             src="${previewImg}" 
             id="preview"
-            onerror="this.onerror=null; this.src='../assets/default_user.png';"
+            onerror="this.onerror=null; this.src='/frontend/assets/default_user.png';"
           />
         </div>
 

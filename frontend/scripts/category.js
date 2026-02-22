@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const div = document.createElement("div");
       const imgUrl = getImageUrl(
         food.food_image_url,
-        "../assets/default_food.png",
+        "/frontend/assets/default_food.png",
       );
 
       div.innerHTML = `
@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       <img
         src="${imgUrl}"
         class="card-image"
-        onerror="this.onerror=null; this.src='../assets/default_food.png';"
+        onerror="this.onerror=null; this.src='/frontend/assets/default_food.png';"
       />
     </div>
 
