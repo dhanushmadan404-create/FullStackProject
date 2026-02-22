@@ -1,72 +1,74 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Profile Page</title>
-    <!-- Toastify CSS -->
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
-    />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile Page</title>
 
-    <!-- Toastify JS -->
-    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    
-    <link rel="stylesheet" href="../styles/profile-style.css" />
-    <link rel="icon" href="../assets/icons8-a-64.png" />
-  </head>
+  <!-- Toastify CSS -->
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"/>
 
-  <body>
-    <header>
-      <div class="header_container">
+  <!-- Toastify JS -->
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+  <link rel="stylesheet" href="../styles/profile-style.css" />
+  <link rel="icon" href="../assets/icons8-a-64.png" />
+</head>
+
+<body>
+  <header>
+    <div class="header_container">
+      <img
+        class="logo"
+        src="../assets/annesana.png"
+        alt="Annesana"
+        onclick="window.location.href='../../index.html'"
+      />
+
+      <img
+        class="logo location"
+        src="../assets/location.png"
+        alt="Location"
+        onclick="window.location.href='./map.html'"
+      />
+    </div>
+  </header>
+
+  <main>
+    <div id="profile_details" class="photo-details"></div>
+
+    <div>
+      <a href="map.html">
         <img
-          class="logo"
-          src="../assets/annesana.png"
-          alt="Annesana"
-          onclick="window.location.href = '../../index.html'"
+          src="../assets/NicePng_food-cart-png_7682382.png"
+          alt="Banner"
+          class="banner"
         />
-        <img
-          class="logo location"
-          src="../assets/location.png"
-          alt="Location"
-          onclick="window.location.href = './map.html'"
-        />
-      </div>
-    </header>
+      </a>
+    </div>
 
-    <!-- Navigation -->
+    <div class="option">
+      <ul class="option_menu">
+        <li class="option_list">
+          <a href="#" id="editBtn">Edit Profile</a>
+        </li>
 
-    <!-- Main Content -->
-    <main>
-      <div id="profile_details" class="photo-details"></div>
-      <div>
-        <a href="map.html">
-          <img
-            src="../assets/NicePng_food-cart-png_7682382.png"
-            alt="not able to see"
-            class="banner"
-        /></a>
-      </div>
-      <div class="option">
-        <ul type="none">
-          <a id="editBtn">
-            <li class="option_list">Edit Profile</li>
-          </a>
+        <li class="option_list">
+          <a href="#" id="logOut">Log Out</a>
+        </li>
+      </ul>
+    </div>
+  </main>
 
-          <a href="#" id="logOut">
-            <li class="option_list">log out</li>
-          </a>
-          <li id="edit"></li>
-        </ul>
-      </div>
-    </main>
-    <!-- <div class="ad-section"></div> -->
-    <footer>
-      <small>© 2025 Annesana. All Rights Reserved.</small>
-    </footer>
+  <!-- Modal Container (Hidden by Default) -->
+  <div id="edit" style="display:none;"></div>
 
-    <script src="../scripts/common.js"></script>
-    <script src="../scripts/profile.js"></script>
-  </body>
+  <footer>
+    <small>© 2025 Annesana. All Rights Reserved.</small>
+  </footer>
+
+  <script src="../scripts/common.js"></script>
+  <script src="../scripts/profile.js"></script>
+</body>
 </html>
