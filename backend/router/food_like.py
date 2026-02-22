@@ -23,7 +23,7 @@ def like_food(
 
     # 2️⃣ Check if already liked
     existing_like = db.query(FoodLike).filter(
-        FoodLike.user_id == data.user_id,
+        FoodLike.user_id == current_user.user_id,
         FoodLike.food_id == data.food_id
     ).first()
 
@@ -35,7 +35,7 @@ def like_food(
 
     # 3️⃣ Create new like
     new_like = FoodLike(
-        user_id=data.user_id,
+        user_id=current_user.user_id, # ✅ Use user_id from token for security
         food_id=data.food_id
     )
 
@@ -51,21 +51,21 @@ def like_food(
         "message": "You liked this food",
         "total_likes":total_likes
     }
-@router.delete("/like")
+@router.delete("/like/{food_id}")
 def unlike_food(
-    data: FoodLikeRequest,
+    food_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    food = db.query(Food).filter(Food.food_id == data.food_id).first()
+    food = db.query(Food).filter(Food.food_id == food_id).first()
     if not food:
         raise HTTPException(status_code=404, detail="Food not found")
 
     like = (
         db.query(FoodLike)
         .filter(
-            FoodLike.user_id == current_user.user_id,  # ✅ from token
-            FoodLike.food_id == data.food_id
+            FoodLike.user_id == current_user.user_id,
+            FoodLike.food_id == food_id
         )
         .first()
     )
@@ -78,7 +78,7 @@ def unlike_food(
 
     total_likes = (
         db.query(FoodLike)
-        .filter(FoodLike.food_id == data.food_id)
+        .filter(FoodLike.food_id == food_id)
         .count()
     )
 

@@ -58,9 +58,9 @@ app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 app.include_router(auth.router, prefix="/api")
 app.include_router(user.router, prefix="/api")
 app.include_router(vendor.router, prefix="/api")
+app.include_router(food_like.router, prefix="/api")  # your like router - MOVING BEFORE food.router
 app.include_router(food.router, prefix="/api")
 app.include_router(review.router, prefix="/api")
-app.include_router(food_like.router, prefix="/api")  # your like router
 
 # --- Global Exception Handler ---
 @app.exception_handler(Exception)

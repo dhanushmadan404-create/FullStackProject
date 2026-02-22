@@ -143,7 +143,6 @@ async function handleLike(foodId) {
         "Authorization": `Bearer ${localStorage.getItem("token")}`
       },
       body: JSON.stringify({
-        user_id: Number(userId),
         food_id: Number(foodId)
       })
     });
@@ -207,16 +206,11 @@ async function handleRemove(foodId) {
   }
 
   try {
-    const res = await fetch(`${API_BASE_URL}/foods/like`, {
+    const res = await fetch(`${API_BASE_URL}/foods/like/${foodId}`, {
       method: "DELETE",
       headers: {
-        "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        food_id: Number(foodId),
-        user_id: Number(localStorage.getItem("user_id"))   // required by FoodLikeRequest
-      })
+      }
     });
 
     // ✅ Safe JSON parsing
