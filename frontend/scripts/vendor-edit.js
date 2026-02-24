@@ -100,7 +100,7 @@ async function handleSubmit(event) {
     }
 
     showToast("Vendor updated successfully ✅", "green");
-
+    window.location.href="./vendor-profile.html"
   } catch (error) {
     console.error("Update Error:", error);
     showToast(error.message || "Something went wrong ❌", "red");

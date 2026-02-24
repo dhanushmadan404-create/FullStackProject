@@ -20,7 +20,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 600 # Long expiry for convenience
 
 # --- Password Hashing ---
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
+# CryptContext is ia helper object and deprecated is useful when i change schemas 
 def hash_password(password: str):
     return pwd_context.hash(password)
 
@@ -29,7 +29,7 @@ def verify_password(plain: str, hashed: str):
 
 # --- OAuth2 ---
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
-
+# IT'S GET authorization :bearer open it 
 # --- Token Logic ---
 def create_access_token(data: dict):
     to_encode = data.copy()
@@ -56,12 +56,14 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
         if email is None:
+            print(email)
             raise auth_exception
     except PyJWTError:
         raise auth_exception
 
     user = db.query(User).filter(User.email == email).first()
     if not user:
+        print(user)
         raise auth_exception
     
     return user
