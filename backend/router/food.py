@@ -105,7 +105,10 @@ def get_foods_by_category(
             "latitude": food.latitude,
             "longitude": food.longitude,
             "vendor_id": food.vendor_id,
-            "total_likes": total_likes
+            "total_likes": total_likes,
+
+            "opening_time": food.vendor.opening_time,
+            "closing_time": food.vendor.closing_time
         })
 
     return response_list
@@ -193,7 +196,10 @@ def get_top_liked_foods(db: Session = Depends(get_db)):
             "latitude": food.latitude,
             "longitude": food.longitude,
             "vendor_id": food.vendor_id,
-            "total_likes": total_likes or 0
+            "total_likes": total_likes or 0,
+            "opening_time": food.vendor.opening_time,
+            "closing_time": food.vendor.closing_time
+
         })
 
     return result

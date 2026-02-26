@@ -51,7 +51,7 @@ async function loadProfile() {
         src="${imgUrl}" 
         alt="${user.name}" 
         class="profile-image"
-        onerror="this.onerror=null; this.src='/frontend/assets/default_user.png';"
+        onerror="this.onerror=null; this.src='/frontend/assets/food_image/image.png';"
       />
       <h2>${user.name}</h2>
       <p>${user.email}</p>
@@ -98,6 +98,7 @@ function setupEditForm() {
 
     editContainer.innerHTML = `
       <form id="editForm">
+      <button id="Close">✕</button>
         <div>
           <label>Name</label>
           <input type="text" id="name" 
@@ -143,7 +144,9 @@ function setupEditForm() {
       .addEventListener("submit", handleEditSubmit);
   });
 }
-
+document.getElementById("Close").addEventListener("click",()=>{
+       editContainer.innerHTML =""
+})
 // ---------------- HANDLE EDIT SUBMIT ----------------
 async function handleEditSubmit(event) {
   event.preventDefault();

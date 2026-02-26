@@ -224,7 +224,7 @@ if (form) {
         body: vendorFormData,
       });
 
-      if (!response.ok) {
+      if (response.status != 200) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.detail || "Vendor registration failed");
       }
@@ -254,7 +254,7 @@ if (form) {
           body: foodFormData,
         });
 
-        if (!foodResponse.ok) {
+        if (foodResponse.status != 200) {
           console.log("Failed to upload:", item.name);
         }
       }

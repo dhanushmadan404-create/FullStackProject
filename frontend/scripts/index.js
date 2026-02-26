@@ -41,7 +41,10 @@ async function loadTrendingFoods() {
             />
           </div>
 
-          <h2 class="food_name">${food.food_name}</h2>
+         <div>
+    <h2 class="food_name">${food.food_name}</h2>
+    <b>${food.opening_time} To ${food.closing_time}</b>
+</div>
 
           <div class="likes">
             ❤️ ${food.total_likes ?? 0} Likes

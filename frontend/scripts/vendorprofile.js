@@ -33,19 +33,6 @@ async function loadProfile() {
 
     // Save to localStorage for edit form prefill
     localStorage.setItem("user_details", JSON.stringify(user));
-
-    // Render profile image + name/email
-    if (profile_image) {
-      profile_image.innerHTML = `<img src="${getImageUrl(user.image_url)}" class="card-image" onerror="this.onerror=null; this.src='/frontend/assets/default_vendor.png';"/>`;
-    }
-    if (vendorName) {
-      vendorName.innerHTML = `
-        <h2>${user.name}</h2>
-        <p>${user.email}</p>
-        <p>${user.phone_number}</p>
-      `;
-    }
-
     // Fetch vendor info from backend
     food_container.innerHTML = "<p>Loading foods...</p>"
     const vendorDocRes = await fetch(`${API_URL}/vendors/user/${userId}`);
@@ -58,6 +45,19 @@ async function loadProfile() {
     if (TimeStatus) {
       TimeStatus.innerHTML = `${vendorDoc.opening_time || "N/A"} - ${vendorDoc.closing_time || "N/A"}`;
     }
+
+    // Render profile image + name/email
+    if (profile_image) {
+      profile_image.innerHTML = `<img src="${getImageUrl(user.image_url)}" class="card-image" onerror="this.onerror=null; this.src='/frontend/assets/food_image/image.png'"/>`;
+    }
+    if (vendorName) {
+      vendorName.innerHTML = `
+        <h2>${user.name}</h2>
+        <p>${user.email}</p>
+        <p>${vendorDoc.phone_number}</p>
+      `;
+    }
+
 
     // Fetch foods
     const foodRes = await fetch(`${API_URL}/foods/vendor/${vendorDoc.vendor_id}`);

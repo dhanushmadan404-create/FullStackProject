@@ -346,13 +346,16 @@ header .logo:hover {
 
 /* ================= FOOTER ================= */
 
-footer {
+.footer {
   background: #1f2937;
+  position: fixed;
+bottom: 0%;
   color: #e5e7eb;
   padding: 28px 16px;
   text-align: center;
   margin-top: 64px;
   font-size: 14px;
+  width: 100%;
 }
 
 /* =========================

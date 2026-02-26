@@ -2,7 +2,13 @@
 const params = new URLSearchParams(window.location.search);
 const category = params.get("category") || "breakfast";
 const cate = category === "drinking" ? "Juice" : category;
-
+const CateImage={
+  breakfast:'/frontend/assets/food_image/Categories/break_fast.jpg',
+  lunch:'/frontend/assets/food_image/Categories/lunch.avif',
+  juice:'/frontend/assets/food_image/Categories/dinner.webp',
+  snacks:'/frontend/assets/food_image/Categories/snacks.jpg',
+  drinking:'/frontend/assets/food_image/Categories/drinking.JPG'
+}
 const userId = localStorage.getItem("user_id");
 const token = localStorage.getItem("token");
 
@@ -45,7 +51,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     cardContainer.innerHTML = "";
-
+    let defaultFood=
     foods.forEach((food) => {
       const isLiked = likedFoodIds.includes(food.food_id);
       const div = document.createElement("div");
@@ -60,11 +66,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       <img
         src="${imgUrl}"
         class="card-image"
-        onerror="this.onerror=null; this.src='/frontend/assets/default_food.png';"
+        onerror="this.onerror=null; this.src=${CateImage[cate.toUpperCase()]};"
       />
     </div>
-
+<div>
     <h2 class="food_name">${food.food_name}</h2>
+    <b>${food.opening_time} To ${food.closing_time}</b>
+</div>
 
   <div class="likes">
   ❤️ <span id="like-count-${food.food_id}">
