@@ -64,7 +64,9 @@ def get_all_foods(db: Session = Depends(get_db)):
             "latitude": food.latitude,
             "longitude": food.longitude,
             "vendor_id": food.vendor_id,
-            "total_likes": total_likes or 0
+            "total_likes": total_likes or 0,
+            "opening_time": food.vendor.opening_time,
+            "closing_time": food.vendor.closing_time
         })
     return result
 
@@ -149,7 +151,6 @@ def create_food(
     db.add(new_food)
     db.commit()
     db.refresh(new_food)
-
     return {
         "food_id": new_food.food_id,
         "food_name": new_food.food_name,
@@ -158,7 +159,9 @@ def create_food(
         "latitude": new_food.latitude,
         "longitude": new_food.longitude,
         "vendor_id": new_food.vendor_id,
-        "total_likes": 0
+        "total_likes": 0,
+        "opening_time": vendor.opening_time,
+        "closing_time": vendor.closing_time
     }
 
 
@@ -224,7 +227,9 @@ def get_foods_by_vendor(vendor_id: int, db: Session = Depends(get_db)):
             "latitude": food.latitude,
             "longitude": food.longitude,
             "vendor_id": food.vendor_id,
-            "total_likes": total_likes or 0
+            "total_likes": total_likes or 0,
+            "opening_time": food.vendor.opening_time,
+            "closing_time": food.vendor.closing_time
         })
     return result
 

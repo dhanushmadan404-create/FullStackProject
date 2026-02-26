@@ -61,7 +61,7 @@ async function loadProfile() {
 
     // Fetch foods
     const foodRes = await fetch(`${API_URL}/foods/vendor/${vendorDoc.vendor_id}`);
-    if (!foodRes.ok) throw new Error("Failed to fetch foods");
+    if (foodRes.status!=200) throw new Error("Failed to fetch foods",foodRes.detail);
 
     const foods = await foodRes.json();
     console.log("Foods:", foods);
