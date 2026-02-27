@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       <img
         src="${imgUrl}"
         class="card-image"
-        onerror="this.onerror=null; this.src=${CateImage[cate.toUpperCase()]};"
+        onerror="this.onerror=null; this.src=${CateImage[cate.toLowerCase()]};"
       />
     </div>
 <div>

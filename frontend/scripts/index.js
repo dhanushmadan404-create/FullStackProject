@@ -35,7 +35,7 @@ async function loadTrendingFoods() {
         <div class="card">
           <div class="image_container">
             <img
-              src="${imgUrl}"
+              src="../assets/food_image/Categories/break_fast.jpg"
               class="card-image"
               onerror="this.onerror=null; this.src='/frontend/assets/default_food.png';"
             />
