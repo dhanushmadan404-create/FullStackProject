@@ -2,13 +2,13 @@
 const params = new URLSearchParams(window.location.search);
 const category = params.get("category") || "breakfast";
 const cate = category === "drinking" ? "Juice" : category;
-const CateImage={
-  breakfast:'../assets/food_image/Categories/break_fast.jpg',
-  lunch:'../assets/food_image/Categories/lunch.avif',
-  dinner:'../assets/food_image/Categories/dinner.webp',
-  juice:'../assets/food_image/Categories/drinking.JP',
-  snacks:'../assets/food_image/Categories/snacks.jpg'
-}
+const CateImage = {
+  breakfast: "../assets/food_image/Categories/break_fast.jpg",
+  lunch: "../assets/food_image/Categories/lunch.avif",
+  dinner: "../assets/food_image/Categories/dinner.webp",
+  juice: "../assets/food_image/Categories/drinking.JP",
+  snacks: "../assets/food_image/Categories/snacks.jpg",
+};
 const userId = localStorage.getItem("user_id");
 const token = localStorage.getItem("token");
 
@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const Cate = document.getElementById("Cate");
   const cardContainer = document.getElementById("cardContainer");
 
-  cardContainer.innerHTML = "<p>Loading foods...</p>"
+  cardContainer.innerHTML = "<p>Loading foods...</p>";
 
   // ---------- Category Title ----------
   Cate.innerHTML = `
@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     let likedFoodIds = [];
     if (token) {
       const likedRes = await fetch(`${API_BASE_URL}/foods/liked`, {
-        headers: { "Authorization": `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (likedRes.ok) {
         likedFoodIds = await likedRes.json();
@@ -51,8 +51,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     cardContainer.innerHTML = "";
-    let defaultFood=
-    foods.forEach((food) => {
+    let defaultFood = foods.forEach((food) => {
       const isLiked = likedFoodIds.includes(food.food_id);
       const div = document.createElement("div");
       const imgUrl = getImageUrl(
@@ -63,11 +62,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       div.innerHTML = `
        <div class="card">
     <div class="image_container">
-      <img
-        src="${imgUrl}"
-        class="card-image"
-        onerror="this.onerror=null; this.src=${CateImage[cate.toLowerCase()]};"
-      />
+     <img
+  src="${CateImage[cate.toLowerCase()]}"
+  class="card-image"
+  onerror="this.onerror=null; this.src='${CateImage[cate.toLowerCase()]}'"
+/>
     </div>
 <div>
     <h2 class="food_name">${food.food_name}</h2>
@@ -138,7 +137,7 @@ async function handleLike(foodId) {
       duration: 3000,
       gravity: "top",
       position: "right",
-      style: { background: "orange" }
+      style: { background: "orange" },
     }).showToast();
     return;
   }
@@ -148,11 +147,11 @@ async function handleLike(foodId) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${localStorage.getItem("token")}`
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify({
-        food_id: Number(foodId)
-      })
+        food_id: Number(foodId),
+      }),
     });
 
     const data = await res.json();
@@ -163,7 +162,7 @@ async function handleLike(foodId) {
         duration: 3000,
         gravity: "top",
         position: "right",
-        style: { background: "red" }
+        style: { background: "red" },
       }).showToast();
 
       likeButton.style.display = "none";
@@ -183,16 +182,15 @@ async function handleLike(foodId) {
       duration: 3000,
       gravity: "top",
       position: "right",
-      style: { background: "green" }
+      style: { background: "green" },
     }).showToast();
-
   } catch (error) {
     Toastify({
       text: "Something went wrong",
       duration: 3000,
       gravity: "top",
       position: "right",
-      style: { background: "red" }
+      style: { background: "red" },
     }).showToast();
   }
 }
@@ -208,7 +206,7 @@ async function handleRemove(foodId) {
       duration: 3000,
       gravity: "top",
       position: "right",
-      style: { background: "orange" }
+      style: { background: "orange" },
     }).showToast();
     return;
   }
@@ -217,8 +215,8 @@ async function handleRemove(foodId) {
     const res = await fetch(`${API_BASE_URL}/foods/like/${foodId}`, {
       method: "DELETE",
       headers: {
-        "Authorization": `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     // ✅ Safe JSON parsing
@@ -238,7 +236,7 @@ async function handleRemove(foodId) {
         duration: 3000,
         gravity: "top",
         position: "right",
-        style: { background: "red" }
+        style: { background: "red" },
       }).showToast();
       return;
     }
@@ -255,16 +253,15 @@ async function handleRemove(foodId) {
       duration: 3000,
       gravity: "top",
       position: "right",
-      style: { background: "blue" }
+      style: { background: "blue" },
     }).showToast();
-
   } catch (error) {
     Toastify({
       text: "Network error. Please try again.",
       duration: 3000,
       gravity: "top",
       position: "right",
-      style: { background: "red" }
+      style: { background: "red" },
     }).showToast();
   }
 }
