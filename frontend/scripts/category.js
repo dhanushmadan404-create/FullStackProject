@@ -3,11 +3,11 @@ const params = new URLSearchParams(window.location.search);
 const category = params.get("category") || "breakfast";
 const cate = category === "drinking" ? "Juice" : category;
 const CateImage={
-  breakfast:'/frontend/assets/food_image/Categories/break_fast.jpg',
-  lunch:'/frontend/assets/food_image/Categories/lunch.avif',
-  juice:'/frontend/assets/food_image/Categories/dinner.webp',
-  snacks:'/frontend/assets/food_image/Categories/snacks.jpg',
-  drinking:'/frontend/assets/food_image/Categories/drinking.JPG'
+  breakfast:'../assets/food_image/Categories/break_fast.jpg',
+  lunch:'../assets/food_image/Categories/lunch.avif',
+  dinner:'../assets/food_image/Categories/dinner.webp',
+  juice:'../assets/food_image/Categories/drinking.JP',
+  snacks:'../assets/food_image/Categories/snacks.jpg'
 }
 const userId = localStorage.getItem("user_id");
 const token = localStorage.getItem("token");

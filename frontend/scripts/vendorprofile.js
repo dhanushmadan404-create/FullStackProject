@@ -170,6 +170,7 @@ editBtn.addEventListener("click", async () => {
 
     editContainer.innerHTML = `
       <form id="editForm">
+      <b id="Close" onclick="Close()">✕</b>
         <div>
           <label>Name</label>
           <input type="text" id="name" 
@@ -210,7 +211,9 @@ editBtn.addEventListener("click", async () => {
     console.log(error);
   }
 });
-
+function Close(){
+  editContainer.innerHTML=""
+}
 // ---------------- HANDLE EDIT SUBMIT ----------------
 async function handleEditSubmit(event) {
   event.preventDefault();

@@ -26,7 +26,13 @@ justify-content: center;
 align-items: center;
 margin-top: 50px;
 }
-
+#Close{
+  cursor: pointer;
+  color: red;
+  padding: 10px;
+  border: rgb(131, 130, 130) solid 2px;
+  border-radius: 20px;
+}
 /* Card */
 #edit form {
 background: #ffffff;
