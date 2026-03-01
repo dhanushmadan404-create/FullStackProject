@@ -23,14 +23,18 @@ async function loadTrendingFoods() {
       return;
     }
 
+    let addressText = "Loading address...";
     foods.forEach(async(food) => {
       const div = document.createElement("div");
+      try {
       const response = await fetch(
     `https://nominatim.openstreetmap.org/reverse?format=json&lat=${food.latitude}&lon=${food.longitude}`
   );
-
   const data = await response.json();
-
+   addressText = `${data.address?.road || ""} ${data.address?.city || ""} ${data.address?.suburb || ""}`;
+      } catch (e) {
+        addressText = "Address unavailable";
+      }
       const imgUrl = getImageUrl(
         food.food_image_url,
         "/frontend/assets/default_food.png"
@@ -48,8 +52,8 @@ async function loadTrendingFoods() {
 
          <div>
     <h2 class="food_name">${food.food_name}</h2>
-    <b>${food.opening_time} To ${food.closing_time}</b>
-   <br/><b>Address:</b><p>${data.address.road},${data.address.suburb},${data.address.city}</p>
+    <b>${food.opening_time} To ${food.closing_time}</b> 
+   <br/><b>Address:</b><p>${addressText}</p>
 </div>
 
           <div class="likes">

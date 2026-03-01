@@ -147,11 +147,17 @@ h2 {
 
 .card {
   background: #ffffff;
+  padding: 10px;
+  height: 600px;
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  
 }
 
 .card:hover {
@@ -195,6 +201,7 @@ h2 {
 .card-buttons {
   display: flex;
   justify-content: center;
+  position: relative;
   gap: 10px;
   padding-bottom: 20px;
 }

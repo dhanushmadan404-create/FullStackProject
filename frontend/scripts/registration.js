@@ -207,14 +207,23 @@ if (form) {
       return;
     }
 
+    const submitBtn = document.getElementById("submit");
+
     try {
+      // Disable button and show loading
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Processing...";
+      }
+
       // ---------- REGISTER VENDOR ----------
       const vendorFormData = new FormData();
-
       vendorFormData.append("phone_number", phone);
       vendorFormData.append("opening_time", opening);
       vendorFormData.append("closing_time", closing);
       vendorFormData.append("image", shopImage);
+
+      let vendorId = null;
 
       const response = await fetch(`${API_BASE_URL}/vendors`, {
         method: "POST",
@@ -224,21 +233,37 @@ if (form) {
         body: vendorFormData,
       });
 
-      if (response.status != 200) {
+      if (response.ok) {
+        const vendorData = await response.json();
+        vendorId = vendorData.vendor_id;
+        console.log("Vendor created:", vendorId);
+      } else {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.detail || "Vendor registration failed");
+
+        // If vendor already exists, try to fetch the existing one
+        if (response.status === 400 && errorData.detail === "Vendor already exists") {
+          console.log("Vendor already exists, fetching existing ID...");
+          const meRes = await fetch(`${API_BASE_URL}/vendors/me`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (meRes.ok) {
+            const meData = await meRes.json();
+            vendorId = meData.vendor_id;
+            console.log("Existing vendor found:", vendorId);
+          } else {
+            throw new Error("Could not retrieve existing vendor info");
+          }
+        } else {
+          throw new Error(errorData.detail || "Vendor registration failed");
+        }
       }
 
-      const vendorResponse = await response.json();
-      const vendorId = vendorResponse.vendor_id;
       localStorage.setItem("vendorId", vendorId);
 
-      console.log("Vendor created:", vendorId);
-
       // ---------- UPLOAD FOOD ITEMS ----------
+      let successCount = 0;
       for (let item of menuItems) {
         const foodFormData = new FormData();
-
         foodFormData.append("food_name", item.name);
         foodFormData.append("category", foodType.toLowerCase());
         foodFormData.append("latitude", selectedLat);
@@ -254,15 +279,39 @@ if (form) {
           body: foodFormData,
         });
 
-        if (foodResponse.status != 200) {
-          console.log("Failed to upload:", item.name);
+        if (foodResponse.ok) {
+          successCount++;
+        } else {
+          console.error("Failed to upload:", item.name);
         }
       }
 
-      console.log("Registration Successful");
-      window.location.href = "./vendor-profile.html";
+      Toastify({
+        text: `Registration Successful! Uploaded ${successCount}/${menuItems.length} items.`,
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        style: { background: "green" },
+      }).showToast();
+
+      setTimeout(() => {
+        window.location.href = "./vendor-profile.html";
+      }, 1500);
+
     } catch (error) {
       console.error("Registration Error:", error.message);
+      Toastify({
+        text: `Error: ${error.message}`,
+        duration: 5000,
+        gravity: "top",
+        position: "right",
+        style: { background: "red" },
+      }).showToast();
+
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Submit";
+      }
     }
   });
 }

@@ -33,7 +33,7 @@ async function renderFoods(foodList) {
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${food.latitude}&lon=${food.longitude}`
       );
       const data = await response.json();
-      addressText = `${data.address?.road || ""}, ${data.address?.city || ""}`;
+      addressText = `${data.address?.road || ""}, ${data.address?.city || ""},${data.address?.suburb || ""}`;
     } catch (e) {
       addressText = "Address unavailable";
     }

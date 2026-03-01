@@ -11,11 +11,15 @@ from models.user import User
 router = APIRouter(prefix="/vendors", tags=["Vendors"])
 
 # --- Image Upload Helper ---
+# If running on Vercel → use /tmp/uploads/vendors
 if os.environ.get("VERCEL"):
     UPLOAD_DIR = "/tmp/uploads/vendors"
 else:
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    UPLOAD_DIR = os.path.join(BASE_DIR, "uploads", "vendors")
+    # Match main.py and food.py logic: root/uploads/vendors
+    # BASE_DIR is .../backend/router
+    BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    PROJECT_ROOT = os.path.dirname(BACKEND_DIR)
+    UPLOAD_DIR = os.path.join(PROJECT_ROOT, "uploads", "vendors")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 def save_image(image: UploadFile) -> str:
