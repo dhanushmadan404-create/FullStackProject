@@ -1,16 +1,98 @@
 // ---------------- GET category FROM URL ----------------
+let allFoods = [];
+let likedFoodIdsGlobal = [];
 const params = new URLSearchParams(window.location.search);
 const category = params.get("category") || "breakfast";
 const cate = category === "drinking" ? "Juice" : category;
-const CateImage = {
-  breakfast: "../assets/food_image/Categories/break_fast.jpg",
-  lunch: "../assets/food_image/Categories/lunch.avif",
-  dinner: "../assets/food_image/Categories/dinner.webp",
-  juice: "../assets/food_image/Categories/drinking.JP",
-  snacks: "../assets/food_image/Categories/snacks.jpg",
-};
+
 const userId = localStorage.getItem("user_id");
 const token = localStorage.getItem("token");
+
+// ---------------- RENDER FOODS FUNCTION ----------------
+async function renderFoods(foodList) {
+  const cardContainer = document.getElementById("cardContainer");
+  cardContainer.innerHTML = "";
+
+  if (!Array.isArray(foodList) || foodList.length === 0) {
+    cardContainer.innerHTML = `
+      <div style="text-align:center; width:100%; margin-top:50px;">
+        <p>No matching foods found 🍛</p>
+      </div>`;
+    return;
+  }
+
+  // Use for...of to handle async/await sequentially or Promise.all for parallel
+  // Parallel fetching is faster for UX
+  const renderPromises = foodList.map(async (food) => {
+    const isLiked = likedFoodIdsGlobal.includes(food.food_id);
+    const div = document.createElement("div");
+
+    let addressText = "Loading address...";
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${food.latitude}&lon=${food.longitude}`
+      );
+      const data = await response.json();
+      addressText = `${data.address?.road || ""}, ${data.address?.city || ""}`;
+    } catch (e) {
+      addressText = "Address unavailable";
+    }
+
+    div.innerHTML = `
+      <div class="card">
+        <div class="image_container">
+          <img 
+            src="${food.image_url }" 
+            class="card-image"
+            onerror="this.onerror=null; this.src='../assets/food_image/Layout.png';"
+          />
+        </div>
+
+        <div>
+          <h2 class="food_name">${food.food_name}</h2>
+          <b>${food.opening_time} To ${food.closing_time}</b>
+          <br/><br/>
+          <b>Address:</b>
+          <p>${addressText}</p>
+        </div>
+
+        <div class="likes">
+          ❤️ <span id="like-count-${food.food_id}">
+            ${food.total_likes ?? 0}
+          </span> Likes
+        </div>
+
+        <div class="card-buttons">
+          <button 
+            id="like-btn-${food.food_id}"
+            onclick="handleLike(${food.food_id})"
+            style="display:${isLiked ? "none" : "inline-block"}">
+            LIKE
+          </button>
+
+          <button 
+            id="remove-btn-${food.food_id}"
+            onclick="handleRemove(${food.food_id})"
+            style="display:${isLiked ? "inline-block" : "none"}">
+            REMOVE
+          </button>
+
+          <button onclick="openReview(${food.food_id}, '${food.food_name}')">
+            REVIEW
+          </button>
+
+          <button onclick="window.location.href='./map.html?food_id=${food.food_id}'">
+            FIND
+          </button>
+        </div>
+      </div>
+    `;
+    return div;
+  });
+
+  const cards = await Promise.all(renderPromises);
+  cards.forEach(card => cardContainer.appendChild(card));
+}
 
 document.addEventListener("DOMContentLoaded", async () => {
   const Cate = document.getElementById("Cate");
@@ -35,81 +117,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         likedFoodIds = await likedRes.json();
       }
     }
+    likedFoodIdsGlobal = likedFoodIds;
 
     // 2️⃣ Fetch foods in category
     const response = await fetch(`${API_BASE_URL}/foods/category/${category}`);
     if (!response.ok) throw new Error("Failed to load foods");
 
     const foods = await response.json();
+    allFoods = foods;
 
-    if (!Array.isArray(foods) || foods.length === 0) {
-      cardContainer.innerHTML = `
-        <div style="text-align:center; width:100%; margin-top:50px;">
-          <p>No foods found for ${category}. 🍛</p>
-        </div>`;
-      return;
-    }
+    // Initial render
+    renderFoods(allFoods);
 
-    cardContainer.innerHTML = "";
-    let defaultFood = foods.forEach((food) => {
-      const isLiked = likedFoodIds.includes(food.food_id);
-      const div = document.createElement("div");
-      const imgUrl = getImageUrl(
-        food.food_image_url,
-        "/frontend/assets/default_food.png",
-      );
-
-      div.innerHTML = `
-       <div class="card">
-    <div class="image_container">
-     <img
-  src="${CateImage[cate.toLowerCase()]}"
-  class="card-image"
-  onerror="this.onerror=null; this.src='${CateImage[cate.toLowerCase()]}'"
-/>
-    </div>
-<div>
-    <h2 class="food_name">${food.food_name}</h2>
-    <b>${food.opening_time} To ${food.closing_time}</b>
-</div>
-
-  <div class="likes">
-  ❤️ <span id="like-count-${food.food_id}">
-    ${food.total_likes ?? 0}
-  </span> Likes
-</div>
-
-
-    <div class="card-buttons">
-
-      <button 
-        id="like-btn-${food.food_id}"
-        onclick="handleLike(${food.food_id})"
-        style="display:${isLiked ? "none" : "inline-block"}">
-        LIKE
-      </button>
-
-      <button 
-        id="remove-btn-${food.food_id}"
-        onclick="handleRemove(${food.food_id})"
-        style="display:${isLiked ? "inline-block" : "none"}">
-        REMOVE
-      </button>
-
-      <button onclick="openReview(${food.food_id}, '${food.food_name}')">
-        REVIEW
-      </button>
-
-      <button onclick="window.location.href='./map.html?food_id=${food.food_id}'">
-        FIND
-      </button>
-
-    </div>
-  </div>
-      `;
-
-      cardContainer.appendChild(div);
-    });
   } catch (err) {
     Toastify({
       text: `Fetch Error: ${err.message}`,
@@ -124,6 +143,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     cardContainer.innerHTML = `<p style='text-align:center;'>Failed to load records ❌</p>`;
   }
 });
+
+const searchInput = document.getElementById("searchInput");
+
+if (searchInput) {
+  searchInput.addEventListener("input", function () {
+    const searchValue = this.value.toLowerCase().trim();
+
+    const filteredFoods = allFoods.filter(food =>
+      food.food_name.toLowerCase().includes(searchValue)
+    );
+
+    renderFoods(filteredFoods);
+  });
+}
+
 // like handle
 // button
 async function handleLike(foodId) {

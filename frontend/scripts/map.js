@@ -73,7 +73,7 @@ async function loadAllFoodLocations() {
       position: "right",
       style: { background: "red" },
       close: true,
-      stopOnFocus: true
+      stopOnFocus: true,
     }).showToast();
   }
 }
@@ -98,7 +98,7 @@ function getUserLocation() {
 
       userMarker = L.marker([userLat, userLng], { icon: userIcon })
         .addTo(map)
-        .bindPopup("You are here")
+        .bindPopup(`You are here`)
         .openPopup();
 
       if (foodLat && foodLng) {
@@ -114,7 +114,7 @@ function getUserLocation() {
         position: "right",
         style: { background: "red" },
         close: true,
-        stopOnFocus: true
+        stopOnFocus: true,
       }).showToast();
     },
   );
@@ -132,7 +132,7 @@ async function loadFoodLocation(foodId) {
         position: "right",
         style: { background: "red" },
         close: true,
-        stopOnFocus: true
+        stopOnFocus: true,
       }).showToast();
       return;
     }
@@ -150,10 +150,17 @@ async function loadFoodLocation(foodId) {
     if (foodMarker) {
       map.removeLayer(foodMarker);
     }
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${food.latitude}&lon=${food.longitude}`,
+    );
+
+    const data = await response.json();
 
     foodMarker = L.marker([food.latitude, food.longitude], { icon: foodIcon })
       .addTo(map)
-      .bindPopup(`<b>${food.food_name}</b><br>${food.category}`)
+      .bindPopup(
+        `<b>${food.food_name}</b><br/>${food.category}<br/><b>Address</b><p>${data.address.road?data.address.road:""},${data.address.suburb?data.address.suburb:""},${data.address.city?data.address.city:""}</p>`,
+      )
       .openPopup();
 
     if (userLat && userLng) {
@@ -167,7 +174,7 @@ async function loadFoodLocation(foodId) {
       position: "right",
       style: { background: "red" },
       close: true,
-      stopOnFocus: true
+      stopOnFocus: true,
     }).showToast();
   }
 }

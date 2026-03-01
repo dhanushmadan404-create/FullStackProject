@@ -23,8 +23,13 @@ async function loadTrendingFoods() {
       return;
     }
 
-    foods.forEach((food) => {
+    foods.forEach(async(food) => {
       const div = document.createElement("div");
+      const response = await fetch(
+    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${food.latitude}&lon=${food.longitude}`
+  );
+
+  const data = await response.json();
 
       const imgUrl = getImageUrl(
         food.food_image_url,
@@ -35,15 +40,16 @@ async function loadTrendingFoods() {
         <div class="card">
           <div class="image_container">
             <img
-              src="./frontend/assets/food_image/Categories/break_fast.jpg"
+              src="${imgUrl}"
               class="card-image"
-              onerror="this.onerror=null; this.src='/frontend/assets/default_food.png';"
+              onerror="this.onerror=null; this.src='./frontend/assets/food_image/Layout.png';"
             />
-          </div>
+          </div> 
 
          <div>
     <h2 class="food_name">${food.food_name}</h2>
     <b>${food.opening_time} To ${food.closing_time}</b>
+   <br/><b>Address:</b><p>${data.address.road},${data.address.suburb},${data.address.city}</p>
 </div>
 
           <div class="likes">
