@@ -95,6 +95,12 @@ async function renderFoods(foodList) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
+  // Check role
+  const check=localStorage.getItem("role")
+if (check ==="vendor"){
+  window.location.href="/frontend/vendor-profile.html"
+}
+// 
   const Cate = document.getElementById("Cate");
   const cardContainer = document.getElementById("cardContainer");
 

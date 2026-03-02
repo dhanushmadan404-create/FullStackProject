@@ -4,6 +4,12 @@ const token = localStorage.getItem("token");
 
 // ---------------- MAIN EXECUTION ----------------
 document.addEventListener("DOMContentLoaded", () => {
+    // Check role
+  const check=localStorage.getItem("role")
+if (check ==="vendor"){
+  window.location.href="/frontend/vendor-profile.html"
+}
+// 
   if (!token) {
     window.location.href = "./login.html";
     Toastify({

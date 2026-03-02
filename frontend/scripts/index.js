@@ -79,4 +79,13 @@ async function loadTrendingFoods() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", loadTrendingFoods);
+document.addEventListener("DOMContentLoaded",()=>{
+
+ loadTrendingFoods()
+const check=localStorage.getItem("role")
+if (check ==="vendor"){
+  window.location.href="/frontend/vendor-profile.html"
+}
+});
+
+// Redirect

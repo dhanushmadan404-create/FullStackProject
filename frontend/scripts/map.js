@@ -208,6 +208,12 @@ function drawRoute() {
 
 // ---------------- MAIN EXECUTION ----------------
 document.addEventListener("DOMContentLoaded", () => {
+    // Check role
+  const check=localStorage.getItem("role")
+if (check ==="vendor"){
+  window.location.href="/frontend/vendor-profile.html"
+}
+// 
   initMap();
   getUserLocation();
 
