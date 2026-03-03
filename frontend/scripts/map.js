@@ -159,7 +159,7 @@ async function loadFoodLocation(foodId) {
     foodMarker = L.marker([food.latitude, food.longitude], { icon: foodIcon })
       .addTo(map)
       .bindPopup(
-        `<b>${food.food_name}</b><br/>${food.category}<br/><b>Address</b><p>${data.address.road?data.address.road:""},${data.address.suburb?data.address.suburb:""},${data.address.city?data.address.city:""}</p>`,
+        `<b>${food.food_name}</b><br/>${food.category}<br/><b>Address</b><p>${data.address.road ? data.address.road : ""},${data.address.suburb ? data.address.suburb : ""},${data.address.city ? data.address.city : ""}</p>`,
       )
       .openPopup();
 
@@ -208,12 +208,12 @@ function drawRoute() {
 
 // ---------------- MAIN EXECUTION ----------------
 document.addEventListener("DOMContentLoaded", () => {
-    // Check role
-  const check=localStorage.getItem("role")
-if (check ==="vendor"){
-  window.location.href="/frontend/vendor-profile.html"
-}
-// 
+  // Check role
+  const check = localStorage.getItem("role")
+  if (check === "vendor") {
+    window.location.href = "/frontend/pages/vendor-profile.html"
+  }
+  // 
   initMap();
   getUserLocation();
 

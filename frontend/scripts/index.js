@@ -24,14 +24,14 @@ async function loadTrendingFoods() {
     }
 
     let addressText = "Loading address...";
-    foods.forEach(async(food) => {
+    foods.forEach(async (food) => {
       const div = document.createElement("div");
       try {
-      const response = await fetch(
-    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${food.latitude}&lon=${food.longitude}`
-  );
-  const data = await response.json();
-   addressText = `${data.address?.road || ""} ${data.address?.city || ""} ${data.address?.suburb || ""}`;
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${food.latitude}&lon=${food.longitude}`
+        );
+        const data = await response.json();
+        addressText = `${data.address?.road || ""} ${data.address?.city || ""} ${data.address?.suburb || ""}`;
       } catch (e) {
         addressText = "Address unavailable";
       }
@@ -79,13 +79,13 @@ async function loadTrendingFoods() {
   }
 }
 
-document.addEventListener("DOMContentLoaded",()=>{
+document.addEventListener("DOMContentLoaded", () => {
 
- loadTrendingFoods()
-const check=localStorage.getItem("role")
-if (check ==="vendor"){
-  window.location.href="/frontend/vendor-profile.html"
-}
+  loadTrendingFoods()
+  const check = localStorage.getItem("role")
+  if (check === "vendor") {
+    window.location.href = "/frontend/pages/vendor-profile.html"
+  }
 });
 
 // Redirect

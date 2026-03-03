@@ -42,7 +42,7 @@ async function renderFoods(foodList) {
       <div class="card">
         <div class="image_container">
           <img 
-            src="${food.image_url }" 
+            src="${food.image_url}" 
             class="card-image"
             onerror="this.onerror=null; this.src='../assets/food_image/Layout.png';"
           />
@@ -96,11 +96,11 @@ async function renderFoods(foodList) {
 
 document.addEventListener("DOMContentLoaded", async () => {
   // Check role
-  const check=localStorage.getItem("role")
-if (check ==="vendor"){
-  window.location.href="/frontend/vendor-profile.html"
-}
-// 
+  const check = localStorage.getItem("role")
+  if (check === "vendor") {
+    window.location.href = "/frontend/pages/vendor-profile.html"
+  }
+  // 
   const Cate = document.getElementById("Cate");
   const cardContainer = document.getElementById("cardContainer");
 

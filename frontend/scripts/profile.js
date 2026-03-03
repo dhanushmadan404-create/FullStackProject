@@ -4,12 +4,12 @@ const token = localStorage.getItem("token");
 
 // ---------------- MAIN EXECUTION ----------------
 document.addEventListener("DOMContentLoaded", () => {
-    // Check role
-  const check=localStorage.getItem("role")
-if (check ==="vendor"){
-  window.location.href="/frontend/vendor-profile.html"
-}
-// 
+  // Check role
+  const check = localStorage.getItem("role")
+  if (check === "vendor") {
+    window.location.href = "/frontend/pages/vendor-profile.html"
+  }
+  // 
   if (!token) {
     window.location.href = "./login.html";
     Toastify({
@@ -150,8 +150,8 @@ function setupEditForm() {
       .addEventListener("submit", handleEditSubmit);
   });
 }
-document.getElementById("Close").addEventListener("click",()=>{
-       editContainer.innerHTML =""
+document.getElementById("Close").addEventListener("click", () => {
+  editContainer.innerHTML = ""
 })
 // ---------------- HANDLE EDIT SUBMIT ----------------
 async function handleEditSubmit(event) {
