@@ -16,14 +16,25 @@ document.addEventListener("DOMContentLoaded", loadVendorData);
 
 async function loadVendorData() {
   try {
-    const response = await fetch(`${API_BASE_URL}/vendors/me`, {
+    const response = await fetch(`${window.API_BASE_URL}/vendors/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
 
+    if (response.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
+      localStorage.removeItem("user_id");
+      window.location.href = "/frontend/pages/login.html";
+      return;
+    }
+
+  
+
     if (!response.ok) {
-      throw new Error("Failed to load vendor");
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.detail || "Failed to load vendor");
     }
 
     const vendor = await response.json();
@@ -85,7 +96,7 @@ async function handleSubmit(event) {
     if (closeTime) formData.append("closing_time", closeTime);
     if (imageFile) formData.append("image", imageFile);
 
-    const response = await fetch(`${API_BASE_URL}/vendors`, {
+    const response = await fetch(`${window.API_BASE_URL}/vendors`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -100,7 +111,7 @@ async function handleSubmit(event) {
     }
 
     showToast("Vendor updated successfully ✅", "green");
-    window.location.href="./vendor-profile.html"
+    window.location.href = "./vendor-profile.html"
   } catch (error) {
     console.error("Update Error:", error);
     showToast(error.message || "Something went wrong ❌", "red");

@@ -75,7 +75,7 @@ async function loadProfile() {
           div.classList.add("review-card");
           div.innerHTML = `
             <img src="${getImageUrl(food.food_image_url)}" class="card-image"
-                 onerror="this.onerror=null; this.src='/frontend/assets/default_food.png';"
+                 onerror="this.onerror=null; this.src='/frontend/assets/food_image/Layout.png';"
             />
             <div class="card-info">
               <p><strong>${food.food_name}</strong></p>
@@ -184,7 +184,7 @@ editBtn.addEventListener("click", async () => {
           <img 
             src="${previewImg}" 
             id="preview"
-            onerror="this.onerror=null; this.src='/frontend/assets/default_user.png';"
+            onerror="this.onerror=null; this.src='/frontend/assets/food_image/Layout.png';"
           />
         </div>
 
@@ -323,7 +323,7 @@ postFoodBtn.addEventListener("click", () => {
       <!-- Map Section -->
       <div class="form-group">
         <label>Shop Location:</label>
-        <button type="button" id="currentLocationBtn">Use Current Location</button>
+        <button type="button" id="currentLocationBtn" onclick="getCurrentLocation()">Use Current Location</button>
         <div id="map" style="height:300px; margin-top:10px; border-radius:10px;"></div>
         <span class="error-message" id="locationError"></span>
       </div>
