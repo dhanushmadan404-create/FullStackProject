@@ -30,17 +30,6 @@ const shopIcon = L.icon({
   iconAnchor: [20, 40],
 });
 
-// ---------------- INITIALIZE MAP ----------------
-function initMap() {
-  const mapElement = document.getElementById("map");
-
-  // Default Chennai View
-  map = L.map("map").setView([13.0827, 80.2707], 11);
-
-  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19,
-  }).addTo(map);
-}
 
 // ---------------- LOAD ALL FOOD LOCATIONS ----------------
 async function loadAllFoodLocations() {
@@ -78,47 +67,34 @@ async function loadAllFoodLocations() {
   }
 }
 
-// ---------------- GET USER LOCATION ----------------
-function getUserLocation() {
-  if (!navigator.geolocation) {
-    console.log("Geolocation not supported in this browser");
+
+// ---------------- DRAW ROUTE ----------------
+function drawRoute() {
+  if (!map || userLat == null || foodLat == null) {
     return;
   }
-
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      userLat = position.coords.latitude;
-      userLng = position.coords.longitude;
-
-      map.setView([userLat, userLng], 13);
-
-      if (userMarker) {
-        map.removeLayer(userMarker);
-      }
-
-      userMarker = L.marker([userLat, userLng], { icon: userIcon })
-        .addTo(map)
-        .bindPopup(`You are here`)
-        .openPopup();
-
-      if (foodLat && foodLng) {
-        drawRoute();
-      }
+  
+  if (routingControl) {
+    map.removeControl(routingControl);
+  }
+  
+  if (typeof L.Routing === "undefined") {
+    console.log("Leaflet Routing plugin not loaded");
+    return;
+  }
+  
+  routingControl = L.Routing.control({
+    waypoints: [L.latLng(userLat, userLng), L.latLng(foodLat, foodLng)],
+    routeWhileDragging: false,
+    addWaypoints: false,
+    draggableWaypoints: false,
+    lineOptions: {
+      styles: [{ color: "blue", opacity: 0.7, weight: 4 }],
     },
-
-    (error) => {
-      Toastify({
-        text: `Location access denied:`,
-        duration: 5000,
-        gravity: "top",
-        position: "right",
-        style: { background: "red" },
-        close: true,
-        stopOnFocus: true,
-      }).showToast();
-    },
-  );
+    createMarker: () => null,
+  }).addTo(map);
 }
+
 
 // ---------------- LOAD SINGLE FOOD LOCATION ----------------
 async function loadFoodLocation(foodId) {
@@ -178,34 +154,58 @@ async function loadFoodLocation(foodId) {
     }).showToast();
   }
 }
-
-// ---------------- DRAW ROUTE ----------------
-function drawRoute() {
-  if (!map || userLat == null || foodLat == null) {
+// ---------------- GET USER LOCATION ----------------
+function getUserLocation() {
+  if (!navigator.geolocation) {
+    console.log("Geolocation not supported in this browser");
     return;
   }
 
-  if (routingControl) {
-    map.removeControl(routingControl);
-  }
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      userLat = position.coords.latitude;
+      userLng = position.coords.longitude;
 
-  if (typeof L.Routing === "undefined") {
-    console.log("Leaflet Routing plugin not loaded");
-    return;
-  }
+      map.setView([userLat, userLng], 13);
 
-  routingControl = L.Routing.control({
-    waypoints: [L.latLng(userLat, userLng), L.latLng(foodLat, foodLng)],
-    routeWhileDragging: false,
-    addWaypoints: false,
-    draggableWaypoints: false,
-    lineOptions: {
-      styles: [{ color: "blue", opacity: 0.7, weight: 4 }],
+      if (userMarker) {
+        map.removeLayer(userMarker);
+      }
+
+      userMarker = L.marker([userLat, userLng], { icon: userIcon })
+        .addTo(map)
+        .bindPopup(`You are here`)
+        .openPopup();
+
+      if (foodLat && foodLng) {
+        drawRoute();
+      }
     },
-    createMarker: () => null,
+
+    (error) => {
+      Toastify({
+        text: `Location access denied:`,
+        duration: 5000,
+        gravity: "top",
+        position: "right",
+        style: { background: "red" },
+        close: true,
+        stopOnFocus: true,
+      }).showToast();
+    },
+  );
+}
+// ---------------- INITIALIZE MAP ----------------
+function initMap() {
+  const mapElement = document.getElementById("map");
+
+  // Default Chennai View
+  map = L.map("map").setView([13.0827, 80.2707], 11);
+
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
   }).addTo(map);
 }
-
 // ---------------- MAIN EXECUTION ----------------
 document.addEventListener("DOMContentLoaded", () => {
   // Check role

@@ -141,7 +141,8 @@ main {
   box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* subtle depth */
 }
 
-.option_list:hover {
+.option_list a:hover {
+  
   background-color: #ffffff;   /* white on hover */
   color: #ff6700;              /* orange text on hover */
   transform: scale(1.05);
@@ -149,14 +150,7 @@ main {
   box-shadow: 0 6px 12px rgba(0,0,0,0.25); /* stronger shadow */
 }
 
-/* Feedback Section */
-/* .ad-section {
-  background: #fff3d0; /* very light warm tone 
-  padding: 40px;
-  margin-top: 40px;
-  width: 100%;
-  min-height: 200px;
-} */
+
 footer {
   background: #ffb347;
   padding: 20px;
