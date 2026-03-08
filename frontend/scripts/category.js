@@ -8,7 +8,10 @@ const cate = category === "drinking" ? "Juice" : category;
 const userId = localStorage.getItem("user_id");
 const token = localStorage.getItem("token");
 
-// ---------------- RENDER FOODS FUNCTION ----------------
+
+
+
+// ?---------------- RENDER FOODS FUNCTION ----------------
 async function renderFoods(foodList) {
   const cardContainer = document.getElementById("cardContainer");
   cardContainer.innerHTML = "";
@@ -23,6 +26,8 @@ async function renderFoods(foodList) {
 
   // Use for...of to handle async/await sequentially or Promise.all for parallel
   // Parallel fetching is faster for UX
+
+  // ? list out the foods with address fetching
   const renderPromises = foodList.map(async (food) => {
     const isLiked = likedFoodIdsGlobal.includes(food.food_id);
     const div = document.createElement("div");
@@ -30,7 +35,7 @@ async function renderFoods(foodList) {
     let addressText = "Loading address...";
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${food.latitude}&lon=${food.longitude}`
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${food.latitude}&lon=${food.longitude}`,
       );
       const data = await response.json();
       addressText = `${data.address?.road || ""}, ${data.address?.city || ""},${data.address?.suburb || ""}`;
@@ -91,16 +96,17 @@ async function renderFoods(foodList) {
   });
 
   const cards = await Promise.all(renderPromises);
-  cards.forEach(card => cardContainer.appendChild(card));
+  cards.forEach((card) => cardContainer.appendChild(card));
 }
 
+// ? ----------------Dom manipulation functions----------------
 document.addEventListener("DOMContentLoaded", async () => {
   // Check role
-  const check = localStorage.getItem("role")
+  const check = localStorage.getItem("role");
   if (check === "vendor") {
-    window.location.href = "/frontend/pages/vendor-profile.html"
+    window.location.href = "/frontend/pages/vendor-profile.html";
   }
-  // 
+  //
   const Cate = document.getElementById("Cate");
   const cardContainer = document.getElementById("cardContainer");
 
@@ -134,7 +140,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Initial render
     renderFoods(allFoods);
-
   } catch (err) {
     Toastify({
       text: `Fetch Error: ${err.message}`,
@@ -150,14 +155,17 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
+// ?----------
+// Search handle
+//?------------
 const searchInput = document.getElementById("searchInput");
 
 if (searchInput) {
   searchInput.addEventListener("input", function () {
     const searchValue = this.value.toLowerCase().trim();
 
-    const filteredFoods = allFoods.filter(food =>
-      food.food_name.toLowerCase().includes(searchValue)
+    const filteredFoods = allFoods.filter((food) =>
+      food.food_name.toLowerCase().includes(searchValue),
     );
 
     renderFoods(filteredFoods);

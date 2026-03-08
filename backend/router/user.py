@@ -1,30 +1,20 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, Form, File
 from sqlalchemy.orm import Session
-import os, uuid, shutil
+import os
 from database import get_db
 from models.user import User
 from schemas.user import UserResponse
 from core.security import get_current_user, hash_password
+import cloudinary.uploader
+import Cloudinary_config
+# from Cloudinary_config import cloudinary_config (redundant if just using side-effect, but user had it)
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
-# --- Image Upload Helper ---
-if os.environ.get("VERCEL"):
-    UPLOAD_DIR = "/tmp/uploads/users"
-else:
-    # Use absolute path relative to project root
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    PROJECT_ROOT = os.path.dirname(BASE_DIR)
-    UPLOAD_DIR = os.path.join(PROJECT_ROOT, "uploads", "users")
-os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 def save_image(image: UploadFile) -> str:
-    ext = image.filename.split(".")[-1]
-    filename = f"{uuid.uuid4().hex}.{ext}"
-    file_path = os.path.join(UPLOAD_DIR, filename)
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(image.file, buffer)
-    return f"/uploads/users/{filename}"
+    result = cloudinary.uploader.upload(image.file)
+    return result["secure_url"]
 
 # --- Register ---
 @router.post("", response_model=UserResponse)

@@ -126,10 +126,7 @@ async function loadFoodLocation(foodId) {
     if (foodMarker) {
       map.removeLayer(foodMarker);
     }
-    const response = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${food.latitude}&lon=${food.longitude}`,
-    );
-
+ 
     const data = await response.json();
 
     foodMarker = L.marker([food.latitude, food.longitude], { icon: foodIcon })

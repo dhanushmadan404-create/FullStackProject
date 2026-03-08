@@ -10,3 +10,4 @@ passlib[bcrypt]==1.7.4
 bcrypt==3.2.2
 python-dotenv==1.0.1
 PyJWT==2.9.0
+cloudinary==1.41.0

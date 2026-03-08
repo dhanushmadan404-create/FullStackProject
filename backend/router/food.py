@@ -3,8 +3,6 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 from typing import List
 import os
-import uuid
-import shutil
 
 from database import get_db
 from models.food import Food
@@ -13,37 +11,18 @@ from models.user import User
 from models.food_like import FoodLike
 from schemas.food import FoodResponse
 from core.security import get_current_user
+import cloudinary.uploader
+import Cloudinary_config
 
 
 router = APIRouter(prefix="/foods", tags=["Foods"])
 
 
-# -----------------------------------
-# Image Upload Configuration
-# -----------------------------------
-
-# If running on Vercel → use /tmp/uploads/foods
-if os.getenv("VERCEL"):
-    UPLOAD_DIR = "/tmp/uploads/foods"
-else:
-    # Match main.py logic: root/uploads/foods
-    BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    PROJECT_ROOT = os.path.dirname(BACKEND_DIR)
-    UPLOAD_DIR = os.path.join(PROJECT_ROOT, "uploads", "foods")
-
-os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
 def save_image(image: UploadFile) -> str:
-    file_extension = image.filename.split(".")[-1]
-    filename = f"{uuid.uuid4().hex}.{file_extension}"
-    file_path = os.path.join(UPLOAD_DIR, filename)
-
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(image.file, buffer)
-
-    # This path will be used in frontend
-    return f"/uploads/foods/{filename}"
+    result = cloudinary.uploader.upload(image.file)
+    return result["secure_url"]
 
 
 # -----------------------------------
@@ -280,13 +259,8 @@ def delete_food(
     if not food:
         raise HTTPException(status_code=404, detail="Food not found or unauthorized")
 
-    # Delete image file if exists
-    if food.food_image_url:
-        filename = food.food_image_url.split("/")[-1]
-        file_path = os.path.join(UPLOAD_DIR, filename)
-
-        if os.path.exists(file_path):
-            os.remove(file_path)
+    # Note: Cloudinary deletion requires public_id which is not stored.
+    # We removed local deletion since UPLOAD_DIR is no longer used.
 
     db.delete(food)
     db.commit()

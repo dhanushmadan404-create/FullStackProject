@@ -8,7 +8,7 @@ from fastapi import HTTPException
 # Get absolute path to backend/.env
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ENV_PATH = os.path.join(BASE_DIR, ".env")
-load_dotenv(ENV_PATH)  # 🔥 REQUIRED
+load_dotenv(ENV_PATH)  
 
 # -----------------------------
 # Database Selection (Local vs Vercel)
