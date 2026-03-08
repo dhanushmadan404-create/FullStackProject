@@ -151,7 +151,6 @@ def create_food(
 # -----------------------------------
 @router.get("/top-liked")
 def get_top_liked_foods(db: Session = Depends(get_db)):
-
     top_foods = (
         db.query(
             Food,
@@ -170,6 +169,10 @@ def get_top_liked_foods(db: Session = Depends(get_db)):
     result = []
 
     for food, total_likes in top_foods:
+        # Check if vendor exists (robustness)
+        if not food.vendor:
+            continue
+
         result.append({
             "food_id": food.food_id,
             "food_name": food.food_name,
@@ -181,7 +184,6 @@ def get_top_liked_foods(db: Session = Depends(get_db)):
             "total_likes": total_likes or 0,
             "opening_time": food.vendor.opening_time,
             "closing_time": food.vendor.closing_time
-
         })
 
     return result
