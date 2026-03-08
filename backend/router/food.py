@@ -34,6 +34,8 @@ def get_all_foods(db: Session = Depends(get_db)):
     foods = db.query(Food).all()
     result = []
     for food in foods:
+        if not food.vendor:
+            continue
         total_likes = db.query(func.count()).select_from(FoodLike).filter(FoodLike.food_id == food.food_id).scalar()
         result.append({
             "food_id": food.food_id,
@@ -70,6 +72,8 @@ def get_foods_by_category(
     response_list = []
 
     for food in foods:
+        if not food.vendor:
+            continue
         # count likes by food_id
         total_likes = (
             db.query(func.count())
@@ -199,6 +203,8 @@ def get_foods_by_vendor(vendor_id: int, db: Session = Depends(get_db)):
     foods = db.query(Food).filter(Food.vendor_id == vendor_id).all()
     result = []
     for food in foods:
+        if not food.vendor:
+            continue
         total_likes = db.query(func.count()).select_from(FoodLike).filter(FoodLike.food_id == food.food_id).scalar()
         result.append({
             "food_id": food.food_id,
@@ -224,8 +230,8 @@ def get_foods_by_vendor(vendor_id: int, db: Session = Depends(get_db)):
 def get_food(food_id: int, db: Session = Depends(get_db)):
     food = db.query(Food).filter(Food.food_id == food_id).first()
 
-    if not food:
-        raise HTTPException(status_code=404, detail="Food not found")
+    if not food or not food.vendor:
+        raise HTTPException(status_code=404, detail="Food not found or vendor missing")
 
     total_likes = db.query(func.count()).select_from(FoodLike).filter(FoodLike.food_id == food.food_id).scalar()
     
@@ -291,8 +297,8 @@ def update_food(
         Vendor.user_id == current_user.user_id
     ).first()
 
-    if not food:
-        raise HTTPException(status_code=404, detail="Food not found or unauthorized")
+    if not food or not food.vendor:
+        raise HTTPException(status_code=404, detail="Food not found or vendor missing")
 
     if food_name: food.food_name = food_name
     if category: food.category = category.lower()
