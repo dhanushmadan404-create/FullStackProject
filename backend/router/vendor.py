@@ -1,21 +1,35 @@
 from fastapi import APIRouter, Depends, HTTPException, Form, File, UploadFile
 from sqlalchemy.orm import Session
 from datetime import time
-import os
 from database import get_db
 from models.vendor import Vendor
 from schemas.vendor import VendorResponse
 from core.security import get_current_user
 from models.user import User
-import cloudinary.uploader
-import Cloudinary_config
-
+import os, uuid, shutil
 router = APIRouter(prefix="/vendors", tags=["Vendors"])
 
 
+# --- Image Upload Helper ---
+# If running on Vercel → use /tmp/uploads/vendors
+if os.environ.get("VERCEL"):
+    UPLOAD_DIR = "/tmp/uploads/vendors"
+else:
+    # Match main.py and food.py logic: root/uploads/vendors
+    # BASE_DIR is .../backend/router
+    BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    PROJECT_ROOT = os.path.dirname(BACKEND_DIR)
+    UPLOAD_DIR = os.path.join(PROJECT_ROOT, "uploads", "vendors")
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+
 def save_image(image: UploadFile) -> str:
-    result = cloudinary.uploader.upload(image.file)
-    return result["secure_url"]
+    ext = image.filename.split(".")[-1]
+    filename = f"{uuid.uuid4().hex}.{ext}"
+    file_path = os.path.join(UPLOAD_DIR, filename)
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(image.file, buffer)
+    return f"/uploads/vendors/{filename}"
+
 
 # --- Create Vendor ---
 @router.post("", response_model=VendorResponse)

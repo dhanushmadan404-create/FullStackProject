@@ -3,7 +3,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 from typing import List
 import os
-
+import uuid
+import shutil
 from database import get_db
 from models.food import Food
 from models.vendor import Vendor
@@ -11,18 +12,38 @@ from models.user import User
 from models.food_like import FoodLike
 from schemas.food import FoodResponse
 from core.security import get_current_user
-import cloudinary.uploader
-import Cloudinary_config
+
 
 
 router = APIRouter(prefix="/foods", tags=["Foods"])
 
 
+# -----------------------------------
+# Image Upload Configuration
+# -----------------------------------
+
+# If running on Vercel → use /tmp/uploads/foods
+if os.getenv("VERCEL"):
+    UPLOAD_DIR = "/tmp/uploads/foods"
+else:
+    # Match main.py logic: root/uploads/foods
+    BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    PROJECT_ROOT = os.path.dirname(BACKEND_DIR)
+    UPLOAD_DIR = os.path.join(PROJECT_ROOT, "uploads", "foods")
+
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
 def save_image(image: UploadFile) -> str:
-    result = cloudinary.uploader.upload(image.file)
-    return result["secure_url"]
+    file_extension = image.filename.split(".")[-1]
+    filename = f"{uuid.uuid4().hex}.{file_extension}"
+    file_path = os.path.join(UPLOAD_DIR, filename)
+
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(image.file, buffer)
+
+    # This path will be used in frontend
+    return f"/uploads/foods/{filename}"
 
 
 # -----------------------------------
@@ -34,8 +55,7 @@ def get_all_foods(db: Session = Depends(get_db)):
     foods = db.query(Food).all()
     result = []
     for food in foods:
-        if not food.vendor:
-            continue
+        
         total_likes = db.query(func.count()).select_from(FoodLike).filter(FoodLike.food_id == food.food_id).scalar()
         result.append({
             "food_id": food.food_id,
@@ -72,8 +92,7 @@ def get_foods_by_category(
     response_list = []
 
     for food in foods:
-        if not food.vendor:
-            continue
+    
         # count likes by food_id
         total_likes = (
             db.query(func.count())
@@ -173,9 +192,7 @@ def get_top_liked_foods(db: Session = Depends(get_db)):
     result = []
 
     for food, total_likes in top_foods:
-        # Check if vendor exists (robustness)
-        if not food.vendor:
-            continue
+      
 
         result.append({
             "food_id": food.food_id,
@@ -203,8 +220,7 @@ def get_foods_by_vendor(vendor_id: int, db: Session = Depends(get_db)):
     foods = db.query(Food).filter(Food.vendor_id == vendor_id).all()
     result = []
     for food in foods:
-        if not food.vendor:
-            continue
+      
         total_likes = db.query(func.count()).select_from(FoodLike).filter(FoodLike.food_id == food.food_id).scalar()
         result.append({
             "food_id": food.food_id,
@@ -230,8 +246,6 @@ def get_foods_by_vendor(vendor_id: int, db: Session = Depends(get_db)):
 def get_food(food_id: int, db: Session = Depends(get_db)):
     food = db.query(Food).filter(Food.food_id == food_id).first()
 
-    if not food or not food.vendor:
-        raise HTTPException(status_code=404, detail="Food not found or vendor missing")
 
     total_likes = db.query(func.count()).select_from(FoodLike).filter(FoodLike.food_id == food.food_id).scalar()
     
@@ -266,7 +280,13 @@ def delete_food(
 
     if not food:
         raise HTTPException(status_code=404, detail="Food not found or unauthorized")
+        # Delete image file if exists
+    if food.food_image_url:
+        filename = food.food_image_url.split("/")[-1]
+        file_path = os.path.join(UPLOAD_DIR, filename)
 
+        if os.path.exists(file_path):
+            os.remove(file_path)
     # Note: Cloudinary deletion requires public_id which is not stored.
     # We removed local deletion since UPLOAD_DIR is no longer used.
 
