@@ -1,20 +1,24 @@
 // ---------------- GET category FROM URL ----------------
 let allFoods = [];
 let likedFoodIdsGlobal = [];
+// category name for gwt data in food table
 const params = new URLSearchParams(window.location.search);
 const category = params.get("category") || "breakfast";
 const cate = category === "drinking" ? "Juice" : category;
 
+// normal authorization
 const userId = localStorage.getItem("user_id");
 const token = localStorage.getItem("token");
 
 
 
-
+// before searching
 // ?---------------- RENDER FOODS FUNCTION ----------------
 async function renderFoods(foodList) {
   const cardContainer = document.getElementById("cardContainer");
   cardContainer.innerHTML = "";
+
+// Check before fetch
 
   if (!Array.isArray(foodList) || foodList.length === 0) {
     cardContainer.innerHTML = `
@@ -24,25 +28,23 @@ async function renderFoods(foodList) {
     return;
   }
 
-  // Use for...of to handle async/await sequentially or Promise.all for parallel
-  // Parallel fetching is faster for UX
 
   // ? list out the foods with address fetching
+  console.log(foodList)
   const renderPromises = foodList.map(async (food) => {
     const isLiked = likedFoodIdsGlobal.includes(food.food_id);
     const div = document.createElement("div");
-
+    
+// getaddress by nomistim reverse api 
     let addressText = "Loading address...";
-    try {
+   
       const response = await fetch(
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${food.latitude}&lon=${food.longitude}`,
       );
       const data = await response.json();
       addressText = `${data.address?.road || ""}, ${data.address?.city || ""},${data.address?.suburb || ""}`;
-    } catch (e) {
-      addressText = "Address unavailable";
-    }
-
+  
+// set data as locked loc
     div.innerHTML = `
       <div class="card">
         <div class="image_container">
@@ -155,12 +157,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-// ?----------
-// Search handle
+// ?---------- 
+// Search handle logic handler
 //?------------
 const searchInput = document.getElementById("searchInput");
 
-if (searchInput) {
+if (searchInput.length !=0) {
   searchInput.addEventListener("input", function () {
     const searchValue = this.value.toLowerCase().trim();
 
@@ -170,9 +172,11 @@ if (searchInput) {
 
     renderFoods(filteredFoods);
   });
+}else{
+   renderFoods(allFoods);
 }
-
-// like handle
+// !
+// ?like handle
 // button
 async function handleLike(foodId) {
   let likeButton = document.getElementById(`like-btn-${foodId}`);
@@ -270,7 +274,7 @@ async function handleRemove(foodId) {
     // ✅ Safe JSON parsing
     const data = await res.json().catch(() => ({}));
 
-    if (!res.ok) {
+    if (res.status!==200) {
       let errorMessage = "Remove failed";
 
       if (typeof data.detail === "string") {
@@ -313,9 +317,9 @@ async function handleRemove(foodId) {
     }).showToast();
   }
 }
-
+// !
 // ---------------- REVIEW SYSTEM ----------------
-
+// !
 const Review = document.getElementById("review");
 
 // Open Review Popup
@@ -362,7 +366,7 @@ window.openReview = async function (food_id, food_name) {
       console.log(commentValue);
       return;
     }
-
+// Post the comment
     try {
       const response = await fetch(`${API_BASE_URL}/reviews`, {
         method: "POST",
@@ -376,7 +380,7 @@ window.openReview = async function (food_id, food_name) {
         }),
       });
 
-      if (!response.ok) {
+      if (response.status!==200) {
         Toastify({
           text: `Failed to post comment`,
           gravity: "top",

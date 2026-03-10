@@ -112,8 +112,9 @@ async function loadFoodLocation(foodId) {
       }).showToast();
       return;
     }
-
+    
     const food = await res.json();
+    console.log(food)
 
     if (!food.latitude || !food.longitude) {
       console.log("Food location not available");
@@ -126,6 +127,9 @@ async function loadFoodLocation(foodId) {
     if (foodMarker) {
       map.removeLayer(foodMarker);
     }
+     const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${food.latitude}&lon=${food.longitude}`,
+      );
  
     const data = await response.json();
 

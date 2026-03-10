@@ -13,11 +13,27 @@ from models.food_like import FoodLike
 from schemas.food import FoodResponse
 from core.security import get_current_user
 
+# Get address
+# import requests
+
+# #? GetAddress By nomitim reverse api
+# def get_address(lat, lon):
+#     url = f"https://nominatim.openstreetmap.org/reverse?format=json&lat={lat}&lon={lon}"
+
+#     headers = {"User-Agent": "food-app/1.0"}
+
+#     res = requests.get(url, headers=headers)
+#     data = res.json()
+
+#     return {
+#         "city": data["address"].get("city"),
+#         "state": data["address"].get("state"),
+#         "country": data["address"].get("country"),
+#         "address": data["display_name"]
+#     }
 
 
 router = APIRouter(prefix="/foods", tags=["Foods"])
-
-
 # -----------------------------------
 # Image Upload Configuration
 # -----------------------------------
