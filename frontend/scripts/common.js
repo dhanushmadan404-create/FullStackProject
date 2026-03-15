@@ -1,7 +1,7 @@
 // API BASE URL (Local + Vercel)
 const API_BASE_URL =
   window.location.hostname === "localhost" ||
-    window.location.hostname === "127.0.0.1"
+  window.location.hostname === "127.0.0.1"
     ? "http://127.0.0.1:8000/api"
     : "/api";
 
@@ -18,11 +18,12 @@ function getImageUrl(path, fallback = "/frontend/assets/default_user.png") {
   // Cleanup potential double slashes
   const cleanPath = path.startsWith("/") ? path.slice(1) : path;
 
-
-  
   // Backend returns paths like "/uploads/foods/filename.jpg"
   // On local, we need to prefix with backend origin if it's an upload
-  if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+  if (
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1"
+  ) {
     // API_BASE_URL is http://127.0.0.1:8000/api
     const origin = "http://127.0.0.1:8000";
     return `${origin}/${cleanPath}`;
@@ -70,10 +71,9 @@ function logout() {
 
 //? NavBar
 function renderNav() {
-  const head = document.getElementById('Nav');
+  const head = document.getElementById("Nav");
   if (!head) return;
 
-  
   head.innerHTML = `
  <div class="header_container">
       <!-- Logo -->
@@ -81,12 +81,16 @@ function renderNav() {
         onclick="window.location.href = '/index.html'" />
 
       <!-- Location search -->
-       ${hideSearch ? `
+       ${
+         window.hideSearch
+           ? `
         <div class="search">
           <input type="text" id="searchInput" placeholder="Search..." name="Search"/>
           <img src="/frontend/assets/search.png" alt="Error">
         </div>
-        ` : ''}
+        `
+           : ""
+       }
         
       <div class="right-align right">
         <a href='/index.html' class="navBtn">
@@ -107,3 +111,25 @@ function renderNav() {
   checkLoginStatus();
 }
 
+// Search Helper (filters data and calls renderFunc)
+function setupSearch(inputSelector, data, renderFunc) {
+  const input = document.querySelector(inputSelector);
+  if (!input) return;
+
+  input.addEventListener("input", (e) => {
+    const query = e.target.value.toLowerCase().trim();
+    if (!query) {
+      renderFunc(data);
+      return;
+    }
+
+    const filtered = data.filter((item) => {
+      const name = (item.food_name || item.name || "").toLowerCase();
+      const cat = (item.category || "").toLowerCase();
+      return name.includes(query) || cat.includes(query);
+    });
+
+    renderFunc(filtered);
+  });
+}
+window.setupSearch = setupSearch;

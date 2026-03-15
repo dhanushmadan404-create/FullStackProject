@@ -1,4 +1,3 @@
-
 // -----------------------------
 // Toggle Login / Register Forms
 // -----------------------------
@@ -88,7 +87,7 @@ async function handleLogin(event) {
       position: "right",
       style: { background: "green" },
       close: true,
-      stopOnFocus: true
+      stopOnFocus: true,
     }).showToast();
 
     localStorage.setItem("token", data.access_token);
@@ -104,7 +103,7 @@ async function handleLogin(event) {
       position: "right",
       style: { background: "red" }, // Corrected color to red for failure
       close: true,
-      stopOnFocus: true
+      stopOnFocus: true,
     }).showToast();
   }
 }
@@ -167,12 +166,13 @@ async function handleRegister(event) {
       body: formData,
     });
 
-
     // 🔥 SAFE ERROR HANDLING
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       console.error("Server Response:", errorData);
-      throw new Error(errorData.detail || `Registration failed (Status ${response.status})`);
+      throw new Error(
+        errorData.detail || `Registration failed (Status ${response.status})`,
+      );
     }
 
     const data = await response.json();
@@ -183,7 +183,7 @@ async function handleRegister(event) {
       position: "right",
       style: { background: "green" },
       close: true,
-      stopOnFocus: true
+      stopOnFocus: true,
     }).showToast();
 
     toggleForm("login");
@@ -195,7 +195,7 @@ async function handleRegister(event) {
       position: "right",
       style: { background: "red" },
       close: true,
-      stopOnFocus: true
+      stopOnFocus: true,
     }).showToast();
   }
 }

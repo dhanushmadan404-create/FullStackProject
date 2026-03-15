@@ -1,62 +1,70 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile Page</title>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Profile Page</title>
+    <!-- Toastify CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
+    />
 
-  <!-- Toastify CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
+    <!-- Toastify JS -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
-  <!-- Toastify JS -->
-  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <link rel="stylesheet" href="/frontend/styles/profile-style.css" />
+    <link rel="icon" href="/frontend/assets/icons8-a-64.png" />
+    <link rel="stylesheet" href="/frontend/styles/Nav.css" />
+  </head>
 
-  <link rel="stylesheet" href="/frontend/styles/profile-style.css" />
-  <link rel="icon" href="/frontend/assets/icons8-a-64.png" />
-  <link rel="stylesheet" href="/frontend/styles/Nav.css">
-</head>
+  <body>
+    <header>
+      <div id="Nav"></div>
+    </header>
 
-<body>
-  <header>
-       <div id="Nav">
+    <main>
+      <div id="profile_details" class="photo-details"></div>
 
+      <div>
+        <a href="/frontend/pages/map.html">
+          <img
+            src="/frontend/assets/NicePng_food-cart-png_7682382.png"
+            alt="Banner"
+            class="banner"
+          />
+        </a>
+      </div>
+
+      <div class="option">
+        <ul class="option_menu">
+          <li class="option_list">
+            <a href="#" id="editBtn">Edit Profile</a>
+          </li>
+
+          <li class="option_list">
+            <a href="#" id="logOut">Log Out</a>
+          </li>
+        </ul>
+      </div>
+    </main>
+    <div class="video-container">
+      <video
+        src="../assets/video/Street_Food_Discovery_Platform_Video.mp4"
+        autoplay
+        muted
+        loop
+      ></video>
     </div>
-  </header>
+    <!-- Modal Container (Hidden by Default) -->
+    <div id="edit"></div>
 
-  <main>
-    <div id="profile_details" class="photo-details"></div>
+    <footer>
+      <small>© 2025 Annesana. All Rights Reserved.</small>
+    </footer>
 
-    <div>
-      <a href="/frontend/pages/map.html">
-        <img src="/frontend/assets/NicePng_food-cart-png_7682382.png" alt="Banner" class="banner" />
-      </a>
-    </div>
-
-    <div class="option">
-      <ul class="option_menu">
-        <li class="option_list">
-          <a href="#" id="editBtn">Edit Profile</a>
-        </li>
-
-        <li class="option_list">
-          <a href="#" id="logOut">Log Out</a>
-        </li>
-      </ul>
-    </div>
-  </main>
-<div class="video-container">
-  <video src="../assets/video/Street_Food_Discovery_Platform_Video.mp4" autoplay muted loop></video>
-</div>
-  <!-- Modal Container (Hidden by Default) -->
-  <div id="edit" ></div>
-
-  <footer>
-    <small>© 2025 Annesana. All Rights Reserved.</small>
-  </footer>
-
-  <script src="../scripts/common.js"></script>
-  <script src="../scripts/profile.js"></script>
-</body>
-
+    <script src="../scripts/common.js"></script>
+    <script src="../scripts/profile.js"></script>
+  </body>
 </html>

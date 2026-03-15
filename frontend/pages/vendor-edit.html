@@ -46,7 +46,6 @@
     </header>
 
     <main>
-      
       <!-- map -->
       <div class="registration-container">
         <div class="header">
@@ -54,8 +53,6 @@
         </div>
 
         <form id="vendorRegistration">
-         
-
           <div class="form-group">
             <label>Phone Number:</label>
             <input
@@ -68,21 +65,28 @@
             <span class="error-message" id="numberError"></span>
           </div>
 
-         
-
           <div class="form-group">
-            <label>Image</label>
+            <label>Image (Optional if already uploaded)</label>
             <input
               id="image"
               type="file"
               class="image-upload"
               accept="image/*"
-              required
+              onchange="previewImage(this)"
+            />
+            <img
+              id="imagePreview"
+              src=""
+              alt="Preview"
+              style="
+                display: none;
+                max-width: 200px;
+                margin-top: 10px;
+                border-radius: 8px;
+              "
             />
             <span class="error-message" id="imageError"></span>
           </div>
-
-        
 
           <div class="operating-hours">
             <h3>Operating Hours:</h3>

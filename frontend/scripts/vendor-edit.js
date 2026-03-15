@@ -2,16 +2,13 @@
 // Vendor Registration / Update Script
 // =====================================
 
-
 const token = localStorage.getItem("token");
 
 if (!token) {
   window.location.href = "/frontend/pages/login.html";
 }
 
-// =====================================
 // Load Vendor Data
-// =====================================
 document.addEventListener("DOMContentLoaded", loadVendorData);
 
 async function loadVendorData() {
@@ -30,8 +27,6 @@ async function loadVendorData() {
       return;
     }
 
-  
-
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(errorData.detail || "Failed to load vendor");
@@ -41,15 +36,16 @@ async function loadVendorData() {
     console.log("Vendor Data:", vendor);
 
     // Prefill values
-    document.getElementById("number").value =
-      vendor.phone_number || "";
+    document.getElementById("number").value = vendor.phone_number || "";
+    document.getElementById("openingTime").value = vendor.opening_time || "";
+    document.getElementById("closingTime").value = vendor.closing_time || "";
 
-    document.getElementById("openingTime").value =
-      vendor.opening_time || "";
-
-    document.getElementById("closingTime").value =
-      vendor.closing_time || "";
-
+    // Show current image preview
+    const imagePreview = document.getElementById("imagePreview");
+    if (imagePreview && vendor.cart_image_url) {
+      imagePreview.src = getImageUrl(vendor.cart_image_url);
+      imagePreview.style.display = "block";
+    }
   } catch (error) {
     console.error("Vendor Load Error:", error);
 
@@ -111,7 +107,7 @@ async function handleSubmit(event) {
     }
 
     showToast("Vendor updated successfully ✅", "green");
-    window.location.href = "./vendor-profile.html"
+    window.location.href = "./vendor-profile.html";
   } catch (error) {
     console.error("Update Error:", error);
     showToast(error.message || "Something went wrong ❌", "red");
@@ -133,3 +129,19 @@ function showToast(message, color) {
     style: { background: color },
   }).showToast();
 }
+
+// =====================================
+// Preview Image Helper
+// =====================================
+function previewImage(input) {
+  const preview = document.getElementById("imagePreview");
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      preview.src = e.target.result;
+      preview.style.display = "block";
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+window.previewImage = previewImage;

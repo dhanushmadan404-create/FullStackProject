@@ -2,7 +2,6 @@
 // Admin Panel Script
 // ========================================
 
-
 // ---------------- SHOW SECTION ----------------
 function showSection(sectionId) {
   document

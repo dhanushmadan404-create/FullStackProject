@@ -1,16 +1,15 @@
-
 // ---------------- GLOBAL TOKEN ----------------
 const token = localStorage.getItem("token");
-const hideSearch=false
+const hideSearch = false;
 
 // ---------------- MAIN EXECUTION ----------------
 document.addEventListener("DOMContentLoaded", () => {
   // Check role
-  const check = localStorage.getItem("role")
+  const check = localStorage.getItem("role");
   if (check === "vendor") {
-    window.location.href = "/frontend/pages/vendor-profile.html"
+    window.location.href = "/frontend/pages/vendor-profile.html";
   }
-  // 
+  //
   if (!token) {
     window.location.href = "./login.html";
     Toastify({
@@ -20,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
       position: "right",
       style: { background: "red" },
       close: true,
-      stopOnFocus: true
+      stopOnFocus: true,
     }).showToast();
 
     return;
@@ -34,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // ---------------- LOAD PROFILE ----------------
 async function loadProfile() {
   const profileContainer = document.getElementById("profile_details");
-  profileContainer.innerHTML = "<p>Loading profile...</p>"
+  profileContainer.innerHTML = "<p>Loading profile...</p>";
   try {
     const response = await fetch(`${API_BASE_URL}/users/me`, {
       headers: {
@@ -72,7 +71,7 @@ async function loadProfile() {
       position: "right",
       style: { background: "red" },
       close: true,
-      stopOnFocus: true
+      stopOnFocus: true,
     }).showToast();
 
     if (error.message === "401") {
@@ -83,7 +82,7 @@ async function loadProfile() {
         position: "right",
         style: { background: "red" },
         close: true,
-        stopOnFocus: true
+        stopOnFocus: true,
       }).showToast();
       localStorage.clear();
       window.location.href = "./login.html";
@@ -146,14 +145,15 @@ function setupEditForm() {
       reader.readAsDataURL(file);
     });
 
+    document.getElementById("Close").addEventListener("click", () => {
+      editContainer.innerHTML = "";
+    });
+
     document
       .getElementById("editForm")
       .addEventListener("submit", handleEditSubmit);
   });
 }
-document.getElementById("Close").addEventListener("click", () => {
-  editContainer.innerHTML = ""
-})
 // ---------------- HANDLE EDIT SUBMIT ----------------
 async function handleEditSubmit(event) {
   event.preventDefault();
@@ -170,7 +170,7 @@ async function handleEditSubmit(event) {
       position: "right",
       style: { background: "red" },
       close: true,
-      stopOnFocus: true
+      stopOnFocus: true,
     }).showToast();
     return;
   }
@@ -209,7 +209,7 @@ async function handleEditSubmit(event) {
       position: "right",
       style: { background: "red" },
       close: true,
-      stopOnFocus: true
+      stopOnFocus: true,
     }).showToast();
   }
 }
@@ -230,7 +230,7 @@ function setupLogout() {
       position: "right",
       style: { background: "red" },
       close: true,
-      stopOnFocus: true
+      stopOnFocus: true,
     }).showToast();
 
     window.location.href = "./login.html";

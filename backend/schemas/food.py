@@ -17,6 +17,6 @@ class FoodResponse(FoodBase):
 
     opening_time: time
     closing_time: time
-   
+    address: dict | None = None
 
     model_config = ConfigDict(from_attributes=True)

@@ -2,7 +2,8 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-font-style: oblique;  text-decoration: none;
+  font-style: oblique;
+  text-decoration: none;
 }
 
 body {
@@ -31,7 +32,7 @@ main {
 }
 .video-container {
   width: 100%;
-  height: 400px;   /* adjust as needed */
+  height: 400px; /* adjust as needed */
   overflow: hidden;
 }
 
@@ -69,27 +70,25 @@ main {
 .option_list {
   width: 300px;
   height: 50px;
-  font-size: 1.8rem;      /* better scaling */
-  color: #ffffff;         /* white text for contrast */
+  font-size: 1.8rem; /* better scaling */
+  color: #ffffff; /* white text for contrast */
   background-color: #ff6700; /* vibrant orange */
   text-align: center;
   border: 3px solid #ff4500; /* slightly darker orange border */
-  border-radius: 8px;     /* rounded corners */
+  border-radius: 8px; /* rounded corners */
   margin-bottom: 12px;
   cursor: pointer;
   transition: 0.25s ease-in-out;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* subtle depth */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* subtle depth */
 }
 
 .option_list a:hover {
-  
-  background-color: #ffffff;   /* white on hover */
-  color: #ff6700;              /* orange text on hover */
+  background-color: #ffffff; /* white on hover */
+  color: #ff6700; /* orange text on hover */
   transform: scale(1.05);
   border-color: #ff6700;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.25); /* stronger shadow */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25); /* stronger shadow */
 }
-
 
 footer {
   background: #ffb347;
@@ -104,11 +103,10 @@ footer {
 /* edit */
 /* ---------- EDIT MODAL OVERLAY ---------- */
 #edit {
- width: 400px;
- position: fixed;
- top: 14%;
- right: 0%;
-
+  width: 400px;
+  position: fixed;
+  top: 14%;
+  right: 0%;
 }
 
 /* ---------- EDIT FORM CARD ---------- */
@@ -127,7 +125,6 @@ footer {
 }
 
 /* ---------- CLOSE BUTTON ---------- */
-
 
 /* ---------- LABEL ---------- */
 #editForm label {

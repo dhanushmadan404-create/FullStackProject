@@ -1,96 +1,117 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Annesana</title>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Annesana</title>
+    <!-- favicon -->
+    <link rel="icon" href="/frontend/assets/icons8-a-64.png" />
 
-  <!-- favicon -->
-  <link rel="icon" href="/frontend/assets/icons8-a-64.png" />
+    <!-- CSS -->
+    <link rel="stylesheet" href="/index-style.css" />
+    <link rel="stylesheet" href="/frontend/styles/Nav.css" />
+  </head>
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="/index-style.css" />
-  <link rel="stylesheet" href="/frontend/styles/Nav.css">
+  <body>
+    <!-- ================= HEADER ================= -->
+    <header>
+      <div id="Nav"></div>
+    </header>
 
+    <!-- ================= MAIN ================= -->
+    <main>
+      <section id="trending_section">
+        <h1>Trending</h1>
+        <div id="trending_container"></div>
+      </section>
 
-</head>
+      <!-- ===== Categories ===== -->
+      <section class="categories">
+        <h2 class="category-title">Categories</h2>
 
-<body>
-  <!-- ================= HEADER ================= -->
-  <header>
-    <div id="Nav">
-
-    </div>
-  
-  </header>
-
-  <!-- ================= MAIN ================= -->
-  <main>
-
-    <section id="trending_section">
-      <h1>Trending</h1>
-      <div id="trending_container"></div>
-    </section>
-
-
-    <!-- ===== Categories ===== -->
-    <section class="categories">
-      <h2 class="category-title">Categories</h2>
-
-      <div class="category-grid vertical">
-        <div onclick="
+        <div class="category-grid vertical">
+          <div
+            onclick="
               window.location.href =
                 './frontend/pages/category.html?category=breakfast'
-            " class="category-card">
-          <img src="./frontend/assets/food_image/Categories/break_fast.jpg" alt="Breakfast" />
-          <span>Breakfast</span>
-        </div>
+            "
+            class="category-card"
+          >
+            <img
+              src="./frontend/assets/food_image/Categories/break_fast.jpg"
+              alt="Breakfast"
+            />
+            <span>Breakfast</span>
+          </div>
 
-        <div onclick="
+          <div
+            onclick="
               window.location.href =
                 './frontend/pages/category.html?category=lunch'
-            " class="category-card">
-          <img src="./frontend/assets/food_image/Categories/lunch.avif" alt="Lunch" />
-          <span>Lunch</span>
-        </div>
+            "
+            class="category-card"
+          >
+            <img
+              src="./frontend/assets/food_image/Categories/lunch.avif"
+              alt="Lunch"
+            />
+            <span>Lunch</span>
+          </div>
 
-        <div onclick="
+          <div
+            onclick="
               window.location.href =
                 './frontend/pages/category.html?category=dinner'
-            " class="category-card">
-          <img src="./frontend/assets/food_image/Categories/dinner.webp" alt="Dinner" />
-          <span>Dinner</span>
-        </div>
+            "
+            class="category-card"
+          >
+            <img
+              src="./frontend/assets/food_image/Categories/dinner.webp"
+              alt="Dinner"
+            />
+            <span>Dinner</span>
+          </div>
 
-        <div onclick="
+          <div
+            onclick="
               window.location.href =
                 './frontend/pages/category.html?category=snacks'
-            " class="category-card">
-          <img src="./frontend/assets/food_image/Categories/snacks.jpg" alt="Snacks" />
-          <span>Snacks</span>
-        </div>
+            "
+            class="category-card"
+          >
+            <img
+              src="./frontend/assets/food_image/Categories/snacks.jpg"
+              alt="Snacks"
+            />
+            <span>Snacks</span>
+          </div>
 
-        <div onclick="
+          <div
+            onclick="
               window.location.href =
                 './frontend/pages/category.html?category=drinking'
-            " class="category-card">
-          <img src="./frontend/assets/food_image/Categories/drinking.JPG" alt="Drinks" />
-          <span>Juice</span>
+            "
+            class="category-card"
+          >
+            <img
+              src="./frontend/assets/food_image/Categories/drinking.JPG"
+              alt="Drinks"
+            />
+            <span>Juice</span>
+          </div>
         </div>
-      </div>
-    </section>
-  </main>
+      </section>
+    </main>
 
-  <!-- ================= FOOTER ================= -->
-  <footer>
-    <small>© 2025 Annesana. All Rights Reserved.</small>
-  </footer>
+    <!-- ================= FOOTER ================= -->
+    <footer>
+      <small>© 2025 Annesana. All Rights Reserved.</small>
+    </footer>
 
-  <!-- ================= JS ================= -->
-  <script src="./frontend/scripts/common.js"></script>
+    <!-- ================= JS ================= -->
+    <script src="./frontend/scripts/common.js"></script>
 
-  <script src="./frontend/scripts/index.js"></script>
-</body>
-
+    <script src="./frontend/scripts/index.js"></script>
+  </body>
 </html>

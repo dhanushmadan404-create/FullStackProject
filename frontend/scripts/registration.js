@@ -1,4 +1,3 @@
-
 // ---------------- GLOBAL VARIABLES ----------------
 let menuItems = [];
 const token = localStorage.getItem("token");
@@ -200,9 +199,8 @@ if (form) {
     const foodType = document.getElementById("foodType")?.value;
     const shopImage = document.getElementById("image")?.files[0];
 
-    const ErrorFoodType = document.getElementById("foodTypeError")
+    const ErrorFoodType = document.getElementById("foodTypeError");
     if (!foodType) {
-
       ErrorFoodType.textContent = "Please select food type";
       return;
     }
@@ -241,7 +239,10 @@ if (form) {
         const errorData = await response.json().catch(() => ({}));
 
         // If vendor already exists, try to fetch the existing one
-        if (response.status === 400 && errorData.detail === "Vendor already exists") {
+        if (
+          response.status === 400 &&
+          errorData.detail === "Vendor already exists"
+        ) {
           console.log("Vendor already exists, fetching existing ID...");
           const meRes = await fetch(`${API_BASE_URL}/vendors/me`, {
             headers: { Authorization: `Bearer ${token}` },
@@ -260,9 +261,8 @@ if (form) {
 
       localStorage.setItem("vendorId", vendorId);
 
-      // ---------- UPLOAD FOOD ITEMS ----------
-      let successCount = 0;
-      for (let item of menuItems) {
+      // ---------- UPLOAD FOOD ITEMS CONCURRENTLY ----------
+      const uploadPromises = menuItems.map((item) => {
         const foodFormData = new FormData();
         foodFormData.append("food_name", item.name);
         foodFormData.append("category", foodType.toLowerCase());
@@ -271,20 +271,21 @@ if (form) {
         foodFormData.append("vendor_id", vendorId);
         foodFormData.append("image", item.image);
 
-        const foodResponse = await fetch(`${API_BASE_URL}/foods`, {
+        return fetch(`${API_BASE_URL}/foods`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
           },
           body: foodFormData,
-        });
-
-        if (foodResponse.ok) {
-          successCount++;
-        } else {
+        }).then((res) => {
+          if (res.ok) return res;
           console.error("Failed to upload:", item.name);
-        }
-      }
+          return null; // Mark as failed but don't stop others
+        });
+      });
+
+      const uploadResults = await Promise.all(uploadPromises);
+      const successCount = uploadResults.filter((res) => res !== null).length;
 
       Toastify({
         text: `Registration Successful! Uploaded ${successCount}/${menuItems.length} items.`,
@@ -297,7 +298,6 @@ if (form) {
       setTimeout(() => {
         window.location.href = "./vendor-profile.html";
       }, 1500);
-
     } catch (error) {
       console.error("Registration Error:", error.message);
       Toastify({

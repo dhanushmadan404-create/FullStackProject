@@ -26,12 +26,12 @@ def get_address(lat, lon):
         res = requests.get(url, headers=headers, timeout=3)
         res.raise_for_status()
         data = res.json()
-        address = data.get("address", {})
+        address_data = data.get("address", {})
         return {
-            "city":  address.get("city") if address.get("city") else ""or address.get("town")if address.get("town") else "" or address.get("village")if address.get("village") else "",
-            "state": address.get("state")if address.get("state") else "",
-            "country": address.get("country")if address.get("country") else "",
-            "address": data.get("display_name")if address.get("display_name") else ""
+            "city": address_data.get("city") or address_data.get("town") or address_data.get("village") or "",
+            "state": address_data.get("state") or "",
+            "country": address_data.get("country") or "",
+            "address": data.get("display_name") or ""
         }
     except Exception as e:
         print(f"Geocoding error: {e}")
@@ -86,7 +86,7 @@ def get_all_foods(db: Session = Depends(get_db)):
             "longitude": food.longitude,
             "vendor_id": food.vendor_id,
             "total_likes": total_likes or 0,
-            "Address":get_address( food.latitude,food.longitude),
+            "address": get_address(food.latitude, food.longitude),
             "opening_time": food.vendor.opening_time,
             "closing_time": food.vendor.closing_time
         })
@@ -131,9 +131,7 @@ def get_foods_by_category(
             "longitude": food.longitude,
             "vendor_id": food.vendor_id,
             "total_likes": total_likes,
-            "Address":get_address( food.latitude,food.longitude),
-
-
+            "address": get_address(food.latitude, food.longitude),
             "opening_time": food.vendor.opening_time,
             "closing_time": food.vendor.closing_time
         })
@@ -183,6 +181,7 @@ def create_food(
         "longitude": new_food.longitude,
         "vendor_id": new_food.vendor_id,
         "total_likes": 0,
+        "address": get_address(new_food.latitude, new_food.longitude),
         "opening_time": vendor.opening_time,
         "closing_time": vendor.closing_time
     }
@@ -219,8 +218,7 @@ def get_top_liked_foods(db: Session = Depends(get_db)):
             "latitude": food.latitude,
             "longitude": food.longitude,
             "vendor_id": food.vendor_id,
-            "Address":get_address( food.latitude,food.longitude),
-
+            "address": get_address(food.latitude, food.longitude),
             "total_likes": total_likes or 0,
             "opening_time": food.vendor.opening_time,
             "closing_time": food.vendor.closing_time

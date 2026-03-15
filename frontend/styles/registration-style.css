@@ -2,7 +2,8 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-font-style: oblique;}
+  font-style: oblique;
+}
 
 /* Logo */
 body {
@@ -197,7 +198,7 @@ h1 {
 .menu input {
   width: 100%;
   padding: 8px 10px;
- 
+
   height: 40px;
   border: 2px solid #e85d04;
   border-radius: 4px 0 0 4px;
@@ -207,7 +208,7 @@ h1 {
 }
 .menu b {
   height: 36px;
- width: 100%;
+  width: 100%;
   background: #e85d04;
   color: #fff;
   border: none;

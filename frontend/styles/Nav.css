@@ -23,7 +23,6 @@ header .logo:hover {
   display: flex;
   align-items: center;
   justify-content: space-between;
-
 }
 
 /* Logo */
@@ -41,8 +40,8 @@ header .logo:hover {
   height: 70px;
   filter: none;
 }
-.navBtn{
-     padding: 8px 16px;
+.navBtn {
+  padding: 8px 16px;
   border: none;
   border-radius: 20px;
   cursor: pointer;
@@ -52,16 +51,14 @@ header .logo:hover {
   background-color: #ff6f00;
   color: white;
   text-decoration: none;
-
 }
-.navBtn:hover{
+.navBtn:hover {
   background-color: #e65100;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-
 }
-.right-align{
-    display: flex;
-    gap: 10px;
+.right-align {
+  display: flex;
+  gap: 10px;
 }
 /* Search Container */
 #searchInput {
@@ -74,7 +71,7 @@ header .logo:hover {
   outline: none;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-.search img{
+.search img {
   width: 20px;
   height: 20px;
   align-self: center;

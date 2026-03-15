@@ -1,7 +1,7 @@
 // API_BASE_URL is defined in common.js
 
 // ---------------- GLOBAL VARIABLES ----------------
-const hideSearch=false;
+const hideSearch = false;
 let map = null;
 let userMarker = null;
 let foodMarker = null;
@@ -31,7 +31,6 @@ const shopIcon = L.icon({
   iconAnchor: [20, 40],
 });
 
-
 // ---------------- LOAD ALL FOOD LOCATIONS ----------------
 async function loadAllFoodLocations() {
   try {
@@ -50,9 +49,15 @@ async function loadAllFoodLocations() {
 
     foods.forEach((food) => {
       if (food.latitude && food.longitude) {
+        const popupContent = `
+          <div style="width:150px;">
+            <img src="${getImageUrl(food.food_image_url)}" style="width:100%; height:80px; object-fit:cover; border-radius:5px; margin-bottom:5px;" onerror="this.src='/frontend/assets/default_food.png'">
+            <b>${food.food_name}</b><br>${food.category}
+          </div>
+        `;
         L.marker([food.latitude, food.longitude], { icon: shopIcon })
           .addTo(map)
-          .bindPopup(`<b>${food.food_name}</b><br>${food.category}`);
+          .bindPopup(popupContent);
       }
     });
   } catch (error) {
@@ -68,22 +73,21 @@ async function loadAllFoodLocations() {
   }
 }
 
-
 // ---------------- DRAW ROUTE ----------------
 function drawRoute() {
   if (!map || userLat == null || foodLat == null) {
     return;
   }
-  
+
   if (routingControl) {
     map.removeControl(routingControl);
   }
-  
+
   if (typeof L.Routing === "undefined") {
     console.log("Leaflet Routing plugin not loaded");
     return;
   }
-  
+
   routingControl = L.Routing.control({
     waypoints: [L.latLng(userLat, userLng), L.latLng(foodLat, foodLng)],
     lineOptions: {
@@ -92,7 +96,6 @@ function drawRoute() {
     createMarker: () => null,
   }).addTo(map);
 }
-
 
 // ---------------- LOAD SINGLE FOOD LOCATION ----------------
 async function loadFoodLocation(foodId) {
@@ -110,9 +113,9 @@ async function loadFoodLocation(foodId) {
       }).showToast();
       return;
     }
-    
+
     const food = await res.json();
-    console.log(food)
+    console.log(food);
 
     if (!food.latitude || !food.longitude) {
       console.log("Food location not available");
@@ -143,7 +146,12 @@ async function loadFoodLocation(foodId) {
     foodMarker = L.marker([food.latitude, food.longitude], { icon: foodIcon })
       .addTo(map)
       .bindPopup(
-        `<b>${food.food_name}</b><br/>${food.category}<br/><b>Address</b><p>${popupAddress}</p>`,
+        `
+        <div style="width:150px;">
+          <img src="${getImageUrl(food.food_image_url)}" style="width:100%; height:80px; object-fit:cover; border-radius:5px; margin-bottom:5px;" onerror="this.src='/frontend/assets/default_food.png'">
+          <b>${food.food_name}</b><br/>${food.category}<br/><b>Address</b><p>${popupAddress}</p>
+        </div>
+        `,
       )
       .openPopup();
 
@@ -217,11 +225,11 @@ function initMap() {
 // ---------------- MAIN EXECUTION ----------------
 document.addEventListener("DOMContentLoaded", () => {
   // Check role
-  const check = localStorage.getItem("role")
+  const check = localStorage.getItem("role");
   if (check === "vendor") {
-    window.location.href = "/frontend/pages/vendor-profile.html"
+    window.location.href = "/frontend/pages/vendor-profile.html";
   }
-  // 
+  //
   initMap();
   getUserLocation();
 

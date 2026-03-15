@@ -1,6 +1,7 @@
 // ---------------- GET category FROM URL ----------------
 let allFoods = [];
-const hideSearch=true
+const hideSearch = true;
+window.hideSearch = hideSearch;
 let likedFoodIdsGlobal = [];
 // category name for gwt data in food table
 const params = new URLSearchParams(window.location.search);
@@ -33,24 +34,22 @@ async function renderFoods(foodList) {
     const isLiked = likedFoodIdsGlobal.includes(food.food_id);
     const div = document.createElement("div");
 
-   
     let addressText = "Loading address...";
-    if (food && food.Address) {
-        const road = food.Address.city || "";
-        const city = food.Address.state || "";
-        const suburb = food.Address.country || "";
-        addressText = [road, city, suburb].filter(Boolean).join(", ") || "";
+    if (food && food.address) {
+      const road = food.address.city || "";
+      const city = food.address.state || "";
+      const suburb = food.address.country || "";
+      addressText = [road, city, suburb].filter(Boolean).join(", ") || "";
     } else {
-        addressText = "Address unavailable";
+      addressText = "Address unavailable";
     }
-    
 
     // set data as locked loc
     div.innerHTML = `
       <div class="card">
         <div class="image_container">
           <img 
-            src="${food.image_url}" 
+            src="${getImageUrl(food.food_image_url, '../assets/food_image/Layout.png')}" 
             class="card-image"
             onerror="this.onerror=null; this.src='../assets/food_image/Layout.png';"
           />
@@ -139,13 +138,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     //  Fetch foods in category
     const response = await fetch(`${API_BASE_URL}/foods/category/${category}`);
-    if (response.status !==200) throw new Error("Failed to load foods");
+    if (response.status !== 200) throw new Error("Failed to load foods");
 
     const foods = await response.json();
     allFoods = foods;
 
     // Initial render
     renderFoods(allFoods);
+
+    // Setup search
+    setupSearch("#searchInput", allFoods, renderFoods);
   } catch (err) {
     Toastify({
       text: `No foods Uploaded`,
@@ -161,21 +163,3 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-// ?----------
-// Search handle logic handler
-//?------------
-const searchInput = document.getElementById("searchInput");
-
-if (searchInput) {
-  searchInput.addEventListener("input", function () {
-    const searchValue = this.value.toLowerCase().trim();
-
-    const filteredFoods = allFoods.filter((food) =>
-      food.food_name.toLowerCase().includes(searchValue),
-    );
-
-    renderFoods(filteredFoods);
-  });
-} else {
-  renderFoods(allFoods);
-}
