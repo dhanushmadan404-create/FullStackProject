@@ -129,13 +129,11 @@ def delete_vendor(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    # Only allow admin or the vendor themselves to delete?
-    # For now, following project style which is simplified.
+
     vendor = db.query(Vendor).filter(Vendor.vendor_id == vendor_id).first()
     if not vendor:
         raise HTTPException(status_code=404, detail="Vendor not found")
     
-    # Optional: check if current_user is admin or the vendor
     if current_user.role != "admin" and vendor.user_id != current_user.user_id:
          raise HTTPException(status_code=403, detail="Not authorized")
 

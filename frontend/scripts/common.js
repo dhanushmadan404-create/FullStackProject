@@ -22,6 +22,8 @@ function getImageUrl(path, fallback = "/frontend/assets/default_user.png") {
   // Cleanup potential double slashes
   const cleanPath = path.startsWith("/") ? path.slice(1) : path;
 
+
+  
   // Backend returns paths like "/uploads/foods/filename.jpg"
   // On local, we need to prefix with backend origin if it's an upload
   if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {

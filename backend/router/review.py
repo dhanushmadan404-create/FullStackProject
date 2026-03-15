@@ -23,7 +23,6 @@ def create_review(
     if not food:
         raise HTTPException(status_code=404, detail="Food not found")
 
-    # Use provided vendor_id or derive it from food
     vendor_id = data.vendor_id if data.vendor_id is not None else food.vendor_id
 
     review = Review(
@@ -37,7 +36,6 @@ def create_review(
     db.commit()
     db.refresh(review)
 
-    # Return with username for immediate UI updates
     return {
         **review.__dict__,
         "username": current_user.name

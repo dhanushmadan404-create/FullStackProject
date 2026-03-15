@@ -16,12 +16,12 @@ def like_food(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    # 1️⃣ Check if food exists
+    # Check if food exists
     food = db.query(Food).filter(Food.food_id == data.food_id).first()
     if not food:
         raise HTTPException(status_code=404, detail="Food not found")
 
-    # 2️⃣ Check if already liked
+    # Check if already liked
     existing_like = db.query(FoodLike).filter(
         FoodLike.user_id == current_user.user_id,
         FoodLike.food_id == data.food_id
@@ -33,9 +33,9 @@ def like_food(
             "message": "You already liked this cart"
         }
 
-    # 3️⃣ Create new like
+    #  Create new like
     new_like = FoodLike(
-        user_id=current_user.user_id, # ✅ Use user_id from token for security
+        user_id=current_user.user_id, 
         food_id=data.food_id
     )
 
@@ -97,5 +97,4 @@ def get_liked_foods(
         .filter(FoodLike.user_id == current_user.user_id)
         .all()
     )
-    # Return a flat list of IDs
     return [f[0] for f in liked_foods]

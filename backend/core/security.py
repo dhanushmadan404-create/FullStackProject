@@ -49,7 +49,7 @@ def get_db():
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     auth_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Invalid authentication",
+        detail="You need to again again",
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:

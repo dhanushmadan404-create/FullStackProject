@@ -10,15 +10,13 @@ const cate = category === "drinking" ? "Juice" : category;
 const userId = localStorage.getItem("user_id");
 const token = localStorage.getItem("token");
 
-
-
 // before searching
 // ?---------------- RENDER FOODS FUNCTION ----------------
 async function renderFoods(foodList) {
   const cardContainer = document.getElementById("cardContainer");
   cardContainer.innerHTML = "";
 
-// Check before fetch
+  // Check before fetch
 
   if (!Array.isArray(foodList) || foodList.length === 0) {
     cardContainer.innerHTML = `
@@ -28,23 +26,26 @@ async function renderFoods(foodList) {
     return;
   }
 
-
   // ? list out the foods with address fetching
-  console.log(foodList)
+  console.log(foodList);
   const renderPromises = foodList.map(async (food) => {
     const isLiked = likedFoodIdsGlobal.includes(food.food_id);
     const div = document.createElement("div");
-    
-// getaddress by nomistim reverse api 
+
+    // getaddress by nomistim reverse api
+    let AddressData;
     let addressText = "Loading address...";
-   
+    try {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${food.latitude}&lon=${food.longitude}`,
       );
-      const data = await response.json();
-      addressText = `${data.address?.road || ""}, ${data.address?.city || ""},${data.address?.suburb || ""}`;
-  
-// set data as locked loc
+      AddressData = await response.json();
+    } catch (error) {
+      console.log(error);
+    }
+    addressText = `${AddressData.address?.road || ""}, ${AddressData.address?.city || ""},${AddressData.address?.suburb || ""}`;
+
+    // set data as locked loc
     div.innerHTML = `
       <div class="card">
         <div class="image_container">
@@ -121,19 +122,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // ---------- Load Foods ----------
   try {
-    // 1️⃣ Fetch liked foods if logged in
+    //  Fetch liked foods if logged in
     let likedFoodIds = [];
     if (token) {
       const likedRes = await fetch(`${API_BASE_URL}/foods/liked`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (likedRes.ok) {
+      if (likedRes.status == 200) {
         likedFoodIds = await likedRes.json();
       }
     }
     likedFoodIdsGlobal = likedFoodIds;
 
-    // 2️⃣ Fetch foods in category
+    //  Fetch foods in category
     const response = await fetch(`${API_BASE_URL}/foods/category/${category}`);
     if (!response.ok) throw new Error("Failed to load foods");
 
@@ -157,12 +158,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-// ?---------- 
+// ?----------
 // Search handle logic handler
 //?------------
 const searchInput = document.getElementById("searchInput");
 
-if (searchInput.length !=0) {
+if (searchInput.length != 0) {
   searchInput.addEventListener("input", function () {
     const searchValue = this.value.toLowerCase().trim();
 
@@ -172,8 +173,8 @@ if (searchInput.length !=0) {
 
     renderFoods(filteredFoods);
   });
-}else{
-   renderFoods(allFoods);
+} else {
+  renderFoods(allFoods);
 }
 // !
 // ?like handle
@@ -185,7 +186,7 @@ async function handleLike(foodId) {
 
   if (!userId) {
     Toastify({
-      text: "Please login first 🔐",
+      text: "Please login first ",
       duration: 3000,
       gravity: "top",
       position: "right",
@@ -274,7 +275,7 @@ async function handleRemove(foodId) {
     // ✅ Safe JSON parsing
     const data = await res.json().catch(() => ({}));
 
-    if (res.status!==200) {
+    if (res.status !== 200) {
       let errorMessage = "Remove failed";
 
       if (typeof data.detail === "string") {
@@ -366,7 +367,7 @@ window.openReview = async function (food_id, food_name) {
       console.log(commentValue);
       return;
     }
-// Post the comment
+    // Post the comment
     try {
       const response = await fetch(`${API_BASE_URL}/reviews`, {
         method: "POST",
@@ -380,7 +381,7 @@ window.openReview = async function (food_id, food_name) {
         }),
       });
 
-      if (response.status!==200) {
+      if (response.status !== 200) {
         Toastify({
           text: `Failed to post comment`,
           gravity: "top",

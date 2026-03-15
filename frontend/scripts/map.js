@@ -85,9 +85,6 @@ function drawRoute() {
   
   routingControl = L.Routing.control({
     waypoints: [L.latLng(userLat, userLng), L.latLng(foodLat, foodLng)],
-    routeWhileDragging: false,
-    addWaypoints: false,
-    draggableWaypoints: false,
     lineOptions: {
       styles: [{ color: "blue", opacity: 0.7, weight: 4 }],
     },

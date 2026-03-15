@@ -62,9 +62,8 @@ def save_image(image: UploadFile) -> str:
     return f"/uploads/foods/{filename}"
 
 
-# -----------------------------------
+
 # Get All Foods
-# -----------------------------------
 
 @router.get("/all", response_model=List[FoodResponse])
 def get_all_foods(db: Session = Depends(get_db)):
@@ -87,9 +86,7 @@ def get_all_foods(db: Session = Depends(get_db)):
         })
     return result
 
-# -----------------------------------
 # Get Foods By Category
-# -----------------------------------
 
 
 @router.get("/category/{category}", response_model=List[FoodResponse])
@@ -133,9 +130,7 @@ def get_foods_by_category(
 
     return response_list
 
-# -----------------------------------
 # Create Food
-# -----------------------------------
 
 @router.post("", response_model=FoodResponse)
 def create_food(
@@ -183,11 +178,7 @@ def create_food(
     }
 
 
-# -----------------------------------
 # Get Top 4 Most Liked Foods
-# IMPORTANT: must be BEFORE /{food_id} so FastAPI doesn't
-# try to parse "top-liked" as an integer food_id (→ 422)
-# -----------------------------------
 @router.get("/top-liked")
 def get_top_liked_foods(db: Session = Depends(get_db)):
     top_foods = (
@@ -226,10 +217,7 @@ def get_top_liked_foods(db: Session = Depends(get_db)):
     return result
 
 
-# -----------------------------------
 # Get Foods By Vendor
-# IMPORTANT: must be BEFORE /{food_id}
-# -----------------------------------
 
 @router.get("/vendor/{vendor_id}", response_model=List[FoodResponse])
 def get_foods_by_vendor(vendor_id: int, db: Session = Depends(get_db)):
@@ -253,10 +241,7 @@ def get_foods_by_vendor(vendor_id: int, db: Session = Depends(get_db)):
     return result
 
 
-# -----------------------------------
 # Get Food By ID
-# IMPORTANT: wildcard — keep this AFTER all specific GET routes
-# -----------------------------------
 
 @router.get("/{food_id}", response_model=FoodResponse)
 def get_food(food_id: int, db: Session = Depends(get_db)):
@@ -279,9 +264,7 @@ def get_food(food_id: int, db: Session = Depends(get_db)):
     }
 
 
-# -----------------------------------
 # Delete Food
-# -----------------------------------
 
 @router.delete("/{food_id}")
 def delete_food(
@@ -303,8 +286,7 @@ def delete_food(
 
         if os.path.exists(file_path):
             os.remove(file_path)
-    # Note: Cloudinary deletion requires public_id which is not stored.
-    # We removed local deletion since UPLOAD_DIR is no longer used.
+   
 
     db.delete(food)
     db.commit()
@@ -312,9 +294,7 @@ def delete_food(
     return {"message": "Food deleted successfully"}
 
 
-# -----------------------------------
 # Update Food
-# -----------------------------------
 
 @router.put("/{food_id}", response_model=FoodResponse)
 def update_food(
