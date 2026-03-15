@@ -1,5 +1,6 @@
 // ---------------- GET category FROM URL ----------------
 let allFoods = [];
+const hideSearch=true
 let likedFoodIdsGlobal = [];
 // category name for gwt data in food table
 const params = new URLSearchParams(window.location.search);
@@ -32,26 +33,17 @@ async function renderFoods(foodList) {
     const isLiked = likedFoodIdsGlobal.includes(food.food_id);
     const div = document.createElement("div");
 
-    // getaddress by nomistim reverse api
-    // getaddress by nomistim reverse api
+   
     let addressText = "Loading address...";
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${food.latitude}&lon=${food.longitude}`,
-      );
-      if (response.ok) {
-        const AddressData = await response.json();
-        const road = AddressData.address?.road || "";
-        const city = AddressData.address?.city || "";
-        const suburb = AddressData.address?.suburb || "";
-        addressText = [road, city, suburb].filter(Boolean).join(", ") || "Address unavailable";
-      } else {
+    if (food && food.Address) {
+        const road = food.Address.city || "";
+        const city = food.Address.state || "";
+        const suburb = food.Address.country || "";
+        addressText = [road, city, suburb].filter(Boolean).join(", ") || "";
+    } else {
         addressText = "Address unavailable";
-      }
-    } catch (error) {
-      console.log("Geocoding error:", error);
-      addressText = "Address unavailable";
     }
+    
 
     // set data as locked loc
     div.innerHTML = `
@@ -62,21 +54,24 @@ async function renderFoods(foodList) {
             class="card-image"
             onerror="this.onerror=null; this.src='../assets/food_image/Layout.png';"
           />
-        </div>
-
-        <div>
+          <div class="title-likes">
           <h2 class="food_name">${food.food_name}</h2>
-          <b>${food.opening_time} To ${food.closing_time}</b>
-          <br/><br/>
-          <b>Address:</b>
-          <p>${addressText}</p>
-        </div>
-
-        <div class="likes">
+           <div class="likes">
           ❤️ <span id="like-count-${food.food_id}">
             ${food.total_likes ?? 0}
           </span> Likes
         </div>
+        </div>
+        </div>
+
+        <div >
+          <p><b>Shop Time:</b>${food.opening_time} To ${food.closing_time}</p>
+          
+          <b>Address:</b>
+          <p>${addressText}</p>
+        </div>
+
+     
 
         <div class="card-buttons">
           <button 
@@ -90,7 +85,7 @@ async function renderFoods(foodList) {
             id="remove-btn-${food.food_id}"
             onclick="handleRemove(${food.food_id})"
             style="display:${isLiked ? "inline-block" : "none"}">
-            REMOVE
+            DISLIKE
           </button>
 
           <button onclick="openReview(${food.food_id}, '${food.food_name}')">
@@ -144,7 +139,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     //  Fetch foods in category
     const response = await fetch(`${API_BASE_URL}/foods/category/${category}`);
-    if (!response.ok) throw new Error("Failed to load foods");
+    if (response.status !==200) throw new Error("Failed to load foods");
 
     const foods = await response.json();
     allFoods = foods;
@@ -153,7 +148,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     renderFoods(allFoods);
   } catch (err) {
     Toastify({
-      text: `Fetch Error: ${err.message}`,
+      text: `No foods Uploaded`,
       duration: 5000,
       gravity: "top",
       position: "right",
@@ -162,7 +157,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       stopOnFocus: true,
     }).showToast();
 
-    cardContainer.innerHTML = `<p style='text-align:center;'>Failed to load records ❌</p>`;
+    cardContainer.innerHTML = `<p style='text-align:center;'>No Foods Uploaded</p>`;
   }
 });
 
@@ -171,7 +166,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 //?------------
 const searchInput = document.getElementById("searchInput");
 
-if (searchInput.length != 0) {
+if (searchInput) {
   searchInput.addEventListener("input", function () {
     const searchValue = this.value.toLowerCase().trim();
 
@@ -183,292 +178,4 @@ if (searchInput.length != 0) {
   });
 } else {
   renderFoods(allFoods);
-}
-// !
-// ?like handle
-// button
-async function handleLike(foodId) {
-  let likeButton = document.getElementById(`like-btn-${foodId}`);
-  let removeButton = document.getElementById(`remove-btn-${foodId}`);
-  let userId = localStorage.getItem("user_id");
-
-  if (!userId) {
-    Toastify({
-      text: "Please login first ",
-      duration: 3000,
-      gravity: "top",
-      position: "right",
-      style: { background: "orange" },
-    }).showToast();
-    return;
-  }
-
-  try {
-    const res = await fetch(`${API_BASE_URL}/foods/like`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify({
-        food_id: Number(foodId),
-      }),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok || data.status === false) {
-      Toastify({
-        text: data.message || "Already liked",
-        duration: 3000,
-        gravity: "top",
-        position: "right",
-        style: { background: "red" },
-      }).showToast();
-
-      likeButton.style.display = "none";
-      removeButton.style.display = "inline-block";
-      return;
-    }
-
-    // ✅ Success
-    likeButton.style.display = "none";
-    removeButton.style.display = "inline-block";
-
-    document.getElementById(`like-count-${foodId}`).textContent =
-      data.total_likes;
-
-    Toastify({
-      text: "Liked successfully ❤️",
-      duration: 3000,
-      gravity: "top",
-      position: "right",
-      style: { background: "green" },
-    }).showToast();
-  } catch (error) {
-    Toastify({
-      text: "Something went wrong",
-      duration: 3000,
-      gravity: "top",
-      position: "right",
-      style: { background: "red" },
-    }).showToast();
-  }
-}
-// remove like handle
-async function handleRemove(foodId) {
-  const likeButton = document.getElementById(`like-btn-${foodId}`);
-  const removeButton = document.getElementById(`remove-btn-${foodId}`);
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    Toastify({
-      text: "Please login first 🔐",
-      duration: 3000,
-      gravity: "top",
-      position: "right",
-      style: { background: "orange" },
-    }).showToast();
-    return;
-  }
-
-  try {
-    const res = await fetch(`${API_BASE_URL}/foods/like/${foodId}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    // ✅ Safe JSON parsing
-    const data = await res.json().catch(() => ({}));
-
-    if (res.status !== 200) {
-      let errorMessage = "Remove failed";
-
-      if (typeof data.detail === "string") {
-        errorMessage = data.detail;
-      } else if (Array.isArray(data.detail)) {
-        errorMessage = data.detail[0]?.msg || errorMessage;
-      }
-
-      Toastify({
-        text: errorMessage,
-        duration: 3000,
-        gravity: "top",
-        position: "right",
-        style: { background: "red" },
-      }).showToast();
-      return;
-    }
-
-    // ✅ Success UI update
-    likeButton.style.display = "inline-block";
-    removeButton.style.display = "none";
-
-    document.getElementById(`like-count-${foodId}`).textContent =
-      data.total_likes ?? 0;
-
-    Toastify({
-      text: data.message || "Like removed successfully",
-      duration: 3000,
-      gravity: "top",
-      position: "right",
-      style: { background: "blue" },
-    }).showToast();
-  } catch (error) {
-    Toastify({
-      text: "Network error. Please try again.",
-      duration: 3000,
-      gravity: "top",
-      position: "right",
-      style: { background: "red" },
-    }).showToast();
-  }
-}
-// !
-// ---------------- REVIEW SYSTEM ----------------
-// !
-const Review = document.getElementById("review");
-
-// Open Review Popup
-window.openReview = async function (food_id, food_name) {
-  Review.style.visibility = "visible";
-
-  Review.innerHTML = `
-    <div  class="review-box">
-      <h2>${food_name}</h2>
-      <span id="closeReview" style="cursor:pointer;">❌</span>
-
-      <div class="commentEntry">
-        <textarea 
-          id="commentText" 
-          placeholder="Enter your comment"
-          minlength="5"
-          maxlength="200"></textarea>
-        <button id="shareBtn">Share</button>
-      </div>
-
-      <div id="allReviews"></div>
-    </div>
-  `;
-
-  // Close button
-  document.getElementById("closeReview").addEventListener("click", () => {
-    Review.style.visibility = "hidden";
-  });
-
-  // Share comment
-  document.getElementById("shareBtn").addEventListener("click", async () => {
-    const commentValue = document.getElementById("commentText").value.trim();
-
-    if (!commentValue) {
-      Toastify({
-        text: `Comment cannot be empty`,
-        duration: 5000,
-        gravity: "top",
-        position: "right",
-        style: { background: "red" },
-        close: true,
-        stopOnFocus: true,
-      }).showToast();
-      console.log(commentValue);
-      return;
-    }
-    // Post the comment
-    try {
-      const response = await fetch(`${API_BASE_URL}/reviews`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-          food_id: food_id,
-          comment: commentValue,
-        }),
-      });
-
-      if (response.status !== 200) {
-        Toastify({
-          text: `Failed to post comment`,
-          gravity: "top",
-          position: "right",
-          style: { background: "red" },
-          close: true,
-          stopOnFocus: true,
-        }).showToast();
-
-        return;
-      }
-      Toastify({
-        text: `Comment posted successfully`,
-        gravity: "top",
-        position: "right",
-        style: { background: "green" },
-      }).showToast();
-
-      document.getElementById("commentText").value = "";
-      loadReviews(food_id);
-    } catch (error) {
-      Toastify({
-        text: `Make sure are you login : ${error}`,
-        duration: 5000,
-        gravity: "top",
-        position: "right",
-        style: { background: "red" },
-        close: true,
-        stopOnFocus: true,
-      }).showToast();
-    }
-  });
-
-  // Load existing reviews
-  loadReviews(food_id);
-};
-
-// Load Reviews
-async function loadReviews(food_id) {
-  const reviewContainer = document.getElementById("allReviews");
-
-  try {
-    const response = await fetch(`${API_BASE_URL}/reviews/food/${food_id}`);
-
-    if (!response.ok) throw new Error("Failed to load reviews");
-
-    const reviewData = await response.json();
-
-    reviewContainer.innerHTML = "";
-
-    if (reviewData.length === 0) {
-      reviewContainer.innerHTML = "<p>No comments yet.</p>";
-      return;
-    }
-
-    reviewData.forEach((data) => {
-      const div = document.createElement("div");
-      div.classList.add("review-item");
-      div.innerHTML = `
-        <b>${data.username || "User"}</b>
-        <small>
-          ${new Date(data.created_at).toLocaleString()}
-        </small>
-        <p>${data.comment}</p>
-        <hr/>
-      `;
-
-      reviewContainer.appendChild(div);
-    });
-  } catch (error) {
-    Toastify({
-      text: `Load Review Error: ${error}`,
-      duration: 5000,
-      gravity: "top",
-      position: "right",
-      style: { background: "red" },
-      close: true,
-      stopOnFocus: true,
-    }).showToast();
-    reviewContainer.innerHTML = "<p>Failed to load comments ❌</p>";
-  }
 }

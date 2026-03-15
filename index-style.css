@@ -15,91 +15,13 @@
 }
 
 body {
-  font-family:
-    "Inter",
-    system-ui,
-    -apple-system,
-    sans-serif;
+  font-style: oblique;
   background-color: var(--bg);
   color: var(--text);
   line-height: 1.6;
 }
 
 /* ================= HEADER ================= */
-
-header {
-  background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-/* Logo */
-header .logo {
-  height: 90px;
-  border-radius: 50px;
-  transition: transform 0.3s ease;
-  background: transparent;
-}
-
-header .logo:hover {
-  transform: scale(1.05);
-}
-
-.header_container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-/* Logo */
-.logo {
-  height: 90px;
-  transition: transform 0.25s ease;
-  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.15));
-}
-
-.logo:hover {
-  transform: scale(1.08);
-}
-
-.logo.location {
-  height: 70px;
-  filter: none;
-}
-
-/* Header Buttons */
-#profile,
-#login {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 14px;
-  transition: all 0.25s ease;
-}
-
-#profile {
-  background-color: transparent;
-  color: #111827;
-}
-
-#profile:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-}
-
-#login {
-  background-color: #ff6f00;
-  color: white;
-  text-decoration: none;
-}
-
-#login:hover {
-  background-color: #e65100;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
 
 /* ================= MAIN ================= */
 main {
@@ -124,7 +46,9 @@ h2 {
 
 #trending_section {
   padding: 60px 80px;
-  background-color: #f5f5f5;
+  background-color:orange;
+  border-radius: 10px 40px;
+  margin-top: 200px;
 }
 
 #trending_section h1 {
@@ -148,8 +72,8 @@ h2 {
 .card {
   background: #ffffff;
   padding: 10px;
-  height: 600px;
-  border-radius: 20px;
+  height: 360px;
+  border-radius: 60px 70px 40px 120px;
   overflow: hidden;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -157,25 +81,28 @@ h2 {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+
   
 }
 
 .card:hover {
-  transform: translateY(-8px);
+  transform: translateY(-10px);
   box-shadow: 0 14px 30px rgba(0, 0, 0, 0.15);
 }
-
+.card h3{
+  width: fit-content;
+  border-bottom: 2px groove orange;
+}
 /* Image container */
 .image_container {
-  width: 100%;
-  height: 250px;
   overflow: hidden;
+  display: flex;
 }
 
 .card-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  border-radius: 50%;
+  width: 100px;
+  object-fit: contain;
   display: block;
 }
 
@@ -242,18 +169,22 @@ h2 {
 .category-card {
   display: flex;
   flex-direction: column;
+  
   align-items: center;
   text-decoration: none;
   color: var(--text);
   background: var(--white);
+  border: 2PX SOLID orange;
   padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
-  transition: background 0.2s;
+  border-radius: 10px 40px;
+
+  box-shadow: 10PX 10px 10px rgba(0, 0, 0, 0.02);
 }
 
 .category-card:hover {
-  background: #f0f0f0;
+  background: #b1aeae;
+  cursor: pointer;
+
 }
 
 .category-card img {

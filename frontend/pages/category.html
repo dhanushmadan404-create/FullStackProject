@@ -15,47 +15,19 @@
     <!-- Toastify JS -->
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <!-- ... styles ... -->
+     <link rel="stylesheet" href="/frontend/styles/Nav.css">
       
   </head>
 
   <body>
     <header>
-      <div class="header_container">
-        <!-- Logo -->
-        <img
-          class="logo"
-          src="../assets/annesana.png"
-          alt="Annesana Logo"
-          onclick="window.location.href = '../../index.html'"
-        />
+    <div id="Nav">
 
-        <!-- Location icon -->
-        <img
-          class="logo location"
-          src="/frontend/assets/food_image/location.png"
-          alt="Location"
-          onclick="window.location.href = './map.html'"
-        />
-           <div>
-            <input type="text" id="searchInput" placeholder="Search..." name="Search"/>
-            <b>🔍</b>
-          </div>
-
-        <div class="right-align right">
-       
-          <button
-            id="profile"
-            onclick="window.location.href = './profile.html'"
-          >
-            Profile
-          </button>
-          <a href="./login.html" id="login">Log in</a>
-        </div>
-      </div>
+    </div>
     </header>
     <!-- ... header ... -->
     <main>
-      <div class="section-title">
+      <div class="section-title top">
         TOP CATEGORIES
 
         <div class="category-grid vertical">
@@ -134,5 +106,6 @@
     </footer>
     <script src="../scripts/common.js"></script>
     <script src="../scripts/category.js"></script>
+    <script src="../scripts/reviewLike.js"></script>
   </body>
 </html>

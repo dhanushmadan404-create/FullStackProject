@@ -1,6 +1,7 @@
 
 // ---------------- GLOBAL TOKEN ----------------
 const token = localStorage.getItem("token");
+const hideSearch=false
 
 // ---------------- MAIN EXECUTION ----------------
 document.addEventListener("DOMContentLoaded", () => {

@@ -1,6 +1,7 @@
 // API_BASE_URL is defined in common.js
 
 // ---------------- GLOBAL VARIABLES ----------------
+const hideSearch=false;
 let map = null;
 let userMarker = null;
 let foodMarker = null;

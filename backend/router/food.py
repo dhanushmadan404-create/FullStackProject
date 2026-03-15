@@ -12,25 +12,30 @@ from models.user import User
 from models.food_like import FoodLike
 from schemas.food import FoodResponse
 from core.security import get_current_user
-
+import requests
 # Get address
 # import requests
 
-# #? GetAddress By nomitim reverse api
-# def get_address(lat, lon):
-#     url = f"https://nominatim.openstreetmap.org/reverse?format=json&lat={lat}&lon={lon}"
+# #? GetAddress By *Nominatim. reverse api
+def get_address(lat, lon):
+    url = f"https://nominatim.openstreetmap.org/reverse?format=json&lat={lat}&lon={lon}"
 
-#     headers = {"User-Agent": "food-app/1.0"}
+    headers = {"User-Agent": "food-app/1.0"}
 
-#     res = requests.get(url, headers=headers)
-#     data = res.json()
-
-#     return {
-#         "city": data["address"].get("city"),
-#         "state": data["address"].get("state"),
-#         "country": data["address"].get("country"),
-#         "address": data["display_name"]
-#     }
+    try:
+        res = requests.get(url, headers=headers, timeout=3)
+        res.raise_for_status()
+        data = res.json()
+        address = data.get("address", {})
+        return {
+            "city":  address.get("city") if address.get("city") else ""or address.get("town")if address.get("town") else "" or address.get("village")if address.get("village") else "",
+            "state": address.get("state")if address.get("state") else "",
+            "country": address.get("country")if address.get("country") else "",
+            "address": data.get("display_name")if address.get("display_name") else ""
+        }
+    except Exception as e:
+        print(f"Geocoding error: {e}")
+        return {"city": "", "state": "", "country": "", "address": ""}
 
 
 router = APIRouter(prefix="/foods", tags=["Foods"])
@@ -81,6 +86,7 @@ def get_all_foods(db: Session = Depends(get_db)):
             "longitude": food.longitude,
             "vendor_id": food.vendor_id,
             "total_likes": total_likes or 0,
+            "Address":get_address( food.latitude,food.longitude),
             "opening_time": food.vendor.opening_time,
             "closing_time": food.vendor.closing_time
         })
@@ -113,6 +119,8 @@ def get_foods_by_category(
             .filter(FoodLike.food_id == food.food_id)
             .scalar()
         )
+        
+
 
         response_list.append({
             "food_id": food.food_id,
@@ -123,6 +131,8 @@ def get_foods_by_category(
             "longitude": food.longitude,
             "vendor_id": food.vendor_id,
             "total_likes": total_likes,
+            "Address":get_address( food.latitude,food.longitude),
+
 
             "opening_time": food.vendor.opening_time,
             "closing_time": food.vendor.closing_time
@@ -209,6 +219,8 @@ def get_top_liked_foods(db: Session = Depends(get_db)):
             "latitude": food.latitude,
             "longitude": food.longitude,
             "vendor_id": food.vendor_id,
+            "Address":get_address( food.latitude,food.longitude),
+
             "total_likes": total_likes or 0,
             "opening_time": food.vendor.opening_time,
             "closing_time": food.vendor.closing_time

@@ -2,6 +2,7 @@
 // -----------------------------
 // Load Trending Foods (Display Only)
 // -----------------------------
+const hideSearch=true
 async function loadTrendingFoods() {
   const container = document.getElementById("trending_container");
   if (!container) return;
@@ -26,20 +27,14 @@ async function loadTrendingFoods() {
     foods.forEach(async (food) => {
       let addressText = "Address unavailable";
       const div = document.createElement("div");
-      try {
-        const response = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${food.latitude}&lon=${food.longitude}`
-        );
-        if (response.ok) {
-          const data = await response.json();
-          const road = data.address?.road || "";
-          const city = data.address?.city || "";
-          const suburb = data.address?.suburb || "";
-          addressText = `${road} ${city} ${suburb}`.trim() || "Address unavailable";
-        }
-      } catch (e) {
-        console.log("Geocoding error:", e);
+      
+      if (food && food.Address) {
+        const road = food.Address.city || "";
+        const city = food.Address.state || "";
+        const suburb = food.Address.country || "";
+        addressText = [road, city, suburb].filter(Boolean).join(", ") || "";
       }
+    
       const imgUrl = getImageUrl(
         food.food_image_url,
         "/frontend/assets/default_food.png"
@@ -53,12 +48,13 @@ async function loadTrendingFoods() {
               class="card-image"
               onerror="this.onerror=null; this.src='./frontend/assets/food_image/Layout.png';"
             />
+            <h2 class="food_name">${food.food_name}</h2>
           </div> 
 
          <div>
-    <h2 class="food_name">${food.food_name}</h2>
-    <b>${food.opening_time} To ${food.closing_time}</b> 
-   <br/><b>Address:</b><p>${addressText}</p>
+         
+    <p><h3>Shop Time:</h3>${food.opening_time} To ${food.closing_time}</p> 
+   <br/><h3>Address:</h3><p>${addressText}</p>
 </div>
 
           <div class="likes">

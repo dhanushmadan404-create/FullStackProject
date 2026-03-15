@@ -1,6 +1,4 @@
-// -----------------------------
 // API BASE URL (Local + Vercel)
-// -----------------------------
 const API_BASE_URL =
   window.location.hostname === "localhost" ||
     window.location.hostname === "127.0.0.1"
@@ -10,9 +8,7 @@ const API_BASE_URL =
 // Make it globally accessible
 window.API_BASE_URL = API_BASE_URL;
 
-// -----------------------------
 // Get Image URL helper
-// -----------------------------
 function getImageUrl(path, fallback = "/frontend/assets/default_user.png") {
   if (!path) return fallback;
 
@@ -36,16 +32,13 @@ function getImageUrl(path, fallback = "/frontend/assets/default_user.png") {
   return `/${cleanPath}`;
 }
 window.getImageUrl = getImageUrl;
-// -----------------------------
 // Run on page load
-// -----------------------------
 document.addEventListener("DOMContentLoaded", () => {
   checkLoginStatus();
+  renderNav();
 });
 
-// -----------------------------
 // Check Login Status
-// -----------------------------
 function checkLoginStatus() {
   const token = localStorage.getItem("token");
 
@@ -66,9 +59,7 @@ function checkLoginStatus() {
   }
 }
 
-// -----------------------------
 // Logout Function
-// -----------------------------
 function logout() {
   localStorage.removeItem("token");
   localStorage.removeItem("role");
@@ -77,4 +68,42 @@ function logout() {
   window.location.href = "/index.html";
 }
 
-// Profile
+//? NavBar
+function renderNav() {
+  const head = document.getElementById('Nav');
+  if (!head) return;
+
+  
+  head.innerHTML = `
+ <div class="header_container">
+      <!-- Logo -->
+      <img class="logo" src="/frontend/assets/annesana.png" alt="Annesana Logo"
+        onclick="window.location.href = '/index.html'" />
+
+      <!-- Location search -->
+       ${hideSearch ? `
+        <div class="search">
+          <input type="text" id="searchInput" placeholder="Search..." name="Search"/>
+          <img src="/frontend/assets/search.png" alt="Error">
+        </div>
+        ` : ''}
+        
+      <div class="right-align right">
+        <a href='/index.html' class="navBtn">
+          Home
+        </a>
+        <a href="/frontend/pages/map.html" class="navBtn">
+          Location
+        </a>
+        <a id="profile" class="navBtn" onclick="window.location.href = '/frontend/pages/profile.html'">
+          Profile
+        </a>
+        <a class="navBtn" href="/frontend/pages/login.html" id="login">Log in</a>
+      </div>
+    </div>
+  `;
+
+  // Re-run login check to ensure profile/login buttons show correctly in the new innerHTML
+  checkLoginStatus();
+}
+
