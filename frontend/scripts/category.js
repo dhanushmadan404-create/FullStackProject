@@ -35,11 +35,9 @@ async function renderFoods(foodList) {
     const div = document.createElement("div");
 
     let addressText = "Loading address...";
-    if (food && food.address) {
-      const road = food.address.city || "";
-      const city = food.address.state || "";
-      const suburb = food.address.country || "";
-      addressText = [road, city, suburb].filter(Boolean).join(", ") || "";
+    if (food.latitude && food.longitude) {
+      const addr = await fetchAddress(food.latitude, food.longitude);
+      addressText = [addr.road, addr.suburb, addr.city].filter(Boolean).join(", ") || addr.display_name;
     } else {
       addressText = "Address unavailable";
     }
@@ -64,10 +62,8 @@ async function renderFoods(foodList) {
         </div>
 
         <div >
-          <p><b>Shop Time:</b>${food.opening_time} To ${food.closing_time}</p>
-          
-          <b>Address:</b>
-          <p>${addressText}</p>
+          <p><strong>Shop Time:</strong> ${food.opening_time} To ${food.closing_time}</p>
+          <p><strong>Address:</strong> ${addressText}</p>
         </div>
 
      

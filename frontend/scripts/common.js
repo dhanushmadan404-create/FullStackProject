@@ -133,3 +133,47 @@ function setupSearch(inputSelector, data, renderFunc) {
   });
 }
 window.setupSearch = setupSearch;
+
+// --- GEOCODING HELPERS ---
+const addressCache = new Map();
+
+/**
+ * Fetch address from Nominatim (Reverse Geocoding)
+ * Includes a mandatory delay to respect rate limits (max 1 per sec)
+ */
+async function fetchAddress(lat, lng) {
+  const cacheKey = `${parseFloat(lat).toFixed(4)},${parseFloat(lng).toFixed(4)}`;
+  if (addressCache.has(cacheKey)) return addressCache.get(cacheKey);
+
+  try {
+    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`;
+    const res = await fetch(url, {
+      headers: { "User-Agent": "AnnesanaFoodApp/1.0" },
+    });
+    const data = await res.json();
+    const addressData = data.address || {};
+
+    const road = addressData.road || addressData.pedestrian || "";
+    const suburb = addressData.suburb || addressData.neighbourhood || addressData.city_district || "";
+    const city = addressData.city || addressData.town || addressData.village || "";
+
+    const result = {
+      road: road,
+      suburb: suburb,
+      city: city,
+      display_name: data.display_name || "Address unavailable",
+    };
+
+    addressCache.set(cacheKey, result);
+    return result;
+  } catch (error) {
+    console.error("Geocoding error:", error);
+    return {
+      road: "",
+      suburb: "",
+      city: "",
+      display_name: "Address unavailable",
+    };
+  }
+}
+window.fetchAddress = fetchAddress;

@@ -16,6 +16,14 @@ async function loadTrendingFoods() {
     if (!response.ok) throw new Error("Failed to fetch trending foods");
 
     trendingFoods = await response.json();
+
+    // Pre-fetch addresses (Nominatim friendly-ish)
+    for (const food of trendingFoods) {
+      if (food.latitude && food.longitude) {
+        food.address_info = await fetchAddress(food.latitude, food.longitude);
+      }
+    }
+
     renderTrendingFoods(trendingFoods);
     
     // Setup search
@@ -41,11 +49,9 @@ function renderTrendingFoods(foods) {
     let addressText = "Address unavailable";
     const div = document.createElement("div");
 
-    if (food && food.address) {
-      const road = food.address.city || "";
-      const city = food.address.state || "";
-      const suburb = food.address.country || "";
-      addressText = [road, city, suburb].filter(Boolean).join(", ") || "";
+    if (food && food.address_info) {
+      const addr = food.address_info;
+      addressText = [addr.road, addr.suburb, addr.city].filter(Boolean).join(", ") || addr.display_name;
     }
 
     const imgUrl = getImageUrl(
@@ -64,8 +70,8 @@ function renderTrendingFoods(foods) {
           <h2 class="food_name">${food.food_name}</h2>
         </div> 
        <div>
-         <p><h3>Shop Time:</h3>${food.opening_time} To ${food.closing_time}</p> 
-         <br/><h3>Address:</h3><p>${addressText}</p>
+         <p><strong>Shop Time:</strong> ${food.opening_time} To ${food.closing_time}</p> 
+         <p><strong>Address:</strong> ${addressText}</p>
        </div>
         <div class="likes">❤️ ${food.total_likes ?? 0} Likes</div>
         <div class="card-buttons">

@@ -13,29 +13,7 @@ from models.food_like import FoodLike
 from schemas.food import FoodResponse
 from core.security import get_current_user
 import requests
-# Get address
-# import requests
 
-# #? GetAddress By *Nominatim. reverse api
-def get_address(lat, lon):
-    url = f"https://nominatim.openstreetmap.org/reverse?format=json&lat={lat}&lon={lon}"
-
-    headers = {"User-Agent": "food-app/1.0"}
-
-    try:
-        res = requests.get(url, headers=headers, timeout=3)
-        res.raise_for_status()
-        data = res.json()
-        address_data = data.get("address", {})
-        return {
-            "city": address_data.get("city") or address_data.get("town") or address_data.get("village") or "",
-            "state": address_data.get("state") or "",
-            "country": address_data.get("country") or "",
-            "address": data.get("display_name") or ""
-        }
-    except Exception as e:
-        print(f"Geocoding error: {e}")
-        return {"city": "", "state": "", "country": "", "address": ""}
 
 
 router = APIRouter(prefix="/foods", tags=["Foods"])
@@ -86,7 +64,6 @@ def get_all_foods(db: Session = Depends(get_db)):
             "longitude": food.longitude,
             "vendor_id": food.vendor_id,
             "total_likes": total_likes or 0,
-            "address": get_address(food.latitude, food.longitude),
             "opening_time": food.vendor.opening_time,
             "closing_time": food.vendor.closing_time
         })
@@ -131,7 +108,6 @@ def get_foods_by_category(
             "longitude": food.longitude,
             "vendor_id": food.vendor_id,
             "total_likes": total_likes,
-            "address": get_address(food.latitude, food.longitude),
             "opening_time": food.vendor.opening_time,
             "closing_time": food.vendor.closing_time
         })
@@ -181,7 +157,6 @@ def create_food(
         "longitude": new_food.longitude,
         "vendor_id": new_food.vendor_id,
         "total_likes": 0,
-        "address": get_address(new_food.latitude, new_food.longitude),
         "opening_time": vendor.opening_time,
         "closing_time": vendor.closing_time
     }
@@ -218,7 +193,6 @@ def get_top_liked_foods(db: Session = Depends(get_db)):
             "latitude": food.latitude,
             "longitude": food.longitude,
             "vendor_id": food.vendor_id,
-            "address": get_address(food.latitude, food.longitude),
             "total_likes": total_likes or 0,
             "opening_time": food.vendor.opening_time,
             "closing_time": food.vendor.closing_time
