@@ -124,16 +124,25 @@ async function loadFoodLocation(foodId) {
     if (foodMarker) {
       map.removeLayer(foodMarker);
     }
-     const response = await fetch(
+    let popupAddress = "Address unavailable";
+    try {
+      const response = await fetch(
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${food.latitude}&lon=${food.longitude}`,
       );
- 
-    const data = await response.json();
+      if (response.ok) {
+        const data = await response.json();
+        if (data && data.address) {
+          popupAddress = `${data.address.road || ""},${data.address.suburb || ""},${data.address.city || ""}`;
+        }
+      }
+    } catch (e) {
+      console.log("Geocoding error:", e);
+    }
 
     foodMarker = L.marker([food.latitude, food.longitude], { icon: foodIcon })
       .addTo(map)
       .bindPopup(
-        `<b>${food.food_name}</b><br/>${food.category}<br/><b>Address</b><p>${data.address.road ? data.address.road : ""},${data.address.suburb ? data.address.suburb : ""},${data.address.city ? data.address.city : ""}</p>`,
+        `<b>${food.food_name}</b><br/>${food.category}<br/><b>Address</b><p>${popupAddress}</p>`,
       )
       .openPopup();
 

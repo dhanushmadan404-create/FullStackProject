@@ -33,17 +33,25 @@ async function renderFoods(foodList) {
     const div = document.createElement("div");
 
     // getaddress by nomistim reverse api
-    let AddressData;
+    // getaddress by nomistim reverse api
     let addressText = "Loading address...";
     try {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${food.latitude}&lon=${food.longitude}`,
       );
-      AddressData = await response.json();
+      if (response.ok) {
+        const AddressData = await response.json();
+        const road = AddressData.address?.road || "";
+        const city = AddressData.address?.city || "";
+        const suburb = AddressData.address?.suburb || "";
+        addressText = [road, city, suburb].filter(Boolean).join(", ") || "Address unavailable";
+      } else {
+        addressText = "Address unavailable";
+      }
     } catch (error) {
-      console.log(error);
+      console.log("Geocoding error:", error);
+      addressText = "Address unavailable";
     }
-    addressText = `${AddressData.address?.road || ""}, ${AddressData.address?.city || ""},${AddressData.address?.suburb || ""}`;
 
     // set data as locked loc
     div.innerHTML = `

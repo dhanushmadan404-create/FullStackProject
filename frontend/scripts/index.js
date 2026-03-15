@@ -23,17 +23,22 @@ async function loadTrendingFoods() {
       return;
     }
 
-    let addressText = "Loading address...";
     foods.forEach(async (food) => {
+      let addressText = "Address unavailable";
       const div = document.createElement("div");
       try {
         const response = await fetch(
           `https://nominatim.openstreetmap.org/reverse?format=json&lat=${food.latitude}&lon=${food.longitude}`
         );
-        const data = await response.json();
-        addressText = `${data.address?.road || ""} ${data.address?.city || ""} ${data.address?.suburb || ""}`;
+        if (response.ok) {
+          const data = await response.json();
+          const road = data.address?.road || "";
+          const city = data.address?.city || "";
+          const suburb = data.address?.suburb || "";
+          addressText = `${road} ${city} ${suburb}`.trim() || "Address unavailable";
+        }
       } catch (e) {
-        addressText = "Address unavailable";
+        console.log("Geocoding error:", e);
       }
       const imgUrl = getImageUrl(
         food.food_image_url,
