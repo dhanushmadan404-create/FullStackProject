@@ -136,44 +136,55 @@ window.setupSearch = setupSearch;
 
 // --- GEOCODING HELPERS ---
 const addressCache = new Map();
+let geocodeQueue = Promise.resolve();
 
 /**
  * Fetch address from Nominatim (Reverse Geocoding)
  * Includes a mandatory delay to respect rate limits (max 1 per sec)
  */
-async function fetchAddress(lat, lng) {
+function fetchAddress(lat, lng) {
   const cacheKey = `${parseFloat(lat).toFixed(4)},${parseFloat(lng).toFixed(4)}`;
-  if (addressCache.has(cacheKey)) return addressCache.get(cacheKey);
+  if (addressCache.has(cacheKey)) return Promise.resolve(addressCache.get(cacheKey));
 
-  try {
-    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`;
-    const res = await fetch(url, {
-      headers: { "User-Agent": "AnnesanaFoodApp/1.0" },
-    });
-    const data = await res.json();
-    const addressData = data.address || {};
+  // Enqueue the request to ensure at least 1100ms between calls
+  geocodeQueue = geocodeQueue.then(() => {
+    return new Promise(resolve => setTimeout(resolve, 1100));
+  }).then(async () => {
+    // Check cache again in case another queued call fetched it
+    if (addressCache.has(cacheKey)) return addressCache.get(cacheKey);
 
-    const road = addressData.road || addressData.pedestrian || "";
-    const suburb = addressData.suburb || addressData.neighbourhood || addressData.city_district || "";
-    const city = addressData.city || addressData.town || addressData.village || "";
+    try {
+      const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`;
+      const res = await fetch(url, {
+        headers: { "User-Agent": "AnnesanaFoodApp/1.0" },
+      });
+      const data = await res.json();
+      const addressData = data.address || {};
 
-    const result = {
-      road: road,
-      suburb: suburb,
-      city: city,
-      display_name: data.display_name || "Address unavailable",
-    };
+      const road = addressData.road || addressData.pedestrian || "";
+      const suburb = addressData.suburb || addressData.neighbourhood || addressData.city_district || "";
+      const city = addressData.city || addressData.town || addressData.village || "";
 
-    addressCache.set(cacheKey, result);
-    return result;
-  } catch (error) {
-    console.error("Geocoding error:", error);
-    return {
-      road: "",
-      suburb: "",
-      city: "",
-      display_name: "Address unavailable",
-    };
-  }
+      const result = {
+        road: road,
+        suburb: suburb,
+        city: city,
+        display_name: data.display_name || "Address unavailable",
+      };
+
+      addressCache.set(cacheKey, result);
+      return result;
+    } catch (error) {
+      console.error("Geocoding error:", error);
+      return {
+        road: "",
+        suburb: "",
+        city: "",
+        display_name: "Address unavailable",
+      };
+    }
+  });
+
+  return geocodeQueue;
 }
 window.fetchAddress = fetchAddress;

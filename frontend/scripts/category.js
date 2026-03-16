@@ -30,17 +30,11 @@ async function renderFoods(foodList) {
 
   // ? list out the foods with address fetching
   console.log(foodList);
-  const renderPromises = foodList.map(async (food) => {
+  
+  // Create all cards immediately with loading state for addresses
+  foodList.forEach((food) => {
     const isLiked = likedFoodIdsGlobal.includes(food.food_id);
     const div = document.createElement("div");
-
-    let addressText = "Loading address...";
-    if (food.latitude && food.longitude) {
-      const addr = await fetchAddress(food.latitude, food.longitude);
-      addressText = [addr.road, addr.suburb, addr.city].filter(Boolean).join(", ") || addr.display_name;
-    } else {
-      addressText = "Address unavailable";
-    }
 
     // set data as locked loc
     div.innerHTML = `
@@ -63,7 +57,7 @@ async function renderFoods(foodList) {
 
         <div >
           <p><strong>Shop Time:</strong> ${food.opening_time} To ${food.closing_time}</p>
-          <p><strong>Address:</strong> ${addressText}</p>
+          <p><strong>Address:</strong> <span id="addr-category-${food.food_id}">Loading address...</span></p>
         </div>
 
      
@@ -93,11 +87,23 @@ async function renderFoods(foodList) {
         </div>
       </div>
     `;
-    return div;
+    cardContainer.appendChild(div);
   });
 
-  const cards = await Promise.all(renderPromises);
-  cards.forEach((card) => cardContainer.appendChild(card));
+  // Fetch addresses asynchronously and update the DOM
+  for (const food of foodList) {
+    if (food.latitude && food.longitude) {
+      window.fetchAddress(food.latitude, food.longitude).then(addr => {
+        if (addr && addr.display_name !== "Address unavailable") {
+            const addressText = [addr.road, addr.suburb, addr.city].filter(Boolean).join(", ") || addr.display_name;
+            const addrElement = document.getElementById(`addr-category-${food.food_id}`);
+            if (addrElement) {
+              addrElement.innerText = addressText;
+            }
+        }
+      });
+    }
+  }
 }
 
 // ? ----------------Dom manipulation functions----------------

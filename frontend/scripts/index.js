@@ -17,17 +17,26 @@ async function loadTrendingFoods() {
 
     trendingFoods = await response.json();
 
-    // Pre-fetch addresses (Nominatim friendly-ish)
-    for (const food of trendingFoods) {
-      if (food.latitude && food.longitude) {
-        food.address_info = await fetchAddress(food.latitude, food.longitude);
-      }
-    }
-
+    // Render immediately
     renderTrendingFoods(trendingFoods);
     
     // Setup search
     setupSearch("#searchInput", trendingFoods, renderTrendingFoods);
+
+    // Asynchronously fetch and update addresses
+    for (const food of trendingFoods) {
+      if (food.latitude && food.longitude) {
+        fetchAddress(food.latitude, food.longitude).then(addr => {
+          if (addr && addr.display_name !== "Address unavailable") {
+            const addressText = [addr.road, addr.suburb, addr.city].filter(Boolean).join(", ") || addr.display_name;
+            const addrElement = document.getElementById(`addr-trending-${food.food_id}`);
+            if (addrElement) {
+              addrElement.innerText = addressText;
+            }
+          }
+        });
+      }
+    }
 
   } catch (error) {
     console.error("Error loading trending foods:", error);
@@ -46,13 +55,13 @@ function renderTrendingFoods(foods) {
   }
 
   foods.forEach((food) => {
-    let addressText = "Address unavailable";
-    const div = document.createElement("div");
-
+    let addressText = "Loading address...";
     if (food && food.address_info) {
       const addr = food.address_info;
       addressText = [addr.road, addr.suburb, addr.city].filter(Boolean).join(", ") || addr.display_name;
     }
+
+    const div = document.createElement("div");
 
     const imgUrl = getImageUrl(
       food.food_image_url,
@@ -71,7 +80,7 @@ function renderTrendingFoods(foods) {
         </div> 
        <div>
          <p><strong>Shop Time:</strong> ${food.opening_time} To ${food.closing_time}</p> 
-         <p><strong>Address:</strong> ${addressText}</p>
+         <p><strong>Address:</strong> <span id="addr-trending-${food.food_id}">${addressText}</span></p>
        </div>
         <div class="likes">❤️ ${food.total_likes ?? 0} Likes</div>
         <div class="card-buttons">
