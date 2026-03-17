@@ -1,7 +1,7 @@
 // -----------------------------
 // Load Trending Foods (Display Only)
 // -----------------------------
-const hideSearch = true;
+const hideSearch = false;
 window.hideSearch = hideSearch;
 let trendingFoods = [];
 
