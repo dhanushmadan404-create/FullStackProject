@@ -10,13 +10,9 @@ import os, uuid, shutil
 router = APIRouter(prefix="/vendors", tags=["Vendors"])
 
 
-# --- Image Upload Helper ---
-# If running on Vercel → use /tmp/uploads/vendors
 if os.environ.get("VERCEL"):
     UPLOAD_DIR = "/tmp/uploads/vendors"
 else:
-    # Match main.py and food.py logic: root/uploads/vendors
-    # BASE_DIR is .../backend/router
     BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     PROJECT_ROOT = os.path.dirname(BACKEND_DIR)
     UPLOAD_DIR = os.path.join(PROJECT_ROOT, "uploads", "vendors")
@@ -28,6 +24,7 @@ def save_image(image: UploadFile) -> str:
     file_path = os.path.join(UPLOAD_DIR, filename)
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(image.file, buffer)
+        # shell utility module 
     return f"/uploads/vendors/{filename}"
 
 

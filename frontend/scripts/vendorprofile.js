@@ -347,9 +347,7 @@ if (postFoodBtn) {
   });
 }
 
-// -----------------------------
 // CLOSE FORM
-// -----------------------------
 function closeForm() {
   addFoodContainer.style.visibility = "hidden";
   addFoodContainer.innerHTML = "";
@@ -362,9 +360,7 @@ function closeForm() {
   }
 }
 
-// -----------------------------
 // MENU MANAGEMENT
-// -----------------------------
 function addMenuItem() {
   const nameInput = document.getElementById("menuName");
   const imageInput = document.getElementById("menuImage");
@@ -411,9 +407,7 @@ function removeMenuItem(index) {
   renderLocalMenu();
 }
 
-// -----------------------------
 // MAP FUNCTION
-// -----------------------------
 function initializeMap() {
   if (map) map.remove();
 
@@ -452,9 +446,7 @@ function getCurrentLocation() {
   }
 }
 
-// -----------------------------
 // UPLOAD FUNCTION
-// -----------------------------
 async function uploadFoodItems() {
   const foodType = document.getElementById("foodType").value;
   const errType = document.getElementById("foodTypeError");

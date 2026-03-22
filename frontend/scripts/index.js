@@ -19,7 +19,7 @@ async function loadTrendingFoods() {
 
     // Render immediately
     renderTrendingFoods(trendingFoods);
-    
+
     // Setup search
     setupSearch("#searchInput", trendingFoods, renderTrendingFoods);
 

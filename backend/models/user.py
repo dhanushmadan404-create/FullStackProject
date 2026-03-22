@@ -12,6 +12,7 @@ class User(Base):
     name = Column(String, nullable=False)
     role = Column(String, nullable=False)
     image_url = Column(Text, nullable=True)
+    # text is can handle large charac
 
     created_at = Column(
         TIMESTAMP,

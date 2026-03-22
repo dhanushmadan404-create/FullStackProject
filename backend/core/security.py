@@ -8,15 +8,11 @@ from dotenv import load_dotenv
 import jwt
 from jwt import PyJWTError
 
-from database import SessionLocal
+from database import get_db
 from models.user import User
 
 load_dotenv()
 
-# --- Config ---
-SECRET_KEY = os.getenv("SECRET_KEY", "CHANGE_ME")
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 600 # Long expiry for convenience
 
 # --- Password Hashing ---
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -27,9 +23,13 @@ def hash_password(password: str):
 def verify_password(plain: str, hashed: str):
     return pwd_context.verify(plain, hashed)
 
-# --- OAuth2 ---
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
-# IT'S GET authorization :bearer open it 
+
+# --- Config ---
+SECRET_KEY = os.getenv("SECRET_KEY", "CHANGE_ME")
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 600 # Long expiry for convenience
+
+
 # --- Token Logic ---
 def create_access_token(data: dict):
     to_encode = data.copy()
@@ -37,13 +37,9 @@ def create_access_token(data: dict):
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-# --- DB Dependency ---
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+# --- OAuth2 ---
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
+# IT'S GET authorization :bearer open it 
 
 # --- Get Current User ---
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):

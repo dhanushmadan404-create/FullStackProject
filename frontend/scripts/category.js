@@ -30,7 +30,7 @@ async function renderFoods(foodList) {
 
   // ? list out the foods with address fetching
   console.log(foodList);
-  
+
   // Create all cards immediately with loading state for addresses
   foodList.forEach((food) => {
     const isLiked = likedFoodIdsGlobal.includes(food.food_id);
@@ -95,11 +95,11 @@ async function renderFoods(foodList) {
     if (food.latitude && food.longitude) {
       window.fetchAddress(food.latitude, food.longitude).then(addr => {
         if (addr && addr.display_name !== "Address unavailable") {
-            const addressText = [addr.road, addr.suburb, addr.city].filter(Boolean).join(", ") || addr.display_name;
-            const addrElement = document.getElementById(`addr-category-${food.food_id}`);
-            if (addrElement) {
-              addrElement.innerText = addressText;
-            }
+          const addressText = [addr.road, addr.suburb, addr.city].filter(Boolean).join(", ") || addr.display_name;
+          const addrElement = document.getElementById(`addr-category-${food.food_id}`);
+          if (addrElement) {
+            addrElement.innerText = addressText;
+          }
         }
       });
     }

@@ -1,6 +1,4 @@
-// -----------------------------
 // Toggle Login / Register Forms
-// -----------------------------
 function toggleForm(formType) {
   const loginForm = document.getElementById("loginForm");
   const registerForm = document.getElementById("registerForm");
@@ -21,9 +19,7 @@ function toggleForm(formType) {
   console.log("Toggled to:", formType);
 }
 
-// -----------------------------
 // Main Execution
-// -----------------------------
 document.addEventListener("DOMContentLoaded", () => {
   console.log(API_BASE_URL);
   const loginBtn = document.getElementById("loginBtn");
@@ -33,9 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (registerBtn) registerBtn.addEventListener("click", handleRegister);
 });
 
-// -----------------------------
 // Login Logic
-// -----------------------------
 async function handleLogin(event) {
   event.preventDefault();
 
@@ -108,9 +102,7 @@ async function handleLogin(event) {
   }
 }
 
-// -----------------------------
 // Register Logic
-// -----------------------------
 async function handleRegister(event) {
   event.preventDefault();
 
@@ -200,9 +192,7 @@ async function handleRegister(event) {
   }
 }
 
-// -----------------------------
 // Redirect Based on Role
-// -----------------------------
 async function redirectUser(role, userId) {
   console.log("Redirecting user with role:", role);
 

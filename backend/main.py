@@ -28,6 +28,7 @@ async def lifespan(app: FastAPI):
     logger.info("Starting up...")
     init_db()  # create tables if not exist
     yield
+    logger.info("Shutting down...")
 
 
 # --- App Definition ---
@@ -38,10 +39,10 @@ app = FastAPI(
 
 # --- CORS (Allow all for simplicity) ---
 app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
+    CORSMiddleware,#class
+    allow_origins=["*"],#domain
+    allow_methods=["*"],#method
+    allow_headers=["*"],#header
 )
 
 # --- File Uploads ---
@@ -50,6 +51,8 @@ if os.environ.get("VERCEL"):
 else:
     # Use absolute path for local uploads to avoid confusion
     UPLOAD_DIR = os.path.join(os.path.dirname(BASE_DIR), "uploads")
+
+
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
@@ -76,7 +79,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 # --- Root ---
 @app.get("/")
 def root():
-    return {"message": "Welcome to Annesana API"}
+    return {"message": "Welcome to Annesa  na API"}
 
 @app.get("/health")
 def health_check():

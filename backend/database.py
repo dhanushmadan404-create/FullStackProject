@@ -5,20 +5,12 @@ from dotenv import load_dotenv
 import os
 from fastapi import HTTPException 
 
-# Get absolute path to backend/.env
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-ENV_PATH = os.path.join(BASE_DIR, ".env")
-load_dotenv(ENV_PATH)  
+load_dotenv()  
 
-# -----------------------------
-# Database Selection (Local vs Vercel)
-# -----------------------------
 if os.environ.get("VERCEL"):
-    # On Vercel: Use the main DATABASE_URL (Supabase)
     DATABASE_URL = os.getenv("DATABASE_URL")
     print("Running on Vercel: Using Supabase Database")
 else:
-    # On Localhost: Look for LOCAL_DATABASE_URL, or fallback to DATABASE_URL
     DATABASE_URL = os.getenv("LOCAL_DATABASE_URL") or os.getenv("DATABASE_URL")
     print("Running on Localhost: Using Local/Fallback Database")
 
@@ -26,11 +18,12 @@ else:
 engine = None
 SessionLocal = None
 if DATABASE_URL:
-    # SQLAlchemy 1.4+ requires 'postgresql://' instead of 'postgres://'
     if DATABASE_URL.startswith("postgres://"):
         DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
         
     engine = create_engine(DATABASE_URL, echo=True, pool_pre_ping=True)
+    # echo print sql queries
+    # pool pre ping is check before connect 
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 else:
     print("WARNING: DATABASE_URL not set. Database features will be unavailable.")
@@ -57,30 +50,9 @@ def init_db():
         print("Skipping init_db: engine not configured.")
         return
         
-    # 🔥 CRITICAL: Import all models here so SQLAlchemy registers them
-    import models 
-    from sqlalchemy import text
-
     
-    try:
-        with engine.connect() as conn:
-            check_sql = text("""
-                SELECT column_name 
-                FROM information_schema.columns 
-                WHERE table_name='users' AND column_name='image';
-            """)
-            result = conn.execute(check_sql).fetchone()
-            
-            if result:
-                print("Found old 'image' column. Renaming to 'image_url'...")
-                conn.execute(text("ALTER TABLE users RENAME COLUMN image TO image_url;"))
-                conn.commit()
-                print("Migration successful: Renamed users.image to users.image_url")
-    except Exception as e:
-        print(f"Migration error (might already be fixed): {e}")
-
     try:
         Base.metadata.create_all(bind=engine)
         print("Database initialized.")
     except Exception as e:
-        print(f"Database initialization error (create_all): {e}")
+        print(f"Database initialization error (create_all): {e}") 

@@ -1,7 +1,7 @@
 // API BASE URL (Local + Vercel)
 const API_BASE_URL =
   window.location.hostname === "localhost" ||
-  window.location.hostname === "127.0.0.1"
+    window.location.hostname === "127.0.0.1"
     ? "http://127.0.0.1:8000/api"
     : "/api";
 
@@ -81,16 +81,15 @@ function renderNav() {
         onclick="window.location.href = '/index.html'" />
 
       <!-- Location search -->
-       ${
-         window.hideSearch
-           ? `
+       ${window.hideSearch
+      ? `
         <div class="search">
           <input type="text" id="searchInput" placeholder="Search..." name="Search"/>
           <img src="/frontend/assets/search.png" alt="Error">
         </div>
         `
-           : ""
-       }
+      : ""
+    }
         
       <div class="right-align right">
         <a href='/index.html' class="navBtn">
