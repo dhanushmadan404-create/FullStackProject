@@ -26,15 +26,7 @@ header .logo {
   align-items: center;
   margin-top: 50px;
 }
-#Close {
-  cursor: pointer;
-  color: red;
-  padding: 10px;
-  border: rgb(131, 130, 130) solid 2px;
-  border-radius: 20px;
-  width: 50px;
-  height: 50px;
-}
+
 /* Card */
 #edit form {
   background: #ffffff;
@@ -222,8 +214,24 @@ header .logo {
 #editForm button:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+  cursor: pointer;
 }
-
+.btn-in-edit{
+    padding: 8px 16px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.25s ease;
+  background-color: #ff6f00;
+  color: white;
+  text-decoration: none;
+}
+.btn-in-edit:hover{
+    background-color: #e65100;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
 #editBtn {
   padding: 12px;
   border-radius: 12px;
@@ -323,16 +331,7 @@ header .logo {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
-.close-btn {
-  background-color: #ffffff;
-  color: #6c757d;
-  border: 1px solid #6c757d;
-}
 
-.close-btn:hover {
-  background-color: #f1f1f1;
-  color: #343a40;
-}
 
 /* Action Buttons */
 .edit-btn,

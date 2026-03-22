@@ -190,7 +190,7 @@ editBtn.addEventListener("click", async () => {
 
     editContainer.innerHTML = `
       <form id="editForm">
-      <b id="Close" onclick="Close()">✕</b>
+      <b id="Close" class="close-btn" onclick="Close()">✕</b>
         <div>
           <label>Name</label>
           <input type="text" id="name" 
@@ -302,7 +302,7 @@ if (postFoodBtn) {
 
     addFoodContainer.innerHTML = `
       <div class="food-form">
-        <button type="button" id="closeFoodForm" class="close-btn">Close</button>
+        <button type="button" id="closeFoodForm" class="btn-in-edit">✕</button>
         <h3>Add Food Items</h3>
 
         <div class="form-group">
@@ -310,7 +310,7 @@ if (postFoodBtn) {
           <select id="foodType">
             <option value="">Select food type</option>
             <option value="breakfast">Breakfast</option>
-            <option value="drinking">Drinking</option>
+            <option value="drinking">Juice</option>
             <option value="dinner">Dinner</option>
             <option value="lunch">Lunch</option>
             <option value="snacks">Snacks</option>
@@ -321,19 +321,19 @@ if (postFoodBtn) {
         <div class="menu">
           <input type="text" id="menuName" placeholder="Enter menu item" />
           <input type="file" id="menuImage" accept="image/*" />
-          <button type="button" id="addMenuBtn">Add</button>
+          <button type="button" class="btn-in-edit" id="addMenuBtn">Add</button>
         </div>
 
         <ul id="list_container"></ul>
 
         <div class="form-group">
           <label>Shop Location:</label>
-          <button type="button" id="currentLocationBtn">Use Current Location</button>
+          <button type="button" class="btn-in-edit" id="currentLocationBtn">Use Current Location</button>
           <div id="map" style="height:300px; margin-top:10px; border-radius:10px;"></div>
           <span class="error-message" id="locationError"></span>
         </div>
 
-        <button id="submitFood">Submit Food</button>
+        <button id="submitFood" class="btn-in-edit">Submit Food</button>
       </div>
     `;
 
